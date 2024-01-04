@@ -12,6 +12,7 @@ import { MessageEL } from "./message.js";
 import { ForumPageEL } from "./forum.js";
 import { GameEL } from "./game.js";
 import { SettingsEL } from "./settings.js";
+import { LoginEL } from "./auth.js";
 
 const AppEL = ()=>{
   //console.log('init app');
@@ -49,43 +50,39 @@ const IndexEL = () => {
   const content = van.derive(()=>{
     if(view.val=='home'){
       return HomeEl();
-      //van._mount(content,HomeEL);
+    }
+    if(view.val=='login'){
+      return LoginEL();
     }
     if(view.val=='blog'){
       return BlogEL();
-      //van._mount(content,BlogEL);
     }
     if(view.val=='account'){
       return AccountEL();
-      //van._mount(content,AccountEL);
     }
     if(view.val=='message'){
       return MessageEL();
-      //van._mount(content,MessageEL);
     }
     if(view.val=='forum'){
       return ForumPageEL();
-      //van._mount(content,ForumEL);
     }
     if(view.val=='game'){
       return GameEL();
-      //van._mount(content,GameEL);
     }
     if(view.val=='settings'){
       return SettingsEL();
-      //van._mount(content,SettingsEL);
     }
     return NoneEL();
   })
 
   function click_view(_view){
-    //van._mount(content,null);
     view.val = _view
   }
 
   return div({id:'index'},
     div(
       button({onclick:()=>click_view('home')},'Home'),
+      button({onclick:()=>click_view('login')},'Login'),
       button({onclick:()=>click_view('blog')},'Blog'),
       button({onclick:()=>view.val='account'},'Account'),
       button({onclick:()=>view.val='message'},'Message'),

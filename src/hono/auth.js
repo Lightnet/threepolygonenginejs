@@ -79,10 +79,10 @@ app.post('/api/auth/signout', async (c) => {
 });
 
 export async function checkAccess(c, next){
-  console.log("access...");
-  console.log(c);
+  //console.log("access...");
+  //console.log(c);
   await next();
-  console.log("access end...");
+  //console.log("access end...");
 }
 
 //get user data that is secure
