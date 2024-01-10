@@ -13,7 +13,8 @@ import { html } from 'hono/html';
 //import { jwt } from 'hono/jwt'
 // https://hono.dev/helpers/cookie
 
-import SQLDB from '../database/node_sql_database.js';
+//import SQLDB from '../database/node_sql_database.js';
+import { ORMSQLITE } from '../database/node_sql_database.js';
 import game from './game.js';
 import auth from './auth.js';
 import blog from './blog.js';
@@ -37,7 +38,8 @@ export function useDB(options){
   }
 }
 // DATABASE
-const db = new SQLDB();
+//const db = new SQLDB();
+const db = new ORMSQLITE();
 
 const PORT = process.env.PORT || 3000;
 const {head, a, body, style, script, button, input, li, p, ul} = van.tags

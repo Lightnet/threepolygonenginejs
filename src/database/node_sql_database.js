@@ -1,4 +1,88 @@
+
+
+import { drizzle } from 'drizzle-orm/better-sqlite3';
+import { eq, sql } from "drizzle-orm";
 import Database from 'better-sqlite3';
+import { users } from './schema.js';
+import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
+
+// https://orm.drizzle.team/docs/rqb
+// https://orm.drizzle.team/docs/column-types/sqlite
+// https://github.com/drizzle-team/drizzle-orm/blob/main/drizzle-orm/src/sqlite-core/README.md
+// 
+
+// import { text, integer, sqliteTable } from "drizzle-orm/sqlite-core";
+// https://www.propelauth.com/post/drizzle-an-orm-that-lets-you-just-write-sql
+// https://orm.drizzle.team/kit-docs/conf
+// npm i -D drizzle-kit
+// npm exec drizzle-kit generate:sqlite --out migrations --schema src/database/schema.js
+
+class ORMSQLITE{
+
+  static db = null;
+  sqlite = null;
+  constructor(){
+
+    this.initDB();
+
+    return this;
+  }
+
+  initDB(){
+
+    this.sqlite = new Database('database_orm.sqlite');
+    this.db = drizzle(this.sqlite);
+    // this will automatically run needed migrations on the database
+    migrate(this.db, { migrationsFolder: './drizzle' });
+  }
+
+  user_exist(_alias){
+    let result = this.db.select().from(users).where(eq(users.alias, _alias)).get();
+    //console.log(result);
+    return result;
+  }
+
+  user_create(_alias,_passphrase){
+    try {
+      let result = this.db.insert(users).values({
+        alias:_alias,
+        passphrase:_passphrase
+      })
+      .run();
+      console.log(result);
+      if(result){
+        return {api:'CREATED'}
+      }else{
+        return {api:'NULL'}
+      }
+    } catch (error) {
+      return {api:'ERROR'}
+    }
+  }
+
+  user_signin(_alias,_passphrase){
+    try {
+      let result = this.db.select().from(users).where(eq(users.alias, _alias)).get();
+      console.log(result);
+      //return result;
+      
+      if(result){
+        if(_passphrase == result.passphrase){
+          return {api:"PASS"};
+        }else{
+          return {api:"DENIED"};
+        }
+      }else{
+        return {api:"NONEXIST"};
+      }
+    } catch (error) {
+      return {api:"ERROR"};
+    }
+  }
+}
+
+
+
 
 class SQLDB{
 
@@ -208,4 +292,8 @@ export function useDB(options){
     c.set('db',_db)
     await next();
   }
+}
+
+export {
+  ORMSQLITE
 }

@@ -2,6 +2,8 @@
 node_modules/
 package-lock.json
 database.sqlite
+database_orm.sqlite
 bun.lockb
 
 .env
+drizzle/

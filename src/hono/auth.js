@@ -22,8 +22,8 @@ app.post('/api/auth/signup', async (c) => {
       }
       const db = c.get('db');
       const user = db.user_exist(data.alias);
-      //console.log("user DB");
-      //console.log(user);
+      console.log("user DB");
+      console.log(user);
       if(user){
         return c.json({api:'EXIST'});
       }else{
@@ -38,7 +38,7 @@ app.post('/api/auth/signup', async (c) => {
 app.post('/api/auth/signin', async (c) => {
   //const data = c.req.query()
   const data = await c.req.json()
-  //console.log(data);
+  console.log(data);
   if(data){
     if((data.alias !=null)&&(data.passphrase !=null)){
       if((!data.alias)||(!data.passphrase)){

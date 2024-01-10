@@ -12,7 +12,7 @@ import { MessageEL } from "./message.js";
 import { ForumPageEL } from "./forum.js";
 import { GameEL } from "./game.js";
 import { SettingsEL } from "./settings.js";
-import { LoginEL } from "./auth.js";
+import { LoginEL, SignUpEL } from "./auth.js";
 
 const AppEL = ()=>{
   //console.log('init app');
@@ -54,6 +54,9 @@ const IndexEL = () => {
     if(view.val=='login'){
       return LoginEL();
     }
+    if(view.val=='signup'){
+      return SignUpEL();
+    }
     if(view.val=='blog'){
       return BlogEL();
     }
@@ -83,6 +86,7 @@ const IndexEL = () => {
     div(
       button({onclick:()=>click_view('home')},'Home'),
       button({onclick:()=>click_view('login')},'Login'),
+      button({onclick:()=>click_view('signup')},'Sign Up'),
       button({onclick:()=>click_view('blog')},'Blog'),
       button({onclick:()=>view.val='account'},'Account'),
       button({onclick:()=>view.val='message'},'Message'),
