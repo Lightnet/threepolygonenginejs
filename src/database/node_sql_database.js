@@ -3,7 +3,7 @@
 import { drizzle } from 'drizzle-orm/better-sqlite3';
 import { eq, sql } from "drizzle-orm";
 import Database from 'better-sqlite3';
-import { users } from './schema.js';
+import { blogs, users } from './schema.js';
 import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
 
 // https://orm.drizzle.team/docs/rqb
@@ -17,6 +17,7 @@ import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
 // npm i -D drizzle-kit
 // npm exec drizzle-kit generate:sqlite --out migrations --schema src/database/schema.js
 
+//orm sqlite
 class ORMSQLITE{
 
   static db = null;
@@ -79,11 +80,71 @@ class ORMSQLITE{
       return {api:"ERROR"};
     }
   }
+
+  blog_create(_title,_content){
+    try{
+      let result = this.db.insert(blogs).values({
+        title:_title,
+        content:_content
+      })
+      .run();
+      console.log("result");
+      console.log(result);
+      if(result){
+        return {api:'CREATED'}
+      }else{
+        return {api:'NULL'}
+      }
+    }catch(e){
+      return {api:'DBERROR'};
+    }
+  }
+
+  get_blogs(){
+    try{
+      let result = this.db.select().from(blogs).all();
+      return result;
+    }catch(e){
+      return {api:'DBERROR'};
+    }
+  }
+
+  blog_delete(_id){
+    try{
+      let result = this.db.delete(blogs)
+        .where(eq(blogs.id, _id))
+        .run();
+        console.log(result);
+      return {api:'DELETE'};
+    }catch(e){
+      return {api:'DBERROR'};
+    }
+  }
+
+  blog_update(_id,_title,_content){
+    try{
+      let result = this.db.update(blogs).set({
+        title:_title,
+        content:_content
+      })
+      .where(eq(blogs.id, _id))
+      .run();
+      //console.log(result);
+      if(result){
+        
+        return {api:'UPDATE'};
+      }else{
+        return {api:'ERROR'};
+      }
+    }catch(e){
+      return {api:'DBERROR'};
+    }
+  }
+
+
 }
 
-
-
-
+//sqlite
 class SQLDB{
 
   static db = null;
