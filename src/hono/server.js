@@ -187,6 +187,27 @@ app.get('/craftrapier', (c) => {
   return c.html(pageHtml);
 });
 
+app.get('/craft', (c) => {
+  //const db = c.get('db');
+  console.log("/craft");
+  const pageHtml = van.html(
+    head(
+      style(`
+      body{
+        background:gray;
+        margin: 0px 0px 0px 0px;
+        overflow: hidden;
+      }
+      `)
+    ),
+    body(
+      //script({src:"https://unpkg.com/three@0.157.0/examples/jsm/libs/ammo.wasm.js"}),
+      script({type:"module",src:"/van_craft.js"})
+    ),
+  );
+  return c.html(pageHtml);
+});
+
 app.get('/chat', (c) => {
   //const db = c.get('db');
   console.log("/chat");
@@ -238,6 +259,7 @@ if(typeServer=='node'){
   console.log('Process Type:',typeServer)
   console.log(`hono server  http://localhost:${PORT}`)
   console.log(`hono server  http://localhost:${PORT}/chat`)
+  console.log(`hono server  http://localhost:${PORT}/craft`)
   console.log(`hono server  http://localhost:${PORT}/craftmobile`)
   console.log(`hono server  http://localhost:${PORT}/craftrapier`)
 }

@@ -20,7 +20,7 @@ import RAPIER from 'https://cdn.skypack.dev/@dimforge/rapier3d-compat';
 
 const {button, canvas, input, label, div, script, pre, p, ul, li, a} = van.tags;
 
-let colGroupPlane = 1, colGroupRedBall = 2, colGroupGreenBall = 4
+let colGroupPlane = 1, colGroupRedBall = 2, colGroupGreenBall = 4;
 
 class CraftMobile extends TriEngine{
 
@@ -30,7 +30,7 @@ class CraftMobile extends TriEngine{
 
   //tmpTrans;
   physicsWorld=null;
-  rigidBodies = []; 
+  rigidBodies = [];
   //world=null;
   rigidBody=null
   
@@ -181,7 +181,6 @@ class CraftMobile extends TriEngine{
 
     ball.userData.physicsBody = rigidBody;
     this.rigidBodies.push(ball);
-
   }
 
   setup_physics_floor(){

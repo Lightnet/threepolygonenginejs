@@ -6,9 +6,10 @@ import * as THREE from 'https://cdn.skypack.dev/three@0.128.0/build/three.module
 import { OrbitControls } from 'https://cdn.skypack.dev/three@0.128.0/examples/jsm/controls/OrbitControls.js';
 
 import van from "https://cdn.jsdelivr.net/gh/vanjs-org/van/public/van-1.2.1.min.js";
+import { PhysicsFrameWork } from './physicsframework.js';
 const {button, canvas, input, label, div, script, pre, p, ul, li, a} = van.tags;
 
-console.log(OrbitControls);
+//console.log(OrbitControls);
 
 class TriEngine {
 
@@ -16,14 +17,16 @@ class TriEngine {
   camera = null;
   scene = null;
 
+  clock=null;
+
+  physics=null
+
   constructor(args){
     console.log("init...")
-    let iscanvasEL = false
-    if(args?.canvas){
-      iscanvasEL = true;
-    }
-    console.log(this.renderer);
-    if (iscanvasEL){
+    this.clock = new THREE.Clock();
+    
+    // check for canvas element
+    if (args?.canvas){
       const _renderer = new THREE.WebGLRenderer({
         canvas:args.canvas,
         antialias: true,
@@ -36,6 +39,26 @@ class TriEngine {
       throw new Error('Parameter is need Canvas Element!');
     }
 
+    this.setup_render();
+    this.setup_window_resize();
+    // Check for physics
+    if(args?.isPhysics){
+      console.log('init physics');
+      this.physics = new PhysicsFrameWork();
+      this.physics.event.listen("Ready",()=>{
+        console.log('init physics event...')
+        this.init();
+      });
+    }else{
+      this.init();
+    }
+  }
+
+  init(){
+
+  }
+
+  setup_render(){
     this.renderer.setSize( window.innerWidth, window.innerHeight );
 
     this.scene = new THREE.Scene();
@@ -62,17 +85,16 @@ class TriEngine {
     }
     //animate();
     this.renderer.setAnimationLoop(animate.bind(this));
-
-    window.addEventListener('resize',this.resize_window.bind(this));
-    this.init();
   }
 
-  init(){
-
+  setup_window_resize(){
+    window.addEventListener('resize',this.resize_window.bind(this));
   }
 
   update(){
-
+    if(this.physics){
+      this.physics.update();
+    }
   }
 
   resize_window(){
