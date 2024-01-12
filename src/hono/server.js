@@ -3,21 +3,25 @@
 // https://github.com/orgs/honojs/discussions/1355
 // 
 // 
+
+import { Server } from 'socket.io'
+import { Server as HttpServer } from 'http'
 import { serve } from '@hono/node-server';
 import van from "mini-van-plate/van-plate"
 import { serveStatic } from '@hono/node-server/serve-static';
 import { Hono } from 'hono';
-import { html } from 'hono/html';
+//import { html } from 'hono/html';
 //import { logger } from 'hono/logger';
 //import { getCookie, getSignedCookie, setCookie, setSignedCookie, deleteCookie } from 'hono/cookie';
 //import { jwt } from 'hono/jwt'
 // https://hono.dev/helpers/cookie
 
 //import SQLDB from '../database/node_sql_database.js';
-import { ORMSQLITE } from '../database/node_sql_database.js';
+import { ORMSQLITE } from '../database/orm_sqlite.js';
 import game from './game.js';
 import auth from './auth.js';
 import blog from './blog.js';
+import forum from './forum.js';
 
 //middleware for db
 //note it reload for every request
@@ -71,6 +75,7 @@ app.use('*',useDB({
 app.route('/game', game);
 app.route('/', auth);
 app.route('/', blog);
+app.route('/', forum);
 
 //<script type="module" src="/client.js"></script>
 //<script type="module" src="/vanjs_client.js"></script>
@@ -182,6 +187,26 @@ app.get('/craftrapier', (c) => {
   return c.html(pageHtml);
 });
 
+app.get('/chat', (c) => {
+  //const db = c.get('db');
+  console.log("/chat");
+  const pageHtml = van.html(
+    head(
+      style(`
+      body{
+        background:gray;
+        margin: 0px 0px 0px 0px;
+        overflow: hidden;
+      }
+      `)
+    ),
+    body(
+      script({type:"module",src:"/van_chat.js"})
+    ),
+  );
+  return c.html(pageHtml);
+});
+
 //set up static folder for public access
 app.use('/*', serveStatic({ root: './assets' }));
 
@@ -194,16 +219,29 @@ if(typeof Bun == 'object'){
   typeServer='bun';
 }
 
-//server base on bun api by fetch
+// https://github.com/orgs/honojs/discussions/1781
+// server base on bun api by fetch
 if(typeServer=='node'){
-  serve({
+  const server = serve({
     fetch: app.fetch,
     port:PORT
   });
+  const io = new Server(server);
+  io.on('connection', (socket) => {
+    console.log('a user connected');
+    console.log('a user connected');
+    socket.on('disconnect', () => {
+      console.log('user disconnected');
+    });
+  });
+  //console.log(io);
   console.log('Process Type:',typeServer)
   console.log(`hono server  http://localhost:${PORT}`)
+  console.log(`hono server  http://localhost:${PORT}/chat`)
   console.log(`hono server  http://localhost:${PORT}/craftmobile`)
   console.log(`hono server  http://localhost:${PORT}/craftrapier`)
 }
+
+//const server = serve(app)
 
 export default app

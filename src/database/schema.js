@@ -26,3 +26,15 @@ export const blogs = sqliteTable('blogs', {
   date: text("date").default(sql`CURRENT_DATE`),
   timestamp: text("timestamp").default(sql`CURRENT_TIMESTAMP`),
 });
+
+export const forums = sqliteTable('forums', {
+  id: integer('id').primaryKey(),  // 'id' is the column name
+  aliasid: text("aliasid"),
+  title: text("title"),
+  content: text("content"),
+  create_at: text("create_at").default(sql`CURRENT_TIME`),
+  update_at: text("update_at").default(sql`CURRENT_TIME`),
+  time: text("time").default(sql`CURRENT_TIME`),
+  date: text("date").default(sql`CURRENT_DATE`),
+  timestamp: text("timestamp").default(sql`CURRENT_TIMESTAMP`),
+});
