@@ -46,16 +46,44 @@ class PhysicsFrameWork{
     this.world.createCollider(groundColliderDesc);
   }
 
-  create_body_cube(){
-    //Ammojs Section
+  create_body_cube(args){
+    let position = {x:0,y:0.0,z:0};
+    let size = {x:0.5,y:0.5,z:0.5};
+    if(args){
+      if(args?.pos){
+        if(args.pos?.x){
+          position.x = args.pos.x;
+        }
+        if(args.pos?.y){
+          position.y = args.pos.y;
+        }
+        if(args.pos?.z){
+          position.z = args.pos.z;
+        }
+      }
+      if(args?.size){
+        if(args.size?.x){
+          size.x = args.size.x;
+        }
+        if(args.size?.y){
+          size.y = args.size.y;
+        }
+        if(args.size?.z){
+          size.z = args.size.z;
+        }
+      }
+    }
+
     // Create a dynamic rigid-body.
     let rigidBodyDesc = RAPIER.RigidBodyDesc.dynamic()
-     .setTranslation(0.0, 20.0, 0.0);
+      .setTranslation(position.x, position.y, position.z);
+     //.setTranslation(0.0, 20.0, 0.0);
     let rigidBody = this.world.createRigidBody(rigidBodyDesc);
     this.rigidBody = rigidBody;
 
     // Create a cuboid collider attached to the dynamic rigidBody.
-    let colliderDesc = RAPIER.ColliderDesc.cuboid(0.5, 0.5, 0.5);
+    //let colliderDesc = RAPIER.ColliderDesc.cuboid(0.5, 0.5, 0.5);
+    let colliderDesc = RAPIER.ColliderDesc.cuboid(size.x, size.y, size.z);
     let collider = this.world.createCollider(colliderDesc, rigidBody);
 
     console.log(rigidBody);

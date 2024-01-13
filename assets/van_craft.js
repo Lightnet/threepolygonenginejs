@@ -71,7 +71,7 @@ class CraftMobile extends TriEngine{
 
     this.scene.add(ball);
 
-    let rigidBody = this.physics.create_body_cube();
+    let rigidBody = this.physics.create_body_cube({pos:{y:20}});
 
     ball.userData.physicsBody = rigidBody;
     this.physics.add_body_sync(ball);
