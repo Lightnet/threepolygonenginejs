@@ -2,8 +2,9 @@
 //import * as three from 'https://unpkg.com/three@0.157.0/build/three.module.js';
 //import { OrbitControls } from 'https://unpkg.com/three@0.157.0/examples/jsm/controls/OrbitControls.js';
 
-import * as THREE from 'https://cdn.skypack.dev/three@0.128.0/build/three.module.js';
-import { OrbitControls } from 'https://cdn.skypack.dev/three@0.128.0/examples/jsm/controls/OrbitControls.js';
+//import * as THREE from 'https://cdn.skypack.dev/three@0.160.0/build/three.module.js';
+//import { OrbitControls } from 'https://cdn.skypack.dev/three@0.160.0/examples/jsm/controls/OrbitControls.js';
+import { THREE, OrbitControls  } from "./ThreeAPI.js";
 
 import van from "https://cdn.jsdelivr.net/gh/vanjs-org/van/public/van-1.2.1.min.js";
 import { PhysicsFrameWork } from './physicsframework.js';
@@ -52,9 +53,14 @@ class TriEngine {
     }else{
       this.init();
     }
+    this.init_editor();
   }
 
   init(){
+
+  }
+
+  init_editor(){
 
   }
 

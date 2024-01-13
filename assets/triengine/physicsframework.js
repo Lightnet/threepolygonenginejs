@@ -96,6 +96,7 @@ class PhysicsFrameWork{
     this.rigidBodies.push(_object);
   }
 
+  //update body from scene object > userData
   updateBodies(){
     if(this.rigidBodies){
       for ( let i = 0; i < this.rigidBodies.length; i++ ) {

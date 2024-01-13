@@ -52,6 +52,7 @@ const getForumsEL = () => {
               div({style:'background-color:lightblue;'},
                 label(data[i].title),
                 button({onclick:editForum(data[i].id)},'edit'),
+                button({onclick:editForum(data[i].id)},'Delete'),
               ),
               div(data[i].content),
             )

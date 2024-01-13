@@ -186,7 +186,7 @@ app.get('/craftrapier', (c) => {
   );
   return c.html(pageHtml);
 });
-
+// https://threejs.org/docs/index.html#manual/en/introduction/Installation
 app.get('/craft', (c) => {
   //const db = c.get('db');
   console.log("/craft");
@@ -202,6 +202,14 @@ app.get('/craft', (c) => {
     ),
     body(
       //script({src:"https://unpkg.com/three@0.157.0/examples/jsm/libs/ammo.wasm.js"}),
+      script({type:"importmap"},`
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+      `),
       script({type:"module",src:"/van_craft.js"})
     ),
   );
