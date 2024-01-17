@@ -5,23 +5,29 @@
  * hono js server current testing...
 
 # Information:
-  This for testing framework servers.
+  This is protoype to keep things simple without the solid-js or preact-js. By using the vanjs for browser javascript module.
 
-  Using web server frame build. For sandbox testing.
+  To develop threejs game with mini game test build.
+  
+  Using the hono server framework, socket.io and sqlite.
 
-  Wanted to have stand alone database file.
+  For basic local game build test for friend party test.
 
 # Packages:
+ * hono
+ * socket.io
  * better-sqlite3
+ * drizzle-orm
  * mini-van-plate
   
-# main server:
+# Main server:
  It depend on the packages.
-
  Hono js is cross platform for nodejs and bun.
 
-# server:
-
+# Server:
 ```
 npm run devh
 ```
+
+# Links:
+ * 
