@@ -79,7 +79,7 @@ class ThreeScene extends TriEngine{
   }
 }
 
-const ThreeEL = () => {
+const ThreeSceneEL = () => {
   const engine = van.state(null);
   const renderEL = canvas({id:'threejs'});
 
@@ -96,4 +96,8 @@ const ThreeEL = () => {
   )
 };
 
-van.add(document.body,ThreeEL())
+//van.add(document.body,ThreeEL())
+export {
+  ThreeSceneEL,
+  ThreeScene
+}

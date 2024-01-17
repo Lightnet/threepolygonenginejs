@@ -198,10 +198,7 @@ app.get('/craft', (c) => {
         margin: 0px 0px 0px 0px;
         overflow: hidden;
       }
-      `)
-    ),
-    body(
-      //script({src:"https://unpkg.com/three@0.157.0/examples/jsm/libs/ammo.wasm.js"}),
+      `),
       script({type:"importmap"},`
 {
   "imports": {
@@ -209,8 +206,97 @@ app.get('/craft', (c) => {
     "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
   }
 }
-      `),
+`),
+    ),
+
+    body(
+      //script({src:"https://unpkg.com/three@0.157.0/examples/jsm/libs/ammo.wasm.js"}),
+      
       script({type:"module",src:"/van_craft.js"})
+    ),
+  );
+  return c.html(pageHtml);
+});
+
+app.get('/three', (c) => {
+  //const db = c.get('db');
+  console.log("/craft");
+  const pageHtml = van.html({style:"height:100%;width:100%;"},
+    head(
+      style(`
+      body{
+        background:gray;
+        margin: 0px 0px 0px 0px;
+        overflow: hidden;
+      }
+      `),
+      script({type:"importmap"},`
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+`),
+    ),
+    body({style:"height:100%;width:100%;"},
+      script({type:"module",src:"/van_three.js"})
+    ),
+  );
+  return c.html(pageHtml);
+});
+
+app.get('/threecss', (c) => {
+  //const db = c.get('db');
+  console.log("/craft");
+  const pageHtml = van.html({style:"height:100%;width:100%;"},
+    head(
+      style(`
+      body{
+        background:gray;
+        margin: 0px 0px 0px 0px;
+        overflow: hidden;
+      }
+      `),
+      script({type:"importmap"},`
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+`),
+    ),
+    body({style:"height:100%;width:100%;"},
+      script({type:"module",src:"/van_threecss.js"})
+    ),
+  );
+  return c.html(pageHtml);
+});
+
+app.get('/threeswitch', (c) => {
+  //const db = c.get('db');
+  console.log("/craft");
+  const pageHtml = van.html({style:"height:100%;width:100%;"},
+    head(
+      style(`
+      body{
+        background:gray;
+        margin: 0px 0px 0px 0px;
+        overflow: hidden;
+      }
+      `),
+      script({type:"importmap"},`
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+`),
+    ),
+    body({style:"height:100%;width:100%;"},
+      script({type:"module",src:"/van_threeswitch.js"})
     ),
   );
   return c.html(pageHtml);
@@ -268,6 +354,9 @@ if(typeServer=='node'){
   console.log(`hono server  http://localhost:${PORT}`)
   console.log(`hono server  http://localhost:${PORT}/chat`)
   console.log(`hono server  http://localhost:${PORT}/craft`)
+  console.log(`hono server  http://localhost:${PORT}/three`)
+  console.log(`hono server  http://localhost:${PORT}/threecss`)
+  console.log(`hono server  http://localhost:${PORT}/threeswitch`)
   console.log(`hono server  http://localhost:${PORT}/craftmobile`)
   console.log(`hono server  http://localhost:${PORT}/craftrapier`)
 }

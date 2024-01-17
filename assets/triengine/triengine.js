@@ -11,6 +11,16 @@ import { PhysicsFrameWork } from './physicsframework.js';
 const {button, canvas, input, label, div, script, pre, p, ul, li, a} = van.tags;
 
 //console.log(OrbitControls);
+//{style:`position:fixed;top:0px,left:0px;`}
+const editorAreaEL=()=>{
+  const editorAreaEL = div({
+    id:'editorarea',
+    style:"position:fixed;top:0px;left:0px;"
+  });
+
+  return editorAreaEL;
+}
+
 
 class TriEngine {
 
@@ -49,19 +59,20 @@ class TriEngine {
       this.physics.event.listen("Ready",()=>{
         console.log('init physics event...')
         this.init();
+        this.init_editor();
       });
     }else{
       this.init();
     }
-    this.init_editor();
+    //this.init_editor();
   }
 
   init(){
-
+    
   }
 
   init_editor(){
-
+    van.add(document.body,editorAreaEL())
   }
 
   setup_render(){
@@ -110,24 +121,24 @@ class TriEngine {
   }
 
 };
-/*
+
 const ThreeEL = () => {
   const engine = van.state(null);
   const renderEL = canvas({id:'threejs'});
   function init(){
     //const renderer = new THREE.WebGLRenderer();
     engine.val = new TriEngine({canvas:renderEL});
-    console.log(engine.val);//
+    //console.log(engine.val);//
   }
   init();
-  return div(
+  return div({style:"position:fixed;top:0px;left:0px;"},
     renderEL
   )
 };
-*/
+
 
 export default TriEngine;
 export {
   TriEngine,
-  //ThreeEL,
+  ThreeEL,
 }
