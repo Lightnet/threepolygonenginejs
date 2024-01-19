@@ -22,6 +22,7 @@ import game from './game.js';
 import auth from './auth.js';
 import blog from './blog.js';
 import forum from './forum.js';
+import pages from './pages.js';
 
 //middleware for db
 //note it reload for every request
@@ -46,7 +47,7 @@ export function useDB(options){
 const db = new ORMSQLITE();
 
 const PORT = process.env.PORT || 3000;
-const {head, a, body, style, script, button, input, li, p, ul} = van.tags
+const {head, body, style, script} = van.tags
 
 // Web Fetch Server
 const app = new Hono({ 
@@ -102,225 +103,10 @@ app.get('/', (c) => {
       script({type:"module",src:"/vanjs_client.js"})
     ),
   );
-
-  /*
-  const pageHtml = html`
-  <!doctype html>
-  <html lang="en">
-    <head>
-      <meta charset="utf-8" />
-      <title>hono js</title>
-      <style>
-        body{
-          background:gray;
-          margin: 0px 0px 0px 0px;
-          overflow: hidden;
-        }
-      </style>
-    </head>
-    <body>
-      <script type="module" src="/vanjs_client.js"></script>
-    </body>
-  </html>
-  `;
-  */
   return c.html(pageHtml);
 });
 
-app.get('/spacemobile', (c) => {
-  const db = c.get('db');
-  const pageHtml = van.html(
-    head(
-      style(`
-      body{
-        background:gray;
-        margin: 0px 0px 0px 0px;
-        overflow: hidden;
-      }
-      `)
-    ),
-    body(
-      script({type:"module",src:"/van_spacemobile.js"})
-    ),
-  );
-  return c.html(pageHtml);
-});
-
-app.get('/craftmobile', (c) => {
-  const db = c.get('db');
-  const pageHtml = van.html(
-    head(
-      style(`
-      body{
-        background:gray;
-        margin: 0px 0px 0px 0px;
-        overflow: hidden;
-      }
-      `)
-    ),
-    body(
-      script({src:"https://unpkg.com/three@0.157.0/examples/jsm/libs/ammo.wasm.js"}),
-      script({type:"module",src:"/van_craftmobile.js"})
-    ),
-  );
-  return c.html(pageHtml);
-});
-
-app.get('/craftrapier', (c) => {
-  //const db = c.get('db');
-  console.log("/craftrapier");
-  const pageHtml = van.html(
-    head(
-      style(`
-      body{
-        background:gray;
-        margin: 0px 0px 0px 0px;
-        overflow: hidden;
-      }
-      `)
-    ),
-    body(
-      //script({src:"https://unpkg.com/three@0.157.0/examples/jsm/libs/ammo.wasm.js"}),
-      script({type:"module",src:"/van_craftrapier.js"})
-    ),
-  );
-  return c.html(pageHtml);
-});
-// https://threejs.org/docs/index.html#manual/en/introduction/Installation
-app.get('/craft', (c) => {
-  //const db = c.get('db');
-  console.log("/craft");
-  const pageHtml = van.html(
-    head(
-      style(`
-      body{
-        background:gray;
-        margin: 0px 0px 0px 0px;
-        overflow: hidden;
-      }
-      `),
-      script({type:"importmap"},`
-{
-  "imports": {
-    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
-  }
-}
-`),
-    ),
-
-    body(
-      //script({src:"https://unpkg.com/three@0.157.0/examples/jsm/libs/ammo.wasm.js"}),
-      
-      script({type:"module",src:"/van_craft.js"})
-    ),
-  );
-  return c.html(pageHtml);
-});
-
-app.get('/three', (c) => {
-  //const db = c.get('db');
-  console.log("/craft");
-  const pageHtml = van.html({style:"height:100%;width:100%;"},
-    head(
-      style(`
-      body{
-        background:gray;
-        margin: 0px 0px 0px 0px;
-        overflow: hidden;
-      }
-      `),
-      script({type:"importmap"},`
-{
-  "imports": {
-    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
-  }
-}
-`),
-    ),
-    body({style:"height:100%;width:100%;"},
-      script({type:"module",src:"/van_three.js"})
-    ),
-  );
-  return c.html(pageHtml);
-});
-
-app.get('/threecss', (c) => {
-  //const db = c.get('db');
-  console.log("/craft");
-  const pageHtml = van.html({style:"height:100%;width:100%;"},
-    head(
-      style(`
-      body{
-        background:gray;
-        margin: 0px 0px 0px 0px;
-        overflow: hidden;
-      }
-      `),
-      script({type:"importmap"},`
-{
-  "imports": {
-    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
-  }
-}
-`),
-    ),
-    body({style:"height:100%;width:100%;"},
-      script({type:"module",src:"/van_threecss.js"})
-    ),
-  );
-  return c.html(pageHtml);
-});
-
-app.get('/threeswitch', (c) => {
-  //const db = c.get('db');
-  console.log("/craft");
-  const pageHtml = van.html({style:"height:100%;width:100%;"},
-    head(
-      style(`
-      body{
-        background:gray;
-        margin: 0px 0px 0px 0px;
-        overflow: hidden;
-      }
-      `),
-      script({type:"importmap"},`
-{
-  "imports": {
-    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
-  }
-}
-`),
-    ),
-    body({style:"height:100%;width:100%;"},
-      script({type:"module",src:"/van_threeswitch.js"})
-    ),
-  );
-  return c.html(pageHtml);
-});
-
-app.get('/chat', (c) => {
-  //const db = c.get('db');
-  console.log("/chat");
-  const pageHtml = van.html(
-    head(
-      style(`
-      body{
-        background:gray;
-        margin: 0px 0px 0px 0px;
-        overflow: hidden;
-      }
-      `)
-    ),
-    body(
-      script({type:"module",src:"/van_chat.js"})
-    ),
-  );
-  return c.html(pageHtml);
-});
+app.route('/', pages);
 
 //set up static folder for public access
 app.use('/*', serveStatic({ root: './assets' }));

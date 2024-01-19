@@ -47,11 +47,15 @@ class TriEngine {
       console.log(this.renderer)
     }else{
       console.log("ERROR Canvas Element needed!");
-      throw new Error('Parameter is need Canvas Element!');
+      //throw new Error('Parameter is need Canvas Element!');
     }
 
     this.setup_render();
-    this.setup_window_resize();
+    if(args?.resize == 'parent'){
+
+    }else if(args?.resize == 'window'){
+      this.setup_window_resize();
+    }
     // Check for physics
     if(args?.isPhysics){
       console.log('init physics');
@@ -118,6 +122,18 @@ class TriEngine {
     this.camera.aspect = window.innerWidth / window.innerHeight;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize( window.innerWidth, window.innerHeight );
+  }
+
+  resize(width, height){
+    if(this.camera && this.renderer){
+      this.camera.aspect = width / height;
+      this.camera.updateProjectionMatrix();
+      this.renderer.setSize( width, height );
+    }
+  }
+
+  domElement(){
+    return this.renderer.domElement;
   }
 
 };

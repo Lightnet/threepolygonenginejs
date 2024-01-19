@@ -4,8 +4,8 @@
 */
 
 import van from "https://cdn.jsdelivr.net/gh/vanjs-org/van/public/van-1.2.1.min.js";
-import { THREE, OrbitControls  } from "./triengine/ThreeAPI.js";
-import {TriEngine} from './triengine/triengine.js';
+import { THREE, OrbitControls  } from "./ThreeAPI.js";
+import {TriEngine} from './triengine.js';
 const {button, canvas, input, label, div} = van.tags;
 
 class ThreeScene extends TriEngine{
@@ -66,9 +66,9 @@ class ThreeScene extends TriEngine{
 
     this.scene.add(ball);
 
-    let rigidBody = this.physics.create_body_cube({pos:{y:20}});
+    //let rigidBody = this.physics.create_body_cube({pos:{y:20}});
 
-    ball.userData.physicsBody = rigidBody;
+    //ball.userData.physicsBody = rigidBody;
 
   }
 
