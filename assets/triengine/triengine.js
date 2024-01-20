@@ -33,7 +33,7 @@ class TriEngine {
   physics=null
 
   constructor(args){
-    console.log("init...")
+    //console.log("init...")
     this.clock = new THREE.Clock();
     
     // check for canvas element
@@ -44,7 +44,7 @@ class TriEngine {
         //alpha: true,
       });
       this.renderer = _renderer;
-      console.log(this.renderer)
+      //console.log(this.renderer)
     }else{
       console.log("ERROR Canvas Element needed!");
       //throw new Error('Parameter is need Canvas Element!');
@@ -61,7 +61,7 @@ class TriEngine {
       console.log('init physics');
       this.physics = new PhysicsFrameWork();
       this.physics.event.listen("Ready",()=>{
-        console.log('init physics event...')
+        //console.log('init physics event...')
         this.init();
         this.init_editor();
       });

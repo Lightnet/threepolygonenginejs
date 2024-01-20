@@ -62,14 +62,11 @@ class ThreeScene extends TriEngine{
     
     ball.castShadow = true;
     ball.receiveShadow = true;
-    console.log(this.scene);
+    //console.log(this.scene);
 
     this.scene.add(ball);
-
     //let rigidBody = this.physics.create_body_cube({pos:{y:20}});
-
     //ball.userData.physicsBody = rigidBody;
-
   }
 
   setup_BaseScene(){

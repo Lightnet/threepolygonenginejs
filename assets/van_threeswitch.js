@@ -8,12 +8,15 @@ const {button, canvas, input, label, div, script, pre, p, ul, li, a} = van.tags;
 
 import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
 import { ThreeScene } from "./triengine/threescene.js";
-
+/*
 var content = '<div>' +
       '<h1>This is an H1 Element.</h1>' +
       '<span class="large">Hello Three.js cookbook</span>' +
       '<textarea> And this is a textarea</textarea>' +
     '</div>';
+*/
+var content = '<div>' +
+'</div>';
 
 
 class CSSRender{
@@ -22,28 +25,12 @@ class CSSRender{
   camera = null;
   scene = null;
   clock=null;
-  physics=null;
-  threeCanvas=null;
   divEl=null;
+  cssScreen=null;//cssObject for threejs render
 
   constructor(args){
     console.log("init...")
     this.clock = new THREE.Clock();
-
-    // check for canvas element
-    //if (args?.canvas){
-      //const _renderer = new CSS3DRenderer({
-        //canvas:args.canvas,
-        //antialias: true,
-        //alpha: true,
-      //});
-      //this.renderer = _renderer;
-      //console.log(this.renderer)
-      //van.add(args.canvas,this.renderer.domElement)
-    //}else{
-      //console.log("ERROR Canvas Element needed!");
-      //throw new Error('Parameter is need Canvas Element!');
-    //}
 
     if (args?.parent){
       const _renderer = new CSS3DRenderer({
@@ -59,25 +46,17 @@ class CSSRender{
       //throw new Error('Parameter is need Canvas Element!');
     }
 
-    if (args?.canvas){
-      this.threeCanvas = args.canvas;
-    }
-
     this.setup_render();
     this.setup_window_resize();
-    // Check for physics
+    // init set up
     this.init();
   }
 
   init(){
-    //const threejs = ThreeSceneEL();
+    //div
     var cssElement = this.createTriCSS3DObject(content);
-    //var cssElement = this.createCSS3DObject(threejs);
-    //var cssElement = this.createCSS3DObject(this.threeCanvas);
-    //var cssElement = this.createCSS3DObject(this.threeCanvas);
-    //cssElement.position.set(100, 100, 100);
     cssElement.position.set(0, 0, 0);
-    console.log(cssElement.position)
+    this.cssScreen = cssElement;
     this.scene.add(cssElement);
   }
 
@@ -132,8 +111,8 @@ class CSSRender{
   appendChild(_canvas){
     if(this.divEl){
       console.log("ADD CSS?")
-      console.log(this.divEl);
-      console.log(_canvas);
+      //console.log(this.divEl);
+      //console.log(_canvas);
       this.divEl.appendChild(_canvas);
     }else{
       console.log("ERROR APPENDCHILD?");
@@ -153,7 +132,7 @@ class CSSRender{
     //this.camera.position.z = 5;
 
     //this.camera.position.set( 600, 400, 1500 );
-    this.camera.position.set( 0, 0, 800 );
+    this.camera.position.set( 0, 0, 630 );
     //this.camera.position.set( 0, 100, 0 );
     //this.camera.position.set( 100, 0, 0 );
     //this.camera.lookAt( 0, 0, 0 );
@@ -166,22 +145,40 @@ class CSSRender{
     window.addEventListener('resize',this.resize_window.bind(this));
   }
 
+  //update render for css
   update(){
     requestAnimationFrame( this.update.bind(this) );
-
     this.renderer.render( this.scene, this.camera );
-    //console.log("update")
-    //console.log(this.scene)
   }
 
   resize_window(){
     this.camera.aspect = window.innerWidth / window.innerHeight;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize( window.innerWidth, window.innerHeight );
+    this.resize_screen_three()
   }
+
+  resize_screen_three(){
+    if(this.cssScreen){
+      let width = window.innerWidth / 2;
+      let height = window.innerHeight / 2;
+      //this.cssScreen.position.set(width*-1,height*-1,0);
+
+      this.divEl.style.width = window.innerWidth+'px';
+      this.divEl.style.height = window.innerHeight+'px';
+    }
+  }
+
+  get_screen_el(){
+    if(this.divEl){
+      //console.log(this.divEl);
+      //console.log(this.divEl.getBoundingClientRect());
+      return this.divEl;
+    }
+    return null;
+  }
+
 }
-
-
 
 
 const toggleThreeSwitch = ()=>{
@@ -189,77 +186,63 @@ const toggleThreeSwitch = ()=>{
   const isEditor = van.state(false);
   const cssRenderEL = div({id:'CSSRENDER',style:"height:100%;width:100%;"});
   const divEL = div({id:'CSSRENDER',style:"height:100%;width:100%;"});
-  const divEL2 = div({id:'CSSRENDER2',style:"height:100%;width:100%;"});
   const canvasEL = canvas({id:'CANVAS',style:"height:100%;width:100%;"});
 
-  const threeScene = new ThreeScene({canvas:canvasEL});
-  console.log(threeScene.domElement());
-
-  const screenCSS = new CSSRender({
-    //canvas:threeScene.domElement(),
-    parent:cssRenderEL
+  //base scene
+  const threeScene = new ThreeScene({
+    canvas:canvasEL// canvas element
   });
-  //const screenCSS = new CSSRender({parent:cssRenderEL});
+  //console.log(threeScene.domElement());
+
+  //screen for ui in div css format.
+  const screenCSS = new CSSRender({
+    parent:cssRenderEL // div element
+  });
 
   function toggleSwitch(){
     isEditor.val = !isEditor.val;
     //console.log("Hello?",isEditor.val);
   }
 
+  const setup_window_resize = ()=>{
+    window.addEventListener('resize',resize_window.bind(this));
+  }
+
+  function resize_window(){
+    if(isEditor.val == false){
+      threeScene.resize(window.innerWidth,window.innerHeight);
+    }
+    if(isEditor.val == true){
+      let _divEl = screenCSS.get_screen_el();
+      let rect = _divEl.getBoundingClientRect();
+      //console.log(rect.height);
+      threeScene.resize(rect.width,rect.height);
+    }
+  }
+
+  function init(){
+    setup_window_resize();
+  }
+
+  init();
+
   const showThreeType = van.derive(() =>{
-    //return cssRenderEL;
     if(isEditor.val){
-      console.log("CSS")
-      //new CSSRender({canvas:threeScene.domElement(),parent:cssRenderEL});
-      
+      console.log("CSS");
       screenCSS.appendChild(canvasEL);
       return cssRenderEL;
-      //divEL2.appendChild(canvasEL)
-      //return divEL2;
     }else{
-      console.log("CANVAS")
-      //return threeScene.domElement();
-      //return null;
-      divEL.appendChild(canvasEL)
+      console.log("CANVAS");
+      divEL.appendChild(canvasEL);
       return divEL;
     }
   })
 
   return div({style:'position:fixed;top:0px;left:0px;'},
-  button({onclick:toggleSwitch,textContent:'toggle'}),
-  showThreeType)
+    button({onclick:toggleSwitch,textContent:'toggle'}),
+    showThreeType
+  );
 }
 
+//set up canvas and editor element
 van.add(document.body,toggleThreeSwitch())
-
-
-/*
-const ThreeRenderEL = () => {
-  const engine = van.state(null);
-  const renderEL = div({id:'CSSRENDER',style:"height:100%;width:100%;"});
-
-  function init(){
-    //const renderer = new THREE.WebGLRenderer();
-    engine.val = new CSSRender({canvas:renderEL,isPhysics:true});
-    console.log(engine.val);//
-  }
-  init();
-  return renderEL;
-};
-
-
-
-const ThreeSceneEL = () => {
-  const engine = van.state(null);
-  const renderEL = canvas({id:'threejs'});
-  function init(){
-    //const renderer = new THREE.WebGLRenderer();
-    engine.val = new ThreeScene({canvas:renderEL,isPhysics:true});
-    console.log(engine.val);//
-  }
-  init();
-  return div(
-    renderEL
-  )
-};
-*/
