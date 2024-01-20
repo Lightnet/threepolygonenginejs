@@ -184,9 +184,9 @@ class CSSRender{
 const toggleThreeSwitch = ()=>{
 
   const isEditor = van.state(false);
-  const cssRenderEL = div({id:'CSSRENDER',style:"height:100%;width:100%;"});
+  const cssRenderEL = div({id:'CSSRENDER',style:"position:fixed;top:0px;left:0px;height:100%;width:100%;"});
   const divEL = div({id:'CSSRENDER',style:"height:100%;width:100%;"});
-  const canvasEL = canvas({id:'CANVAS',style:"height:100%;width:100%;"});
+  const canvasEL = canvas({id:'CANVAS',style:"position:fixed;top:0px;left:0px;height:100%;width:100%;"});
 
   //base scene
   const threeScene = new ThreeScene({
@@ -216,7 +216,10 @@ const toggleThreeSwitch = ()=>{
       let _divEl = screenCSS.get_screen_el();
       let rect = _divEl.getBoundingClientRect();
       //console.log(rect.height);
-      threeScene.resize(rect.width,rect.height);
+      console.log(rect);
+      //threeScene.resize(rect.width,rect.height);
+      threeScene.resize(window.innerWidth,window.innerHeight);
+
     }
   }
 
@@ -239,8 +242,12 @@ const toggleThreeSwitch = ()=>{
   })
 
   return div({style:'position:fixed;top:0px;left:0px;'},
-    button({onclick:toggleSwitch,textContent:'toggle'}),
-    showThreeType
+    
+    showThreeType,//threejs, editor UI CSS
+    div({style:'position:fixed;top:0px;left:0px;'},//UI top
+      button({onclick:toggleSwitch,textContent:'toggle'})
+    )
+    
   );
 }
 
