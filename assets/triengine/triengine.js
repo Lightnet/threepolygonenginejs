@@ -54,6 +54,7 @@ class TriEngine {
     if(args?.resize == 'parent'){
 
     }else if(args?.resize == 'window'){
+      console.log("init resize...")
       this.setup_window_resize();
     }
     // Check for physics

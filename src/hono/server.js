@@ -142,6 +142,7 @@ if(typeServer=='node'){
   console.log(`hono server  http://localhost:${PORT}/craft`)
   console.log(`hono server  http://localhost:${PORT}/three`)
   console.log(`hono server  http://localhost:${PORT}/threecss`)
+  console.log(`hono server  http://localhost:${PORT}/resizecssrender`)
   console.log(`hono server  http://localhost:${PORT}/threeswitch`)
   console.log(`hono server  http://localhost:${PORT}/craftmobile`)
   console.log(`hono server  http://localhost:${PORT}/craftrapier`)

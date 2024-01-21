@@ -4,19 +4,11 @@ import van from "https://cdn.jsdelivr.net/gh/vanjs-org/van/public/van-1.2.1.min.
 import { THREE } from "./triengine/ThreeAPI.js";
 const {button, canvas, input, label, div, script, pre, p, ul, li, a} = van.tags;
 
-
 import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
 import { ThreeScene } from "./triengine/threescene.js";
-/*
-var content = '<div>' +
-      '<h1>This is an H1 Element.</h1>' +
-      '<span class="large">Hello Three.js cookbook</span>' +
-      '<textarea> And this is a textarea</textarea>' +
-    '</div>';
-*/
+
 var content = '<div>' +
 '</div>';
-
 
 class CSSRender{
 
@@ -83,8 +75,8 @@ class CSSRender{
   }
 
   createTriCSS3DObject(content, args) {
-    let width = args?.width || 800;
-    let height = args?.height || 600;
+    let width = args?.width || window.innerWidth;
+    let height = args?.height || window.innerHeight;
     // convert the string to dome elements
     var wrapper = document.createElement('div');
     if(typeof content == 'string'){
@@ -129,19 +121,50 @@ class CSSRender{
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 5000 );
     //this.camera.position.z = 5;
-
-    //this.camera.position.set( 600, 400, 1500 );
-    this.camera.position.set( 0, 0, 630 );
-    //this.camera.position.set( 0, 100, 0 );
-    //this.camera.position.set( 100, 0, 0 );
+    //fit screen?
+    this.camera.position.set( 0, 0, 600 );
     //this.camera.lookAt( 0, 0, 0 );
 
     //this.controls = new OrbitControls(this.camera, this.renderer.domElement)
     this.update();
   }
+  // https://threejs.org/docs/#api/en/core/Raycaster.intersectObject
+  // https://discourse.threejs.org/t/convert-screen-2d-to-world-3d-coordiate-system-without-using-raycaster/13739
+
 
   setup_window_resize(){
-    window.addEventListener('resize',this.resize_window.bind(this));
+    window.addEventListener('resize', this.resize_window.bind(this));
+    //window.addEventListener( 'mousemove', this.onPointerMove.bind(this) );
+  }
+
+  onPointerMove( event ){
+    this.pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+	  this.pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+    //console.log(this.pointer);
+
+    const { clientX, clientY } = event
+    const pos = this.screenToWorld({
+        x: clientX,
+        y: clientY,
+        canvasWidth: window.innerWidth,
+        canvasHeight: window.innerHeight,
+        camera:this.camera
+    })
+    console.log(pos)
+  }
+
+  //https://discourse.threejs.org/t/convert-screen-2d-to-world-3d-coordiate-system-without-using-raycaster/13739/6
+  screenToWorld({ x, y, canvasWidth, canvasHeight, camera }) {
+    const coords = new THREE.Vector3(
+        (x / canvasWidth) * 2 - 1,
+        -(y / canvasHeight) * 2 + 1,
+        0.5
+    )
+    const worldPosition = new THREE.Vector3()
+    const plane = new THREE.Plane(new THREE.Vector3(0.0, 0.0, 1.0))//face camera?
+    const raycaster = new THREE.Raycaster()
+    raycaster.setFromCamera(coords, camera)
+    return raycaster.ray.intersectPlane(plane, worldPosition)
   }
 
   //update render for css
@@ -150,21 +173,43 @@ class CSSRender{
     this.renderer.render( this.scene, this.camera );
   }
 
-  resize_window(){
+  vec = new THREE.Vector3(); // create once and reuse
+  pos = new THREE.Vector3(); // create once and reuse
+
+  resize_window(event){
+
     this.camera.aspect = window.innerWidth / window.innerHeight;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize( window.innerWidth, window.innerHeight );
-    this.resize_screen_three()
+    //console.log(event);
+    //const { clientX, clientY } = event;
+    //console.log(clientX);
+    const pos = this.screenToWorld({
+        x: 1,
+        y: 1,
+        canvasWidth: window.innerWidth,
+        canvasHeight: window.innerHeight,
+        camera:this.camera
+    })
+    //console.log(pos);
+    this.resize_screen_three(pos);
   }
 
-  resize_screen_three(){
+  resize_screen_three(pos){
     if(this.cssScreen){
-      let width = window.innerWidth / 2;
-      let height = window.innerHeight / 2;
+      //console.log(x,y);
+      //let width = window.innerWidth / 2;
+      //let height = window.innerHeight / 2;
       //this.cssScreen.position.set(width*-1,height*-1,0);
 
-      this.divEl.style.width = window.innerWidth+'px';
-      this.divEl.style.height = window.innerHeight+'px';
+      //this.divEl.style.width = window.innerWidth+'px';
+      //this.divEl.style.height = window.innerHeight+'px';//not working or is by ratio fixed?
+      //console.log(pos);
+      let width = Math.abs(pos.x*2);
+      //console.log(pos);
+      //console.log("width:",width);
+      this.divEl.style.width = (width)+'px';
+      this.divEl.style.height = (pos.y*2)+'px';
     }
   }
 
@@ -216,8 +261,8 @@ const toggleThreeSwitch = ()=>{
       let rect = _divEl.getBoundingClientRect();
       //console.log(rect.height);
       console.log(rect);
-      //threeScene.resize(rect.width,rect.height);
-      threeScene.resize(window.innerWidth,window.innerHeight);
+      threeScene.resize(rect.width,rect.height);
+      //threeScene.resize(window.innerWidth,window.innerHeight);
 
     }
   }

@@ -176,6 +176,34 @@ route.get('/threeswitch', (c) => {
   return c.html(pageHtml);
 });
 
+route.get('/resizecssrender', (c) => {
+  //const db = c.get('db');
+  console.log("/threeswitch");
+  const pageHtml = van.html({style:"height:100%;width:100%;"},
+    head(
+      style(`
+      body{
+        background:gray;
+        margin: 0px 0px 0px 0px;
+        overflow: hidden;
+      }
+      `),
+      script({type:"importmap"},`
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+`),
+    ),
+    body({style:"height:100%;width:100%;"},
+      script({type:"module",src:"/resizecssrender.js"})
+    ),
+  );
+  return c.html(pageHtml);
+});
+
 route.get('/chat', (c) => {
   //const db = c.get('db');
   console.log("/chat");
