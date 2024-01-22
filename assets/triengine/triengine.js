@@ -125,11 +125,33 @@ class TriEngine {
     this.renderer.setSize( window.innerWidth, window.innerHeight );
   }
 
-  resize(width, height){
+  resize(width, height, options=null){
+    if(options){
+      if(options?.parent=='sub'){
+        //this is for css sub parent...
+        //console.log(this.renderer.domElement);
+        let parent = this.renderer.domElement.parentNode;
+
+        let _width = parseFloat(String(parent.style.width).replace("px",""));
+        let _height = parseFloat(String(parent.style.height).replace("px",""));
+        //console.log("_width:",_width);
+        //console.log("_height:",_height);
+        this.camera.aspect = _width / _height;
+        this.camera.updateProjectionMatrix();
+        this.renderer.domElement.style.width = parent.style.width;
+        this.renderer.domElement.style.height = parent.style.height;
+        return;
+      }
+    }
+
     if(this.camera && this.renderer){
+      //console.log("width:", width, " height:", height);
+      //width =  window.innerWidth;
+      //height =  window.innerHeight;
       this.camera.aspect = width / height;
       this.camera.updateProjectionMatrix();
       this.renderer.setSize( width, height );
+      //console.log(this.renderer.getSize());
     }
   }
 

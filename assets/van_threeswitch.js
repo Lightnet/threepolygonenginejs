@@ -215,7 +215,7 @@ const toggleThreeSwitch = ()=>{
       let _divEl = screenCSS.get_screen_el();
       let rect = _divEl.getBoundingClientRect();
       //console.log(rect.height);
-      console.log(rect);
+      //console.log(rect);
       //threeScene.resize(rect.width,rect.height);
       threeScene.resize(window.innerWidth,window.innerHeight);
 
