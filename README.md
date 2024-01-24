@@ -13,6 +13,13 @@
 
   For basic local game build test for friend party test.
 
+# Entities Components System:
+ To keep things simple for not mess code. Since loop, update and render needs to call functions to update stuff.
+
+ There are couple reason is one is server and client have different functions that has no requestAnimationFrame call in nodejs. The other is easy to handle or filter component on both side.
+
+ Note have not tested the ECS yet.
+
 # Packages:
  * hono
  * socket.io

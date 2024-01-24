@@ -204,6 +204,36 @@ route.get('/resizecssrender', (c) => {
   return c.html(pageHtml);
 });
 
+
+route.get('/entitiesomponentssystems', (c) => {
+  //const db = c.get('db');
+  console.log("/entitiesomponentssystems");
+  const pageHtml = van.html({style:"height:100%;width:100%;"},
+    head(
+      style(`
+      body{
+        background:gray;
+        margin: 0px 0px 0px 0px;
+        overflow: hidden;
+      }
+      `),
+      script({type:"importmap"},`
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
+    "remove-array-items": "https://unpkg.com/remove-array-items@3.0.0/src/remove-array-items.js"
+  }
+}
+`),
+    ),
+    body({style:"height:100%;width:100%;"},
+      script({type:"module",src:"/entitiesomponentssystems.js"})
+    ),
+  );
+  return c.html(pageHtml);
+});
+
 route.get('/chat', (c) => {
   //const db = c.get('db');
   console.log("/chat");
