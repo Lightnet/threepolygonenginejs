@@ -5,7 +5,7 @@ console.log('init')
 var testfile = "./tests/ecs_loop.js";
 
 if (isMainThread) {
-  const threads = new Set();;
+  const threads = new Set();
   console.log("main")
   // Create the worker.
   const worker = new Worker(testfile,{workerData:{id:'1'}});

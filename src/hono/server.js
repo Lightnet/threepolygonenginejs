@@ -5,7 +5,7 @@
 // 
 
 import { Server } from 'socket.io'
-import { Server as HttpServer } from 'http'
+//import { Server as HttpServer } from 'http'
 import { serve } from '@hono/node-server';
 import van from "mini-van-plate/van-plate"
 import { serveStatic } from '@hono/node-server/serve-static';
@@ -23,6 +23,8 @@ import auth from './auth.js';
 import blog from './blog.js';
 import forum from './forum.js';
 import pages from './pages.js';
+import { GameManagement } from '../game/gamemanagement.js';
+import { GameNetwork } from '../game/network.js';
 
 //middleware for db
 //note it reload for every request
@@ -128,13 +130,33 @@ if(typeServer=='node'){
     port:PORT
   });
   const io = new Server(server);
+  GameNetwork.io = io;
+  const gameManagement = new GameManagement({io:io});
+
   io.on('connection', (socket) => {
     console.log('a user connected');
-    console.log('a user connected');
+    
+    socket.on('api', (data) => {
+      console.log(data)
+      if(data){
+        if(data.action == "creategame"){
+          gameManagement.createGameInstance();
+        }
+        if(data.action == "reset"){
+          gameManagement.gameReset();
+        }
+        if(data.action == "echo"){
+          gameManagement.echo();
+        }
+      } 
+    });
+
+
     socket.on('disconnect', () => {
       console.log('user disconnected');
     });
   });
+
   //console.log(io);
   console.log('Process Type:',typeServer)
   console.log(`hono server  http://localhost:${PORT}`)

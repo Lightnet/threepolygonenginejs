@@ -14,4 +14,43 @@ socket.on('disconnect', function() {
 });
 
 
-van.add(document.body,div('hello'))
+//van.add(document.body,div('hello'))
+
+const ChatUIEL = ()=>{
+
+  const chatmessages = van.state('');
+
+  function InputChatType(e){
+    chatmessages.val=e.target.value;
+    //console.log("E",e);
+  }
+
+  function InputChatEnter(e){
+    //console.log(e)
+    console.log(e.code)
+    if(e.code == "Enter"){
+      console.log(chatmessages.val)
+      if(chatmessages.val == "/creategame"){
+        socket.emit("api",{action:"creategame"});
+      }
+      if(chatmessages.val == "/reset"){
+        socket.emit("api",{action:"reset"});
+      }
+
+      if(chatmessages.val == "/echo"){
+        socket.emit("api",{action:"echo"});
+      }
+    }
+  }
+
+
+  return div({},
+    div({style:`width:200px;height:200px;`}),
+    div(
+      input({value:chatmessages,oninput:e=>InputChatType(e),onkeyup:e=>InputChatEnter(e)}),
+      button({},'Send')
+    ),
+  )
+}
+
+van.add(document.body,ChatUIEL)
