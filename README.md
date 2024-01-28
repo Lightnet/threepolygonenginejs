@@ -13,6 +13,15 @@
 
   For basic local game build test for friend party test.
 
+# game server (notes):
+ Is is possible to run multiple game instance? Yes and No. Nodejs can't run threads.
+
+ https://www.digitalocean.com/community/tutorials/how-to-use-multithreading-in-node-js
+
+ It use worker_threads module. There are pros and cons to them.
+
+
+
 # Entities Components System:
  To keep things simple for not mess code. Since loop, update and render needs to call functions to update stuff.
 

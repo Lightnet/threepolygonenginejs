@@ -7,7 +7,7 @@ import van from "https://cdn.jsdelivr.net/gh/vanjs-org/van/public/van-1.2.1.min.
 import { TriEngine } from './triengine/triengine.js';
 //import RAPIER from 'https://cdn.skypack.dev/@dimforge/rapier3d-compat';
 
-const {button, canvas, input, label, div, script, pre, p, ul, li, a} = van.tags;
+const {button, canvas, input, label, div} = van.tags;
 
 class CraftMobile extends TriEngine{
 

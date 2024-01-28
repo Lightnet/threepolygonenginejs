@@ -2,7 +2,7 @@
 
 import van from "https://cdn.jsdelivr.net/gh/vanjs-org/van/public/van-1.2.1.min.js";
 import { THREE } from "./triengine/ThreeAPI.js";
-const {button, canvas, input, label, div, script, pre, p, ul, li, a} = van.tags;
+const {button, canvas, input, label, div} = van.tags;
 //import {ThreeEL} from './triengine/triengine.js';
 //van.add(document.body,ThreeEL())
 

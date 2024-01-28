@@ -169,6 +169,8 @@ if(typeServer=='node'){
   console.log(`hono server  http://localhost:${PORT}/craftmobile`)
   console.log(`hono server  http://localhost:${PORT}/craftrapier`)
   console.log(`hono server  http://localhost:${PORT}/entitiesomponentssystems`)
+  console.log(`hono server  http://localhost:${PORT}/workertest`)
+  console.log(`hono server  http://localhost:${PORT}/ecs_worker`)
 }
 
 //const server = serve(app)

@@ -18,7 +18,7 @@ import RAPIER from 'https://cdn.skypack.dev/@dimforge/rapier3d-compat';
 //console.log(AmmoPhysics);
 //var AmmoPhysics = null;
 
-const {button, canvas, input, label, div, script, pre, p, ul, li, a} = van.tags;
+const {button, canvas, input, label, div} = van.tags;
 
 let colGroupPlane = 1, colGroupRedBall = 2, colGroupGreenBall = 4;
 
