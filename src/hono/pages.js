@@ -304,4 +304,35 @@ route.get('/ecs_worker', (c) => {
   return c.html(pageHtml);
 });
 
+
+route.get('/triecs_sample', (c) => {
+  //const db = c.get('db');
+  console.log("/triecs_sample");
+  const pageHtml = van.html(
+    head(
+      style(`
+      body{
+        background:gray;
+        margin: 0px 0px 0px 0px;
+        overflow: hidden;
+      }
+      `),
+      script({type:"importmap"},`
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
+    "remove-array-items": "https://unpkg.com/remove-array-items@3.0.0/src/remove-array-items.js",
+    "ecs":"https://unpkg.com/ecs@0.20.0/ecs.js"
+  }
+}
+`)
+    ),
+    body(
+      script({type:"module",src:"/TriECS_Sample.js"})
+    ),
+  );
+  return c.html(pageHtml);
+});
+
 export default route;

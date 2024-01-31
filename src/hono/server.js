@@ -23,7 +23,7 @@ import auth from './auth.js';
 import blog from './blog.js';
 import forum from './forum.js';
 import pages from './pages.js';
-import { GameManagement } from '../game/gamemanagement.js';
+import { GameManagement, socketGameSetup } from '../game/gamemanagement.js';
 import { GameNetwork } from '../game/network.js';
 
 //middleware for db
@@ -135,7 +135,10 @@ if(typeServer=='node'){
 
   io.on('connection', (socket) => {
     console.log('a user connected');
-    
+
+    gameManagement.socketGameSetup(socket);
+    //socketGameSetup(gameManagement,socket);
+    /*
     socket.on('api', (data) => {
       console.log(data)
       if(data){
@@ -150,8 +153,7 @@ if(typeServer=='node'){
         }
       } 
     });
-
-
+    */
     socket.on('disconnect', () => {
       console.log('user disconnected');
     });
@@ -171,6 +173,7 @@ if(typeServer=='node'){
   console.log(`hono server  http://localhost:${PORT}/entitiesomponentssystems`)
   console.log(`hono server  http://localhost:${PORT}/workertest`)
   console.log(`hono server  http://localhost:${PORT}/ecs_worker`)
+  console.log(`hono server  http://localhost:${PORT}/triecs_sample`)
 }
 
 //const server = serve(app)

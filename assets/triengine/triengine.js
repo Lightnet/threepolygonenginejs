@@ -1,10 +1,11 @@
-// 
+// protoype test
+
 //import * as three from 'https://unpkg.com/three@0.157.0/build/three.module.js';
 //import { OrbitControls } from 'https://unpkg.com/three@0.157.0/examples/jsm/controls/OrbitControls.js';
 
 //import * as THREE from 'https://cdn.skypack.dev/three@0.160.0/build/three.module.js';
 //import { OrbitControls } from 'https://cdn.skypack.dev/three@0.160.0/examples/jsm/controls/OrbitControls.js';
-import { THREE, OrbitControls  } from "./ThreeAPI.js";
+import { THREE, OrbitControls  } from "./dps.js";
 
 import van from "https://cdn.jsdelivr.net/gh/vanjs-org/van/public/van-1.2.1.min.js";
 import { PhysicsFrameWork } from './physicsframework.js';
@@ -97,16 +98,7 @@ class TriEngine {
 
     this.controls = new OrbitControls(this.camera, this.renderer.domElement)
 
-    function animate() {
-      //requestAnimationFrame( animate );
-      this.renderer.render( this.scene, this.camera );
-      //cube.rotation.x += 0.01;
-      //cube.rotation.y += 0.01;
-      //this.controls.update()
-      this.update();
-    }
-    //animate();
-    this.renderer.setAnimationLoop(animate.bind(this));
+    this.renderer.setAnimationLoop(this.update.bind(this));
   }
 
   setup_window_resize(){
@@ -114,6 +106,9 @@ class TriEngine {
   }
 
   update(){
+    if(this.renderer){
+      this.renderer.render( this.scene, this.camera );
+    }
     if(this.physics){
       this.physics.update();
     }

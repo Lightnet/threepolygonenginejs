@@ -13,8 +13,10 @@
 
 import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
 import { OrbitControls } from 'https://unpkg.com/three@0.160.0/examples/jsm/controls/OrbitControls.js'
+import ECS from "https://unpkg.com/ecs@0.20.0/ecs.js";
 
 export {
   THREE,
-  OrbitControls
+  OrbitControls,
+  ECS
 }

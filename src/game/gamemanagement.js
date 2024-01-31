@@ -48,7 +48,7 @@ class GameManagement{
   }
 
   destroyGameInstance(){
-
+    //gameInstance.postMessage({api:'SHUTDOWN'});
   }
   // https://www.geeksforgeeks.org/how-to-iterate-over-set-elements-in-javascript/
   // https://nodejs.org/api/worker_threads.html#workerpostmessagevalue-transferlist
@@ -64,8 +64,49 @@ class GameManagement{
       gameInstance.postMessage({api:'echo'});
     }
   }
+
+  socketGameSetup(socket){
+    socket.on('api', (data) => {
+      console.log(data)
+      if(data){
+        if(data.action == "creategame"){
+          this.createGameInstance();
+        }
+        if(data.action == "reset"){
+          this.gameReset();
+        }
+        if(data.action == "close"){
+          this.gameReset();
+        }
+        if(data.action == "echo"){
+          this.echo();
+        }
+      } 
+    });
+  }
 }
 
+function socketGameSetup(gameManagement,socket){
+  socket.on('api', (data) => {
+    console.log(data)
+    if(data){
+      if(data.action == "creategame"){
+        gameManagement.createGameInstance();
+      }
+      if(data.action == "reset"){
+        gameManagement.gameReset();
+      }
+      if(data.action == "close"){
+        gameManagement.gameReset();
+      }
+      if(data.action == "echo"){
+        gameManagement.echo();
+      }
+    } 
+  });
+}
+//EXPORT FUNS,CLASS
 export{
-  GameManagement
+  GameManagement,
+  socketGameSetup
 }

@@ -77,7 +77,6 @@ function keyboardControlSystem (world) {
             entity.moveable.dx = 0
           }
 
-
           /*
           if (Keyboard.keyPressed('up'))
               entity.moveable.dy -= 1
@@ -117,8 +116,10 @@ function rendererSystem (world) {
       count: 0,
       entries: new Array(100)
   }
+  console.log("render init??")
 
   const onUpdate = function (dt) {
+    //console.log("update...");
 
     // optional 3rd parameter, can be 'added' or 'removed'. provides the list of entities that were
     // added since the last ECS.cleanup(...) call
@@ -135,31 +136,37 @@ function rendererSystem (world) {
 
 ECS.addSystem(world, keyboardControlSystem)
 ECS.addSystem(world, movementSystem)
-//ECS.addSystem(world, rendererSystem)
+ECS.addSystem(world, rendererSystem)
 
+
+function variablesSystem(world) {
+
+  console.log("variables init??")
+
+  const onUpdate = function (dt) {
+    console.log("variables")
+  }
+  return { onUpdate }
+}
+
+ECS.addSystem(world, variablesSystem)
 
 var currentTime = performance.now()
 function gameLoop () {
   const newTime = performance.now()
   const frameTime = newTime - currentTime  // in milliseconds, e.g. 16.64356
   currentTime = newTime
-
   // run onUpdate for all added systems
   ECS.update(world, frameTime)
-
   // necessary cleanup step at the end of each frame loop
   ECS.cleanup(world)
-
   //requestAnimationFrame(gameLoop)
 }
 
-
 // finally start the game loop
 //gameLoop()
-
 var isLoop = true;
 var i=0;
-
 function timedCount() {
   i = i + 1;
   //postMessage(i);
@@ -190,10 +197,7 @@ class Timer extends EventTarget {
 }
 
 const WorkerEL = () => {
-  //const engine = van.state(null);
   const renderEL = div({id:'ECS'});
-  //const gloop = van.state(null);
-
   const mytimer = new Timer()
 
   mytimer.addEventListener("start", () => console.log("timer started!"))
@@ -230,7 +234,6 @@ const WorkerEL = () => {
     
     van.add(renderEL,button({onclick:()=>start()},'start'))
     van.add(renderEL,button({onclick:()=>stop()},'stop'))
-
 
     van.add(renderEL,button({onclick:()=>timerStart()},'timer start'))
     van.add(renderEL,button({onclick:()=>timerStop()},'timer stop'))
