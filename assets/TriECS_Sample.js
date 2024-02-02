@@ -9,6 +9,16 @@ class TriECS_Sample extends TriECSEngine {
 
   setup(){
     super.setup();
+    this.createScene();
+  }
+
+  createScene(){
+    // setup system and update
+    ECS.addSystem(this.world,this.boxRotateSystem.bind(this));
+  }
+
+  boxRotateSystem(world){
+
     const scene = this.getScene();
     const camera = this.getCamera();
 
@@ -22,11 +32,6 @@ class TriECS_Sample extends TriECSEngine {
     ECS.addComponentToEntity(this.world, ECSEntity, 'mesh', cube);
 
     scene.add(cube);
-
-    ECS.addSystem(this.world,this.boxRotateSystem);
-  }
-
-  boxRotateSystem(world){
 
     //loop update
     const onUpdate = function (dt) {
