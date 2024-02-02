@@ -1,5 +1,7 @@
 // rework build
 
+
+// https://www.geeksforgeeks.org/enums-in-javascript/#:~:text=Enums%20in%20JavaScript%20are%20used,readability%2C%20maintainability%20and%20prevent%20errors.
 import { THREE, OrbitControls, ECS  } from "./dps.js";
 import van from "https://cdn.jsdelivr.net/gh/vanjs-org/van/public/van-1.2.1.min.js";
 import { PhysicsFrameWork } from './physicsframework.js';
@@ -18,23 +20,46 @@ class TriECSEngine{
   world=null;
   currentTime = performance.now()
   isRun=false;
+  isPhysics=false;
 
   constructor(args={}){
     console.log("init...");
     this.clock = new THREE.Clock();
 
-    if(args?.isPhysics){
+    if(args?.isPhysics==true){
+      this.isPhysics=true
       //console.log('init physics');
-      //this.physics = new PhysicsFrameWork();
-      //this.physics.event.listen("Ready",()=>{
-        //console.log('init physics event...')
-        //this.init();
+      this.physics = new PhysicsFrameWork();
+      this.physics.event.listen("Ready",()=>{
+        console.log('Physics ready!');
+        this.setup();
         //this.init_editor();
-      //});
+      });
     }else{
       this.setup();
     }
 
+  }
+
+  addSystem(world=null,_system){
+    if(world){
+      ECS.addSystem(world,_system)
+    }else{
+      ECS.addSystem(this.world,_system)
+    }
+    
+  }
+
+  getScene(){
+    return this.scene;
+  }
+
+  getCamera(){
+    return this.camera;
+  }
+
+  getPhysicsWorld(){
+    return this.physicsWorld;
   }
 
   setup(){
@@ -44,12 +69,19 @@ class TriECSEngine{
     //window listen
     this.setupWindowResize();
     //ECS
+    console.log("ECS set up...")
+    //console.log(this.physics)
     this.setupECS();
-    this.setupSystems();
   }
 
   setupECS(){
     this.world = ECS.createWorld();
+    ECS.addSystem(this.world, this.setupECSRender.bind(this));
+    if(this.isPhysics){
+      //this.setupECSPhysics();
+    }
+    
+    ECS.addSystem(this.world, this.querySystemTest);
   }
 
   setupElement(){
@@ -61,6 +93,7 @@ class TriECSEngine{
     van.add(document.body,this.divEL);
   }
 
+  //canvas
   setupRenderer(){
     let config = {}
     if(this.canvasEL){
@@ -83,7 +116,7 @@ class TriECSEngine{
     this.camera.position.z = 5;
 
   }
-
+  //ECS render system
   setupECSRender(world){
     //set up
     const renderer = this.renderer;
@@ -106,16 +139,47 @@ class TriECSEngine{
 
     return { onUpdate }
   }
-
+  //INPUT user control
   setupInput(world){
-    
+    var keys={
+      "q":false,
+    }
   }
 
-  setupSystems(){
-    ECS.addSystem(this.world, this.setupECSRender.bind(this));
+  //div element 
+  setupCSSRenderer(){
+
+  }
+  //set up phyiscs ECS
+  setupECSPhysics(){
+    ECS.addSystem(this.world, this.physicsSystem.bind(this))
+  }
+
+  //ECS SYSTEM SETUP & UPDATE
+  physicsSystem(world){
+    console.log("physicsSystem")
+    console.log(this.physics)
+    var physics = this.physics;
+    
+
+    const ECSPhysics = ECS.createEntity(world);
+    ECS.addComponentToEntity(world, ECSPhysics, 'physicsWorld', physics)
+
+    const onUpdate = function (dt) {
+      const entity = ECS.getEntity(world, [ 'physicsWorld' ])
+      if(entity.physicsWorld){
+        physicsWorld.update();
+      }
+    }
+
+    return { onUpdate }
+
   }
 
   update(){
+    if(this.isRun==false){
+      return;
+    }
     //compare time
     const newTime = performance.now();
     const frameTime = newTime - this.currentTime;  // in milliseconds, e.g. 16.64356
@@ -123,9 +187,12 @@ class TriECSEngine{
     //console.log(frameTime); //display 
 
     // run onUpdate for all added systems
-    ECS.update(this.world, frameTime)
-    // necessary cleanup step at the end of each frame loop
-    ECS.cleanup(this.world)
+    //console.log(this.world);
+    if(this.world){//check if world exist if physics is enable is delay update var
+      ECS.update(this.world, frameTime)
+      // necessary cleanup step at the end of each frame loop
+      ECS.cleanup(this.world)
+    }
 
     //if(this.renderer){
       //this.renderer.render( this.scene, this.camera );
@@ -134,9 +201,7 @@ class TriECSEngine{
       //this.physics.update();
     //}
 
-    requestAnimationFrame(()=>{
-      this.update();
-    })
+    requestAnimationFrame(this.update.bind(this));
   }
 
   setupWindowResize(){
@@ -156,6 +221,22 @@ class TriECSEngine{
     this.update();
   }
 
+  stop(){
+    this.isRun = false;
+  }
+
+  //
+  querySystemTest(world){
+
+    const onUpdate = function (dt) {
+
+      //const entity = ECS.getEntity(world, ['scene'])
+      //console.log(entity);
+
+    }
+
+    return { onUpdate }
+  }
 
 }
 
