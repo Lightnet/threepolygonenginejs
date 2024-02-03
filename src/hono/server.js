@@ -170,6 +170,7 @@ if(typeServer=='node'){
   console.log(`hono server  http://localhost:${PORT}/threeswitch`)
   console.log(`hono server  http://localhost:${PORT}/threeammo`)//nope
   console.log(`hono server  http://localhost:${PORT}/threerapier`)
+  console.log(`hono server  http://localhost:${PORT}/threerapierjsm`)
   console.log(`hono server  http://localhost:${PORT}/entitiesomponentssystems`)
   console.log(`hono server  http://localhost:${PORT}/worker`)
   console.log(`hono server  http://localhost:${PORT}/ecs_worker`)

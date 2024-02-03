@@ -105,7 +105,7 @@ class TriEngine {
     if(this.renderer){
       this.renderer.render( this.scene, this.camera );
     }
-    if(this.physics !=null && isPhysics==true){
+    if(this.physics !=null && this.isPhysics==true){
       this.physics.update();
     }
   }

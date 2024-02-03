@@ -197,4 +197,11 @@ route.get('/triecs_sample', (c) => {
   return c.html(pageHtml);
 });
 
+route.get('/threerapierjsm', (c) => {
+  //const db = c.get('db');
+  console.log("/threerapierjsm");
+  const pageHtml = scriptHtml02("/three_reapier_jsm.js");
+  return c.html(pageHtml);
+});
+
 export default route;
