@@ -2,14 +2,13 @@
 
 //import * as three from 'https://unpkg.com/three@0.157.0/build/three.module.js';
 //import { OrbitControls } from 'https://unpkg.com/three@0.157.0/examples/jsm/controls/OrbitControls.js';
-
 //import * as THREE from 'https://cdn.skypack.dev/three@0.160.0/build/three.module.js';
 //import { OrbitControls } from 'https://cdn.skypack.dev/three@0.160.0/examples/jsm/controls/OrbitControls.js';
-import { THREE, OrbitControls  } from "./dps.js";
+// import van from "https://cdn.jsdelivr.net/gh/vanjs-org/van/public/van-1.2.1.min.js";
 
-import van from "https://cdn.jsdelivr.net/gh/vanjs-org/van/public/van-1.2.1.min.js";
+import { THREE, OrbitControls, van  } from "./dps.js";
 import { PhysicsFrameWork } from './physicsframework.js';
-const {button, canvas, input, label, div, script, pre, p, ul, li, a} = van.tags;
+const {canvas} = van.tags;
 
 //console.log(OrbitControls);
 //{style:`position:fixed;top:0px,left:0px;`}
@@ -45,6 +44,7 @@ class TriEngine {
         //alpha: true,
       });
       this.renderer = _renderer;
+      //console.log("this.renderer")
       //console.log(this.renderer)
     }else{
       console.log("ERROR Canvas Element needed!");
@@ -55,7 +55,7 @@ class TriEngine {
     if(args?.resize == 'parent'){
 
     }else if(args?.resize == 'window'){
-      console.log("init resize...")
+      //console.log("init resize...");
       this.setup_window_resize();
     }
     // Check for physics
@@ -65,7 +65,7 @@ class TriEngine {
       this.physics.event.listen("Ready",()=>{
         //console.log('init physics event...')
         this.init();
-        this.init_editor();
+        //this.init_editor();
       });
     }else{
       this.init();

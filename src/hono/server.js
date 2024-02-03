@@ -168,10 +168,10 @@ if(typeServer=='node'){
   console.log(`hono server  http://localhost:${PORT}/threecss`)
   console.log(`hono server  http://localhost:${PORT}/resizecssrender`)
   console.log(`hono server  http://localhost:${PORT}/threeswitch`)
-  console.log(`hono server  http://localhost:${PORT}/craftmobile`)
-  console.log(`hono server  http://localhost:${PORT}/craftrapier`)
+  console.log(`hono server  http://localhost:${PORT}/threeammo`)//nope
+  console.log(`hono server  http://localhost:${PORT}/threerapier`)
   console.log(`hono server  http://localhost:${PORT}/entitiesomponentssystems`)
-  console.log(`hono server  http://localhost:${PORT}/workertest`)
+  console.log(`hono server  http://localhost:${PORT}/worker`)
   console.log(`hono server  http://localhost:${PORT}/ecs_worker`)
   console.log(`hono server  http://localhost:${PORT}/triecs_sample`)
 }

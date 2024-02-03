@@ -1,24 +1,19 @@
 /*
   Information:
     vanjs main client entry point
+    Note working... odd way to load.
 */
+
 // https://medium.com/@bluemagnificent/intro-to-javascript-3d-physics-using-ammo-js-and-three-js-dd48df81f591
 // https://gist.github.com/BlueMagnificent/6ef76c65839a3d952228ba2f99d9b1e7
 
-
 //import * as THREE from 'three';
 //import * as THREE from 'https://unpkg.com/three@0.157.0/build/three.module.js';
-import * as THREE from 'https://unpkg.com/three@0.157.0/build/three.module.js';
-//import * as Ammo from 'https://unpkg.com/three@0.157.0/examples/jsm/libs/ammo.wasm.js';
-import van from "https://cdn.jsdelivr.net/gh/vanjs-org/van/public/van-1.2.1.min.js";
-import {TriEngine} from './triengine/triengine.js';
-//import cannonEs from 'https://cdn.jsdelivr.net/npm/cannon-es@0.20.0/+esm';
-//import ammoNode from 'https://cdn.jsdelivr.net/npm/ammo-node@1.0.0/+esm';
-//import 'https://raw.githubusercontent.com/kripken/ammo.js/main/builds/ammo.js';
+//import * as Ammo from 'https://unpkg.com/three@0.157.0/examples/jsm/libs/ammo.wasm.js';//nope
+//import van from "https://cdn.jsdelivr.net/gh/vanjs-org/van/public/van-1.2.1.min.js";
 
-//console.log(Ammo );
-//console.log(AmmoPhysics);
-//var AmmoPhysics = null;
+import { THREE, van } from './triengine/dps.js';
+import {TriEngine} from './triengine/triengine.js';
 
 const {button, canvas, input, label, div} = van.tags;
 

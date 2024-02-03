@@ -1,6 +1,8 @@
 /*
   Information:
     vanjs main client entry point
+
+    Testing three and rapier stand alone.
 */
 
 // https://gist.github.com/BlueMagnificent/6ef76c65839a3d952228ba2f99d9b1e7
@@ -8,77 +10,75 @@
 
 //import * as THREE from 'three';
 //import * as THREE from 'https://unpkg.com/three@0.157.0/build/three.module.js';
-import * as THREE from 'https://unpkg.com/three@0.157.0/build/three.module.js';
-//import * as Ammo from 'https://unpkg.com/three@0.157.0/examples/jsm/libs/ammo.wasm.js';
-import van from "https://cdn.jsdelivr.net/gh/vanjs-org/van/public/van-1.2.1.min.js";
+//import van from "https://cdn.jsdelivr.net/gh/vanjs-org/van/public/van-1.2.1.min.js";
+//import RAPIER from 'https://cdn.skypack.dev/@dimforge/rapier3d-compat';
+import { 
+  THREE, 
+  van, 
+  RAPIER
+} from './triengine/dps.js';
 import {TriEngine} from './triengine/triengine.js';
-import RAPIER from 'https://cdn.skypack.dev/@dimforge/rapier3d-compat';
 
-//console.log(Ammo );
-//console.log(AmmoPhysics);
-//var AmmoPhysics = null;
-
-const {button, canvas, input, label, div} = van.tags;
+const {canvas, div} = van.tags;
 
 let colGroupPlane = 1, colGroupRedBall = 2, colGroupGreenBall = 4;
 
-class CraftMobile extends TriEngine{
+class ThreeRapierTest extends TriEngine{
 
   clock=null;
   mesh = null;
   isPhysics = false;
 
-  //tmpTrans;
   physicsWorld=null;
   rigidBodies = [];
   //world=null;
   rigidBody=null
   
   constructor(args){
-    
     super(args);
-    console.log("init....")
-    //this.mesh = null;
+    console.log("rapier test init...");
     this.clock = new THREE.Clock();
-    
-    const setup = this.setup.bind(this);
-    setup();
+  }
 
+  init(){
+    super.init();
+    this.setup();
   }
 
   async setup(){
-    
+    console.log("setup three rapier...");
+    await this.setup_physics();
+    this.setupScene();
+    this.createPhysicsGround();
+    this.createPhysicsObject();
+    //console.log("finish...")
+  }
+
+  setupScene(){
+    this.createLight();
+
     const geometry = new THREE.BoxGeometry( 1, 1, 1 );
     const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
     const cube = new THREE.Mesh( geometry, material );
     this.mesh = cube;
     //this.scene.add( cube );
-    console.log(this.mesh);
+    //console.log(this.mesh);
 
     this.camera.position.set(0,0,50);
     //this.camera.position.z
-
-
-    console.log("setup")
-    this.createLight();
-    await this.setup_physics();
-
-    this.createGroundBlock();
-
-    this.setup_physics_objs();
-    console.log("finish...")
   }
+
   // https://rapier.rs/docs/user_guides/javascript/getting_started_js
   async setup_physics(){
-    console.log("physics")
+    //console.log("physics")
     await RAPIER.init();
-    console.log(RAPIER);
+    //console.log(RAPIER);
     // Use the RAPIER module here.
     let gravity = { x: 0.0, y: -9.81, z: 0.0 };
     let world = new RAPIER.World(gravity);
-    console.log(this.world)
+    //console.log(this.world)
     this.physicsWorld = world;
-    console.log(this.world)
+    //console.log(this.world)
   }
 
   updatePhysics( deltaTime ){
@@ -123,7 +123,7 @@ class CraftMobile extends TriEngine{
     this.scene.add( dirLight );
   }
 
-  createGroundBlock(){
+  createPhysicsGround(){
     let pos = {x: 0, y: -1, z: 0};
     let scale = {x: 10, y: 0.1, z: 10};
     let quat = {x: 0, y: 0, z: 0, w: 1};
@@ -142,13 +142,13 @@ class CraftMobile extends TriEngine{
 
     // Create the ground
     let groundColliderDesc = RAPIER.ColliderDesc.cuboid(10.0, 0.1, 10.0);
-    console.log(this.physicsWorld)
+    //console.log(this.physicsWorld)
     this.physicsWorld.createCollider(groundColliderDesc);
 
     //Ammojs Section
   }
 
-  setup_physics_objs(){
+  createPhysicsObject(){
     let pos = {x: 0, y: 20, z: 0};
     //let pos = {x: 0, y: 0, z: 0};
     let radius = 1;
@@ -162,7 +162,7 @@ class CraftMobile extends TriEngine{
     
     ball.castShadow = true;
     ball.receiveShadow = true;
-    console.log(this.scene);
+    //console.log(this.scene);
 
     this.scene.add(ball);
 
@@ -177,7 +177,7 @@ class CraftMobile extends TriEngine{
     let colliderDesc = RAPIER.ColliderDesc.cuboid(0.5, 0.5, 0.5);
     let collider = this.physicsWorld.createCollider(colliderDesc, rigidBody);
 
-    console.log(rigidBody);
+    //console.log(rigidBody);
 
     ball.userData.physicsBody = rigidBody;
     this.rigidBodies.push(ball);
@@ -188,28 +188,26 @@ class CraftMobile extends TriEngine{
   }
 
   update(){
+    super.update();
+    //console.log("update???");
     let deltaTime = this.clock.getDelta();
     this.updatePhysics(deltaTime);
-    
   }
-  
 }
 
 const ThreeEL = () => {
   const engine = van.state(null);
-  const renderEL = canvas({id:'threejs'});
+  const renderEL = canvas({id:'CanvasThreeJS'});
 
   function init(){
     //const renderer = new THREE.WebGLRenderer();
-    engine.val = new CraftMobile({canvas:renderEL});
-    console.log(engine.val);//
+    engine.val = new ThreeRapierTest({canvas:renderEL});
+    //console.log(engine.val);//
   }
 
   init();
 
-  return div(
-    renderEL
-  )
+  return renderEL;
 };
 
 van.add(document.body,ThreeEL())
