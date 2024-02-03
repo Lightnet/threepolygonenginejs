@@ -25,7 +25,9 @@
 
 # Information:
 
-  This is protoype to build the minecraft style since it limited by bandwidth. As well hosting limits bandwidth cap. Required all files stand alone to deal with sandbox worker. Work in progress.
+  This is protoype to build the minecraft style since it limited by bandwidth. Base on other games as well to keep the world simple to run the game.
+  
+  Required all files stand alone to deal with sandbox worker. Work in progress.
   
   By using the vanjs for browser and javascript module. To develop threejs game with mini games.
   
