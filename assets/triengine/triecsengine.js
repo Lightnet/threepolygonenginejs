@@ -78,7 +78,7 @@ class TriECSEngine{
     this.world = ECS.createWorld();
     ECS.addSystem(this.world, this.setupECSRender.bind(this));
     if(this.isPhysics){
-      //this.setupECSPhysics();
+      this.setupECSPhysics();
     }
     
     ECS.addSystem(this.world, this.querySystemTest);
@@ -168,7 +168,7 @@ class TriECSEngine{
     const onUpdate = function (dt) {
       const entity = ECS.getEntity(world, [ 'physicsWorld' ])
       if(entity.physicsWorld){
-        physicsWorld.update();
+        entity.physicsWorld.update();
       }
     }
 

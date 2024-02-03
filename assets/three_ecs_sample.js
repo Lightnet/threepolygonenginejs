@@ -46,5 +46,5 @@ class TriECS_Sample extends TriECSEngine {
   }
 }
 
-const app = new TriECS_Sample({isPhysics:true});
+const app = new TriECS_Sample({isPhysics:false});
 app.run();
