@@ -52,6 +52,35 @@ function scriptHtml02(_script){
   return pageHtml;
 }
 
+function scriptHtml03(_script){
+  const pageHtml = van.html(
+    head(
+      style(`
+      body{
+        background:gray;
+        margin: 0px 0px 0px 0px;
+        overflow: hidden;
+      }
+      `),
+      script({type:"importmap"},`{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
+    "remove-array-items": "https://unpkg.com/remove-array-items@3.0.0/src/remove-array-items.js",
+    "ecs":"https://unpkg.com/ecs@0.20.0/ecs.js"
+  }
+}
+`),
+    ),
+    body(
+      script({src:"https://unpkg.com/three@0.160.0/examples/jsm/libs/ammo.wasm.js"}),
+      script({type:"module",src:_script}),
+    ),
+  );
+
+  return pageHtml;
+}
+
 route.get('/spacemobile', (c) => {
   //const db = c.get('db');
   const pageHtml = scriptHtml("/van_spacemobile.js");
@@ -60,7 +89,7 @@ route.get('/spacemobile', (c) => {
 
 route.get('/threeammo', (c) => {
   //const db = c.get('db');
-  const pageHtml = scriptHtml02("/van_threeammo.js");
+  const pageHtml = scriptHtml03("/van_threeammo.js");
   return c.html(pageHtml);
 });
 

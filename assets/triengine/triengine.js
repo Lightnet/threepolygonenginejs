@@ -27,10 +27,9 @@ class TriEngine {
   renderer = null;
   camera = null;
   scene = null;
-
   clock=null;
-
-  physics=null
+  physics=null;
+  isPhysics=false;
 
   constructor(args){
     //console.log("init...")
@@ -57,6 +56,8 @@ class TriEngine {
     }else if(args?.resize == 'window'){
       //console.log("init resize...");
       this.setup_window_resize();
+    }else{
+      this.setup_window_resize();
     }
     // Check for physics
     if(args?.isPhysics){
@@ -73,7 +74,7 @@ class TriEngine {
     //this.init_editor();
   }
 
-  init(){
+  async init(){
     
   }
 
@@ -86,18 +87,13 @@ class TriEngine {
 
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-    
     //const geometry = new THREE.BoxGeometry( 1, 1, 1 );
     //const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
     //const cube = new THREE.Mesh( geometry, material );
     //this.scene.add( cube );
 
     this.camera.position.z = 5;
-
-    const self = this;
-
     this.controls = new OrbitControls(this.camera, this.renderer.domElement)
-
     this.renderer.setAnimationLoop(this.update.bind(this));
   }
 
@@ -109,7 +105,7 @@ class TriEngine {
     if(this.renderer){
       this.renderer.render( this.scene, this.camera );
     }
-    if(this.physics){
+    if(this.physics !=null && isPhysics==true){
       this.physics.update();
     }
   }
