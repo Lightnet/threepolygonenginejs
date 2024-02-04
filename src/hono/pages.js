@@ -210,5 +210,17 @@ route.get('/threerapierjsm', (c) => {
   const pageHtml = scriptHtml02("/three_reapier_jsm.js");
   return c.html(pageHtml);
 });
+route.get('/css3dthree', (c) => {
+  //const db = c.get('db');
+  console.log("/css3dthree");
+  const pageHtml = scriptHtml02("/css3dthree.js");
+  return c.html(pageHtml);
+});
+route.get('/css2dthree', (c) => {
+  //const db = c.get('db');
+  console.log("/css3dthree");
+  const pageHtml = scriptHtml02("/css2dthree.js");
+  return c.html(pageHtml);
+});
 
 export default route;

@@ -16,11 +16,14 @@ import { OrbitControls } from 'https://unpkg.com/three@0.160.0/examples/jsm/cont
 import ECS from "https://unpkg.com/ecs@0.20.0/ecs.js";
 import van from "https://cdn.jsdelivr.net/gh/vanjs-org/van/public/van-1.2.1.min.js";
 import RAPIER from 'https://cdn.skypack.dev/@dimforge/rapier3d-compat';
+import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
 
 export {
   THREE,
   OrbitControls,
   ECS,
   RAPIER,
-  van
+  van,
+  CSS3DRenderer,
+  CSS3DObject
 }

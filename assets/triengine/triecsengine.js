@@ -148,8 +148,13 @@ class TriECSEngine{
 
   //div element 
   setupCSSRenderer(){
-
+    const _renderer = new CSS3DRenderer({
+      canvas:this.canvasEL
+    });
+    this.cssRenderer = _renderer;
   }
+
+
   //set up phyiscs ECS
   setupECSPhysics(){
     ECS.addSystem(this.world, this.physicsSystem.bind(this))
