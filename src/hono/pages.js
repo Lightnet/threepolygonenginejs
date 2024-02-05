@@ -204,6 +204,13 @@ route.get('/triecs_sample02', (c) => {
   return c.html(pageHtml);
 });
 
+route.get('/triecs_sample03', (c) => {
+  //const db = c.get('db');
+  console.log("/triecs_sample03");
+  const pageHtml = scriptHtml02("/three_ecs_sample03.js");
+  return c.html(pageHtml);
+});
+
 route.get('/threerapierjsm', (c) => {
   //const db = c.get('db');
   console.log("/threerapierjsm");

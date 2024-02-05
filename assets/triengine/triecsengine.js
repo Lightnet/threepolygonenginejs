@@ -2,8 +2,14 @@
 
 
 // https://www.geeksforgeeks.org/enums-in-javascript/#:~:text=Enums%20in%20JavaScript%20are%20used,readability%2C%20maintainability%20and%20prevent%20errors.
-import { THREE, OrbitControls, ECS  } from "./dps.js";
-import van from "https://cdn.jsdelivr.net/gh/vanjs-org/van/public/van-1.2.1.min.js";
+import { 
+  THREE,
+  CSS3DRenderer,
+  CSS3DObject,
+  OrbitControls, 
+  ECS,
+  van
+} from "./dps.js";
 import { PhysicsFrameWork } from './physicsframework.js';
 
 const {canvas, div} = van.tags;
@@ -47,7 +53,6 @@ class TriECSEngine{
     }else{
       ECS.addSystem(this.world,_system)
     }
-    
   }
 
   getScene(){
@@ -65,23 +70,28 @@ class TriECSEngine{
   setup(){
     //Element html
     this.setupElement();
-    this.setupRenderer();
+    
     //window listen
-    this.setupWindowResize();
+    //this.setupWindowResize();
     //ECS
     console.log("ECS set up...")
     //console.log(this.physics)
     this.setupECS();
+    this.setupRenderer();
+    this.setupCSSRenderer();
+    this.setupViews();
   }
 
   setupECS(){
     this.world = ECS.createWorld();
-    ECS.addSystem(this.world, this.setupECSRender.bind(this));
+    
     if(this.isPhysics){
       this.setupECSPhysics();
     }
     
     ECS.addSystem(this.world, this.querySystemTest);
+    ECS.addSystem(this.world, this.resizeWindowInnerSystem);
+    //ECS.addSystem(this.world, this.resizeWindowInnerlogSystem); //test
   }
 
   setupElement(){
@@ -99,25 +109,19 @@ class TriECSEngine{
     if(this.canvasEL){
       config.canvas = this.canvasEL;
     }
+    //const _renderer = new THREE.WebGLRenderer({canvas:args.canvas,antialias: true,alpha: true});
     const _renderer = new THREE.WebGLRenderer(config);
-
-    //const _renderer = new THREE.WebGLRenderer({
-      //canvas:args.canvas,
-      //antialias: true,
-      //alpha: true,
-    //});
     this.renderer = _renderer;
-
-
     this.renderer.setSize( window.innerWidth, window.innerHeight );
 
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
     this.camera.position.z = 5;
 
+    ECS.addSystem(this.world, this.ECSRenderSystem.bind(this));
   }
   //ECS render system
-  setupECSRender(world){
+  ECSRenderSystem(world){
     //set up
     const renderer = this.renderer;
     const camera = this.camera;
@@ -146,14 +150,131 @@ class TriECSEngine{
     }
   }
 
-  //div element 
-  setupCSSRenderer(){
-    const _renderer = new CSS3DRenderer({
-      canvas:this.canvasEL
-    });
-    this.cssRenderer = _renderer;
+  resizeWindowInnerSystem(world){
+
+    const ECSInner = ECS.createEntity(world);
+    ECS.addComponentToEntity(world, ECSInner, 'innerWidth', window.innerWidth || 0);
+    ECS.addComponentToEntity(world, ECSInner, 'innerHeight', window.innerHeight || 0);
+    console.log(ECSInner);
+
+    const onUpdate = function (dt) {
+      const ECSWin = ECS.getEntity(world, ['innerWidth', 'innerHeight']);
+      if(ECSWin){
+        ECSWin.innerWidth = window.innerWidth;
+        ECSWin.innerHeight = window.innerHeight;
+        //console.log(ECSWin);
+      }
+    }
+
+    return { 
+      onUpdate
+    };
   }
 
+  resizeWindowInnerlogSystem(world){
+    const onUpdate = function (dt) {
+      const ECSWin = ECS.getEntity(world, ['innerWidth', 'innerHeight']);
+      if(ECSWin){
+        console.log("ECSWin");
+        console.log(ECSWin);
+      }
+    }
+
+    return { 
+      onUpdate
+    };
+  }
+
+  //div element 
+  setupCSSRenderer(){
+    const _cssrenderer = new CSS3DRenderer();
+    //STYLE
+    _cssrenderer.domElement.style.position='fixed';
+    _cssrenderer.domElement.style.top='0px';
+    _cssrenderer.setSize(window.innerWidth,window.innerHeight);
+    //assign to class var
+    this.cssRenderer = _cssrenderer;
+    this.cssScene = new THREE.Scene();
+    this.cssCamera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+    //setup ECS loop
+    ECS.addSystem(this.world, this.cssRendererSystem.bind(this));
+    //config
+    this.cssCamera.position.set( 0, 0, 610 );
+    this.cssCamera.lookAt(0,0,0);
+    
+    //add doc body for renderer
+    van.add(document.body, _cssrenderer.domElement);
+    //resize window
+    window.addEventListener('resize',this.resizeCSSRenderer.bind(this));
+    //setup
+    //this.createCssScreen();
+  }
+
+  resizeCSSRenderer(){
+    this.cssCamera.aspect = window.innerWidth / window.innerHeight;
+    this.cssCamera.updateProjectionMatrix();
+    this.cssRenderer.setSize( window.innerWidth, window.innerHeight );
+  }
+
+  cssRendererSystem(world){
+    console.log("init cssrenderer system...")
+    const renderer = this.cssRenderer;
+    const camera = this.cssCamera;
+    const scene = this.cssScene;
+    //console.log(renderer)
+    //console.log(camera)
+    //console.log(scene)
+
+    const ECSCSSRender = ECS.createEntity(world);
+
+    ECS.addComponentToEntity(world, ECSCSSRender, 'cssrenderer', renderer);
+    ECS.addComponentToEntity(world, ECSCSSRender, 'cssCamera', camera);
+    ECS.addComponentToEntity(world, ECSCSSRender, 'cssScene', scene);
+
+    const onUpdate = function (dt) {
+      //console.log("update???")
+      const ECSCSS = ECS.getEntity(world, [ 'cssrenderer', 'cssCamera','cssScene']);
+      //console.log(ECSCSS);
+      ECSCSS.cssrenderer.render(ECSCSS.cssScene,ECSCSS.cssCamera);
+    }
+    return { onUpdate }
+  }
+
+  createCssScreen(){
+    const cssDiv = div({id:'DIVSCREEN01',style:"width:800px;height:600px;"})
+    cssDiv.style.width = window.innerWidth + 'px';
+    cssDiv.style.height = window.innerHeight + 'px';
+    cssDiv.style.backgroundColor ="lightblue";
+
+    //var cssDiv = document.createElement('div');
+    //cssDiv.style.width = 800+'px';
+    //cssDiv.style.height = 600+'px';
+    //cssDiv.style.background = new THREE.Color(Math.random() * 0xffffff).getStyle();
+    this.cssScreen = cssDiv;
+    var cssElement = new CSS3DObject(cssDiv);
+    console.log(cssElement)
+    //cssElement.position.set(0, 0, 0);
+    this.cssScene.add(cssElement);
+    //console.log(this.cssScene);
+
+    window.addEventListener('resize',this.cssResizeScreen.bind(this));
+    //window.addEventListener('resize',this.cssResizeScreen);//nope
+  }
+
+  cssResizeScreen(event){
+    //console.log(this.cssScene);
+    if(this.cssScreen){
+      this.cssScreen.style.width = window.innerWidth + 'px';
+      this.cssScreen.style.height = window.innerHeight + 'px';
+    }
+  }
+
+  setupViews(){
+    this.createCssScreen();
+    console.log(this.renderer.domElement);
+    //this.cssScreen.appendChild(this.renderer.domElement);
+    this.setupWindowResize();
+  }
 
   //set up phyiscs ECS
   setupECSPhysics(){
@@ -165,8 +286,6 @@ class TriECSEngine{
     console.log("physicsSystem")
     console.log(this.physics)
     var physics = this.physics;
-    
-
     const ECSPhysics = ECS.createEntity(world);
     ECS.addComponentToEntity(world, ECSPhysics, 'physicsWorld', physics)
 
@@ -176,9 +295,7 @@ class TriECSEngine{
         entity.physicsWorld.update();
       }
     }
-
     return { onUpdate }
-
   }
 
   update(){
@@ -190,7 +307,6 @@ class TriECSEngine{
     const frameTime = newTime - this.currentTime;  // in milliseconds, e.g. 16.64356
     this.currentTime = newTime
     //console.log(frameTime); //display 
-
     // run onUpdate for all added systems
     //console.log(this.world);
     if(this.world){//check if world exist if physics is enable is delay update var
@@ -198,14 +314,12 @@ class TriECSEngine{
       // necessary cleanup step at the end of each frame loop
       ECS.cleanup(this.world)
     }
-
     //if(this.renderer){
       //this.renderer.render( this.scene, this.camera );
     //}
     //if(this.physics){
       //this.physics.update();
     //}
-
     requestAnimationFrame(this.update.bind(this));
   }
 

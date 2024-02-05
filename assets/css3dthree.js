@@ -3,7 +3,7 @@
 import { 
   THREE, 
   van,
-  CSS3DRenderer, 
+  CSS3DRenderer,
   CSS3DObject,
   OrbitControls
 } from "./triengine/dps.js";
