@@ -158,8 +158,8 @@ class CSSRender{
 
   resize_screen_three(){
     if(this.cssScreen){
-      let width = window.innerWidth / 2;
-      let height = window.innerHeight / 2;
+      //let width = window.innerWidth / 2;
+      //let height = window.innerHeight / 2;
       //this.cssScreen.position.set(width*-1,height*-1,0);
 
       this.divEl.style.width = window.innerWidth+'px';

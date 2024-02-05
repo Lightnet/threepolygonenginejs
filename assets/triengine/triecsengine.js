@@ -44,7 +44,6 @@ class TriECSEngine{
     }else{
       this.setup();
     }
-
   }
 
   addSystem(world=null,_system){
@@ -80,6 +79,7 @@ class TriECSEngine{
     this.setupRenderer();
     this.setupCSSRenderer();
     this.setupViews();
+    
   }
 
   setupECS(){
@@ -90,8 +90,11 @@ class TriECSEngine{
     }
     
     ECS.addSystem(this.world, this.querySystemTest);
+    ECS.addSystem(this.world, this.mousePositionSystem.bind(this));
+    //ECS.addSystem(this.world, this.mousePositionLogSystem.bind(this));
     ECS.addSystem(this.world, this.resizeWindowInnerSystem);
     //ECS.addSystem(this.world, this.resizeWindowInnerlogSystem); //test
+    
   }
 
   setupElement(){
@@ -155,13 +158,30 @@ class TriECSEngine{
     const ECSInner = ECS.createEntity(world);
     ECS.addComponentToEntity(world, ECSInner, 'innerWidth', window.innerWidth || 0);
     ECS.addComponentToEntity(world, ECSInner, 'innerHeight', window.innerHeight || 0);
-    console.log(ECSInner);
+    ECS.addComponentToEntity(world, ECSInner, 'isResize', true);
+
+    //let isResize = false;
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    //console.log(ECSInner);
 
     const onUpdate = function (dt) {
-      const ECSWin = ECS.getEntity(world, ['innerWidth', 'innerHeight']);
+      const ECSWin = ECS.getEntity(world, ['innerWidth', 'innerHeight','isResize']);
       if(ECSWin){
         ECSWin.innerWidth = window.innerWidth;
         ECSWin.innerHeight = window.innerHeight;
+        if(width != window.innerWidth){
+          width = window.innerWidth;
+          //console.log("resize");
+          ECSWin.isResize = true; 
+        }else if(height != window.innerHeight){
+          //console.log("resize");
+          height = window.innerHeight
+          ECSWin.isResize = true;
+        }else{
+          //console.log("no resize");
+          ECSWin.isResize = false;
+        }
         //console.log(ECSWin);
       }
     }
@@ -172,6 +192,7 @@ class TriECSEngine{
   }
 
   resizeWindowInnerlogSystem(world){
+    
     const onUpdate = function (dt) {
       const ECSWin = ECS.getEntity(world, ['innerWidth', 'innerHeight']);
       if(ECSWin){
@@ -183,6 +204,108 @@ class TriECSEngine{
     return { 
       onUpdate
     };
+  }
+  //get entity by unique id
+  mousePositionSystem(world){
+    console.log("init mouse pointer...")
+    const ECSPointer = ECS.createEntity(world);
+    //ECS.addComponentToEntity(world, ECSPointer, 'clientX', 0);//fail undefined
+    //ECS.addComponentToEntity(world, ECSPointer, 'clientY', 0);//fail undefined
+
+    ECS.addComponentToEntity(world, ECSPointer, 'clientX', 1);// 0=will not work.
+    ECS.addComponentToEntity(world, ECSPointer, 'clientY', 1);
+
+    function mouseMovePoint(event){
+      //console.log(event.clientX)
+      ECSPointer.clientX = event.clientX;
+      ECSPointer.clientY = event.clientY;
+      //console.log(world);
+      //const ECSPoint = ECS.getEntity(world, ['clientX', 'clientY']);
+      //console.log(ECSPoint)
+      //const id1 = ECS.getEntityId(world, ECSPointer);
+      //const e = ECS.getEntityById(world, id1);
+      //console.log(id1);
+      //console.log(e);
+      //e.clientX = event.clientX;
+      //e.clientY = event.clientY;
+    }
+
+    window.addEventListener('mousemove', mouseMovePoint);
+
+    const onUpdate = function (dt) {
+      //console.log("update pointer");
+      const ECSPoint = ECS.getEntity(world, ['clientX','clientY']);
+      //console.log("update pointer", ECSPoint);
+      if(ECSPoint){
+        console.log(ECSPoint);
+      }
+    }
+
+    return { 
+      //onUpdate
+    };
+  }
+
+  mousePositionLogSystem(world){
+
+    const onUpdate = function (dt) {
+      const ECSPoint = ECS.getEntity(world, ['clientX','clientY']);
+      //console.log("update pointer", ECSPoint);
+      if(ECSPoint){
+        console.log(ECSPoint);
+      }
+    }
+
+    return { 
+      onUpdate
+    };
+  }
+
+  resizeCSSScreenSystem(world){
+
+    const screenToWorld = this.screenToWorld;//no variable from class
+    const resizeViewPort = this.resizeViewPort.bind(this);//has variable from class
+
+    const onUpdate = function (dt) {
+      //console.log("update???")
+      //const ECSPoint = ECS.getEntity(world, ['clientX', 'clientY']);
+      const ECSWin = ECS.getEntity(world, ['innerWidth', 'innerHeight']);
+      const ECSView = ECS.getEntity(world, ['cssCamera']);
+      //console.log(Canvas);
+      //if(ECSPoint && ECSWin && ECSView){
+      if(ECSWin && ECSView){
+        //console.log(ECSWin);
+        //console.log(ECSPoint);
+        //console.log(ECSView);
+        if(ECSWin.isResize){//update if resize is true
+          const pos = screenToWorld({
+            x: 1,
+            y: 1,
+            canvasWidth: window.innerWidth,
+            canvasHeight: window.innerHeight,
+            camera:ECSView.cssCamera
+          });
+          //console.log(pos);
+          resizeViewPort(pos);
+        }
+      }
+    }
+
+    return { 
+      onUpdate 
+    }
+  }
+
+  resizeViewPort(pos){
+    //console.log(this.cssScreen)
+    
+    if(this.cssScreen){
+      let width = Math.abs(pos.x*2);
+      var offset = -10;//testing...
+      this.cssScreen.style.width = ((width) + offset)+'px';
+      this.cssScreen.style.height = ((pos.y*2) + offset)+'px';
+    }
+    
   }
 
   //div element 
@@ -252,13 +375,27 @@ class TriECSEngine{
     //cssDiv.style.background = new THREE.Color(Math.random() * 0xffffff).getStyle();
     this.cssScreen = cssDiv;
     var cssElement = new CSS3DObject(cssDiv);
-    console.log(cssElement)
+    //console.log(cssElement)
     //cssElement.position.set(0, 0, 0);
     this.cssScene.add(cssElement);
     //console.log(this.cssScene);
 
-    window.addEventListener('resize',this.cssResizeScreen.bind(this));
+    //window.addEventListener('resize',this.cssResizeScreen.bind(this));
     //window.addEventListener('resize',this.cssResizeScreen);//nope
+  }
+
+  //https://discourse.threejs.org/t/convert-screen-2d-to-world-3d-coordiate-system-without-using-raycaster/13739/6
+  screenToWorld({ x, y, canvasWidth, canvasHeight, camera }) {
+    const coords = new THREE.Vector3(
+        (x / canvasWidth) * 2 - 1,
+        -(y / canvasHeight) * 2 + 1,
+        0.5
+    )
+    const worldPosition = new THREE.Vector3()
+    const plane = new THREE.Plane(new THREE.Vector3(0.0, 0.0, 1.0))//face camera?
+    const raycaster = new THREE.Raycaster()
+    raycaster.setFromCamera(coords, camera)
+    return raycaster.ray.intersectPlane(plane, worldPosition)
   }
 
   cssResizeScreen(event){
@@ -271,9 +408,10 @@ class TriECSEngine{
 
   setupViews(){
     this.createCssScreen();
-    console.log(this.renderer.domElement);
-    //this.cssScreen.appendChild(this.renderer.domElement);
+    //console.log(this.renderer.domElement);
+    this.cssScreen.appendChild(this.renderer.domElement);
     this.setupWindowResize();
+    ECS.addSystem(this.world, this.resizeCSSScreenSystem.bind(this)); //
   }
 
   //set up phyiscs ECS
