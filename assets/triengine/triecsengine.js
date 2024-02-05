@@ -296,6 +296,7 @@ class TriECSEngine{
     }
   }
 
+  //need better code for resize update...
   resizeViewPort(pos){
     //console.log(this.cssScreen)
     
@@ -304,8 +305,30 @@ class TriECSEngine{
       var offset = -10;//testing...
       this.cssScreen.style.width = ((width) + offset)+'px';
       this.cssScreen.style.height = ((pos.y*2) + offset)+'px';
+      this.resizeCanvasRenderer();
     }
-    
+  }
+
+  //css camera renderer scene
+  //working...
+  resizeCanvasRenderer(){
+    //console.log(this.renderer);
+    if(this.renderer && this.cssScreen){
+      //const rect = this.cssScreen.getBoundingClientRect();
+      //console.log(rect);
+      //this.renderer.setSize(rect.width,rect.height);
+      let parent = this.renderer.domElement.parentNode;
+      //let _width = parent.getBoundingClientRect().width;
+      //let _height = parent.getBoundingClientRect().height;
+
+      let _width = parseFloat(String(parent.style.width).replace("px",""));
+      let _height = parseFloat(String(parent.style.height).replace("px",""));
+
+      this.renderer.domElement.style.width = _width + 'px';
+      this.renderer.domElement.style.height = _height + 'px';
+      this.camera.aspect = _width / _height;
+      this.camera.updateProjectionMatrix();
+    }
   }
 
   //div element 
@@ -406,11 +429,13 @@ class TriECSEngine{
     }
   }
 
+  
+
   setupViews(){
     this.createCssScreen();
     //console.log(this.renderer.domElement);
     this.cssScreen.appendChild(this.renderer.domElement);
-    this.setupWindowResize();
+    //this.setupWindowResize();
     ECS.addSystem(this.world, this.resizeCSSScreenSystem.bind(this)); //
   }
 
