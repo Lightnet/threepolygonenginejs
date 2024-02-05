@@ -54,6 +54,17 @@ class TriECSEngine{
     }
   }
 
+  //ECS
+  blankSystem(world){
+    const onUpdate = function (dt) {
+
+    }
+
+    return { 
+      onUpdate 
+    }
+  }
+
   getScene(){
     return this.scene;
   }
@@ -79,7 +90,6 @@ class TriECSEngine{
     this.setupRenderer();
     this.setupCSSRenderer();
     this.setupViews();
-    
   }
 
   setupECS(){
@@ -94,7 +104,6 @@ class TriECSEngine{
     //ECS.addSystem(this.world, this.mousePositionLogSystem.bind(this));
     ECS.addSystem(this.world, this.resizeWindowInnerSystem);
     //ECS.addSystem(this.world, this.resizeWindowInnerlogSystem); //test
-    
   }
 
   setupElement(){
@@ -266,14 +275,19 @@ class TriECSEngine{
     const screenToWorld = this.screenToWorld;//no variable from class
     const resizeViewPort = this.resizeViewPort.bind(this);//has variable from class
 
+    const mainViewPort = ECS.createEntity(world);
+    ECS.addComponentToEntity(world, mainViewPort, 'cssWindowWidth', window.innerWidth);
+    ECS.addComponentToEntity(world, mainViewPort, 'cssWindowHeight', window.innerHeight);
+
     const onUpdate = function (dt) {
       //console.log("update???")
       //const ECSPoint = ECS.getEntity(world, ['clientX', 'clientY']);
       const ECSWin = ECS.getEntity(world, ['innerWidth', 'innerHeight']);
+      const CSSWin = ECS.getEntity(world, ['cssWindowWidth', 'cssWindowHeight']);
       const ECSView = ECS.getEntity(world, ['cssCamera']);
       //console.log(Canvas);
       //if(ECSPoint && ECSWin && ECSView){
-      if(ECSWin && ECSView){
+      if(ECSWin && ECSView && CSSWin){
         //console.log(ECSWin);
         //console.log(ECSPoint);
         //console.log(ECSView);
@@ -286,7 +300,37 @@ class TriECSEngine{
             camera:ECSView.cssCamera
           });
           //console.log(pos);
-          resizeViewPort(pos);
+          CSSWin.cssWindowWidth = pos.x;
+          CSSWin.cssWindowHeight = pos.y;
+          //resizeViewPort(pos);
+        }
+      }
+    }
+
+    return { 
+      onUpdate 
+    }
+  }
+
+  resizeCSSScreenDivSystem(world){
+
+    const resizeViewPort = this.resizeViewPort.bind(this)
+    const resizeRendererFromParent = this.resizeRendererFromParent.bind(this)
+
+    const onUpdate = function (dt) {
+      const ECSWin = ECS.getEntity(world, ['innerWidth', 'innerHeight']);
+      const CSSWin = ECS.getEntity(world, ['cssWindowWidth', 'cssWindowHeight']);
+      //console.log(CSSWin);
+      if(ECSWin && CSSWin){
+        if(ECSWin.isResize){
+          resizeViewPort({
+            x:CSSWin.cssWindowWidth,
+            y:CSSWin.cssWindowHeight
+          });
+          resizeRendererFromParent({
+            x:CSSWin.cssWindowWidth,
+            y:CSSWin.cssWindowHeight
+          });
         }
       }
     }
@@ -297,15 +341,30 @@ class TriECSEngine{
   }
 
   //need better code for resize update...
-  resizeViewPort(pos){
+  resizeViewPort(size){
     //console.log(this.cssScreen)
-    
-    if(this.cssScreen){
-      let width = Math.abs(pos.x*2);
+    if(this.cssScreen){//this is div element
+      let width = Math.abs(size.x*2);
       var offset = -10;//testing...
       this.cssScreen.style.width = ((width) + offset)+'px';
-      this.cssScreen.style.height = ((pos.y*2) + offset)+'px';
-      this.resizeCanvasRenderer();
+      this.cssScreen.style.height = ((size.y*2) + offset)+'px';
+      //this.resizeCanvasRenderer();
+    }
+  }
+
+  resizeRendererFromParent(size){
+    //console.log(size);
+    if(this.renderer){
+      //let parent = this.renderer.domElement.parentNode;
+      //let _width = parseFloat(String(parent.style.width).replace("px",""));
+      //let _height = parseFloat(String(parent.style.height).replace("px",""));
+      let offset = -10;//testing...
+      let _width = Math.abs(size.x*2) + offset;
+      let _height = size.y *2 + offset;
+      this.renderer.domElement.style.width = _width + 'px';
+      this.renderer.domElement.style.height = _height + 'px';
+      this.camera.aspect = _width / _height;
+      this.camera.updateProjectionMatrix();
     }
   }
 
@@ -317,6 +376,7 @@ class TriECSEngine{
       //const rect = this.cssScreen.getBoundingClientRect();
       //console.log(rect);
       //this.renderer.setSize(rect.width,rect.height);
+      // get parnet from css div element.
       let parent = this.renderer.domElement.parentNode;
       //let _width = parent.getBoundingClientRect().width;
       //let _height = parent.getBoundingClientRect().height;
@@ -429,14 +489,13 @@ class TriECSEngine{
     }
   }
 
-  
-
   setupViews(){
     this.createCssScreen();
     //console.log(this.renderer.domElement);
     this.cssScreen.appendChild(this.renderer.domElement);
     //this.setupWindowResize();
     ECS.addSystem(this.world, this.resizeCSSScreenSystem.bind(this)); //
+    ECS.addSystem(this.world, this.resizeCSSScreenDivSystem.bind(this)); //
   }
 
   //set up phyiscs ECS
