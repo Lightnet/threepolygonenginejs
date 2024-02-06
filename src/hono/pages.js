@@ -81,153 +81,56 @@ function scriptHtml03(_script){
   return pageHtml;
 }
 
-route.get('/spacemobile', (c) => {
-  //const db = c.get('db');
-  const pageHtml = scriptHtml("/van_spacemobile.js");
-  return c.html(pageHtml);
-});
-
 route.get('/threeammo', (c) => {
   //const db = c.get('db');
   const pageHtml = scriptHtml03("/van_threeammo.js");
   return c.html(pageHtml);
 });
 
-route.get('/threerapier', (c) => {
-  //const db = c.get('db');
-  console.log("/threerapier");
-  const pageHtml = scriptHtml02("/van_threerapier.js");
-  return c.html(pageHtml);
-});
 // https://threejs.org/docs/index.html#manual/en/introduction/Installation
-route.get('/craft', (c) => {
+
+var urlandjs = [
+  //{url:'/spacemobile',file:'/van_spacemobile.js'},
+  {url:'/threerapier',file:'/van_threerapier.js'},
+  {url:'/craft',file:'/van_craft.js'},
+  {url:'/three',file:'/van_three.js'},
+  {url:'/threecss',file:'/van_threecss.js'},
+  {url:'/threeswitch',file:'/van_threeswitch.js'},
+  {url:'/resizecssrender',file:'/resizecssrender.js'},
+  {url:'/entitiesomponentssystems',file:'/entitiesomponentssystems.js'},
+  {url:'/chat',file:'/van_chat.js'},
+  {url:'/worker',file:'/worker_main.js'},
+  {url:'/ecs_worker',file:'/ecs_worker_main.js'},
+  {url:'/triecs_sample',file:'/three_ecs_sample.js'},
+  {url:'/triecs_sample02',file:'/three_ecs_sample02.js'},
+  {url:'/triecs_sample03',file:'/three_ecs_sample03.js'},
+  {url:'/threerapierjsm',file:'/three_reapier_jsm.js'},
+  {url:'/css2dthree',file:'/css2dthree.js'},
+  {url:'/css3dthree',file:'/css3dthree.js'},
+]
+//console.log("URLS...");
+route.get("/:name", (c, next) => {
+  let isFound = false;
+  const name = c.req.param('name');
+  let file = '';
+  for (var idx in urlandjs){
+    if(urlandjs[idx].url.match(name)){
+      console.log("match...")
+      file = urlandjs[idx].file;
+      isFound=true;
+      console.log(file);
+      break;
+    }
+  }
   //const db = c.get('db');
-  console.log("/craft");
-  const pageHtml = scriptHtml02("/van_craft.js");
-  return c.html(pageHtml);
+  console.log("http://localhost:3000/"+name);
+  if(isFound){
+    const pageHtml = scriptHtml02(file);
+    return c.html(pageHtml);
+  }
+  //return c.html('None');
+  return next();
 });
 
-route.get('/three', (c) => {
-  //const db = c.get('db');
-  console.log("/three");
-  const pageHtml = scriptHtml02("/van_three.js");
-  return c.html(pageHtml);
-});
-
-route.get('/threecss', (c) => {
-  //const db = c.get('db');
-  console.log("/threecss");
-  const pageHtml = scriptHtml02("/van_threecss.js");
-  return c.html(pageHtml);
-});
-
-route.get('/threeswitch', (c) => {
-  //const db = c.get('db');
-  console.log("/threeswitch");
-  const pageHtml = scriptHtml02("/van_threeswitch.js");
-  return c.html(pageHtml);
-});
-
-route.get('/resizecssrender', (c) => {
-  //const db = c.get('db');
-  console.log("/threeswitch");
-  const pageHtml = scriptHtml02("/resizecssrender.js");
-  return c.html(pageHtml);
-});
-
-
-route.get('/entitiesomponentssystems', (c) => {
-  //const db = c.get('db');
-  console.log("/entitiesomponentssystems");
-  const pageHtml = scriptHtml02("/entitiesomponentssystems.js");
-  return c.html(pageHtml);
-});
-
-route.get('/chat', (c) => {
-  //const db = c.get('db');
-  console.log("/chat");
-  const pageHtml = van.html(
-    head(
-      style(`
-      body{
-        background:gray;
-        margin: 0px 0px 0px 0px;
-        overflow: hidden;
-      }
-      `)
-    ),
-    body(
-      script({type:"module",src:"/van_chat.js"})
-    ),
-  );
-  return c.html(pageHtml);
-});
-
-route.get('/worker', (c) => {
-  //const db = c.get('db');
-  console.log("/worker");
-  const pageHtml = van.html(
-    head(
-      style(`
-      body{
-        background:gray;
-        margin: 0px 0px 0px 0px;
-        overflow: hidden;
-      }
-      `)
-    ),
-    body(
-      script({type:"module",src:"/worker_main.js"})
-    ),
-  );
-  return c.html(pageHtml);
-});
-
-route.get('/ecs_worker', (c) => {
-  //const db = c.get('db');
-  console.log("/ecs_worker");
-  const pageHtml = scriptHtml02("/ecs_worker_main.js");
-  return c.html(pageHtml);
-});
-
-route.get('/triecs_sample', (c) => {
-  //const db = c.get('db');
-  console.log("/triecs_sample");
-  const pageHtml = scriptHtml02("/three_ecs_sample.js");
-  return c.html(pageHtml);
-});
-
-route.get('/triecs_sample02', (c) => {
-  //const db = c.get('db');
-  console.log("/triecs_sample02");
-  const pageHtml = scriptHtml02("/three_ecs_sample02.js");
-  return c.html(pageHtml);
-});
-
-route.get('/triecs_sample03', (c) => {
-  //const db = c.get('db');
-  console.log("/triecs_sample03");
-  const pageHtml = scriptHtml02("/three_ecs_sample03.js");
-  return c.html(pageHtml);
-});
-
-route.get('/threerapierjsm', (c) => {
-  //const db = c.get('db');
-  console.log("/threerapierjsm");
-  const pageHtml = scriptHtml02("/three_reapier_jsm.js");
-  return c.html(pageHtml);
-});
-route.get('/css3dthree', (c) => {
-  //const db = c.get('db');
-  console.log("/css3dthree");
-  const pageHtml = scriptHtml02("/css3dthree.js");
-  return c.html(pageHtml);
-});
-route.get('/css2dthree', (c) => {
-  //const db = c.get('db');
-  console.log("/css3dthree");
-  const pageHtml = scriptHtml02("/css2dthree.js");
-  return c.html(pageHtml);
-});
 
 export default route;

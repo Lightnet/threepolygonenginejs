@@ -1,10 +1,8 @@
-
-
-import van from "https://cdn.jsdelivr.net/gh/vanjs-org/van/public/van-1.2.1.min.js";
-//import { THREE } from "./triengine/ThreeAPI.js";
-const {button, canvas, input, label, div} = van.tags;
+//testing ECS only
 
 import ECS from "https://unpkg.com/ecs@0.20.0/ecs.js";
+import van from "https://cdn.jsdelivr.net/gh/vanjs-org/van/public/van-1.2.1.min.js";
+const {button,label, div} = van.tags;
 
 // generates a new entity component system
 const world = ECS.createWorld()
@@ -14,64 +12,86 @@ const PLAYER = ECS.createEntity(world)
 ECS.addComponentToEntity(world, PLAYER, 'position', { x: 15, y: 23 })
 ECS.addComponentToEntity(world, PLAYER, 'moveable', { dx: 0, dy: 0 })
 
-var Keyboard = {};
+//create input in the system
+function keyboardInputUpdateSystem(world){
+  var GamePad = {
+    LEFT:false,
+    RIGHT:false,
+    UP:false,
+    DOWN:false,
+  }
 
-var GameKeyBoard = {
-  "q":false,
-  "w":false,
-  "e":false,
-  "r":false,
-  "t":false,
-  "y":false,
-  "u":false,
-  "i":false,
-  "o":false,
-  "p":false,
-  "a":false,
-  "s":false,
-  "d":false,
-  "f":false,
-  "g":false,
-  "h":false,
-  "j":false,
-  "k":false,
-  "l":false,
-  "z":false,
-  "x":false,
-  "c":false,
-  "v":false,
-  "b":false,
-  "n":false,
-  "m":false,
-};
+  const ECSGamePad = ECS.createEntity(world)
+  ECS.addComponentToEntity(world, ECSGamePad, 'GamePad', GamePad);
 
-const EINPUT = ECS.createEntity(world)
-ECS.addComponentToEntity(world, EINPUT, 'INPUT', GameKeyBoard);
-console.log(EINPUT);
+  window.addEventListener('keydown', pressDownKeyBoard)
+  window.addEventListener('keyup', releaseUpKeyBoard)
+
+  function pressDownKeyBoard(event){
+    //console.log(event.key);
+    if(event.key == "a"){
+      ECSGamePad.GamePad.LEFT = true;
+    }
+    if(event.key == "d"){
+      ECSGamePad.GamePad.RIGHT = true;
+    }
+    if(event.key == "w"){
+      ECSGamePad.GamePad.UP = true;
+    }
+    if(event.key == "s"){
+      ECSGamePad.GamePad.DOWN = true;
+    }
+  }
+
+  function releaseUpKeyBoard(event){
+    if(event.key == "a"){
+      ECSGamePad.GamePad.LEFT = false;
+    }
+    if(event.key == "d"){
+      ECSGamePad.GamePad.RIGHT = false;
+    }
+    if(event.key == "w"){
+      ECSGamePad.GamePad.UP = false;
+    }
+    if(event.key == "s"){
+      ECSGamePad.GamePad.DOWN = false;
+    }
+  }
+
+  const onUpdate = function (dt) {
+
+  }
+
+  return { 
+    //onUpdate
+  }
+}
+
+ECS.addSystem(world, keyboardInputUpdateSystem)
 
 // update entity velocity based on key pressed
 function keyboardControlSystem (world) {
   // called each game loop
   const onUpdate = function (dt) {
-      const EInput = ECS.getEntity(world, [ 'INPUT' ])
+      const EInput = ECS.getEntity(world, [ 'GamePad' ])
       //console.log(EInput);
-      console.log(EInput.INPUT);
+      //console.log(EInput.GamePad);
 
       // get all of the entities in the world that pass the filter
       for (const entity of ECS.getEntities(world, [ 'moveable' ])) {
         //console.log("update...");
           // update the entity position according to what is pressed
-          if (EInput.INPUT.w == true){
+          if (EInput.GamePad.UP == true){
             entity.moveable.dy -= 1
-          }else if (EInput.INPUT.s == true){
+          }else if (EInput.GamePad.DOWN == true){
             entity.moveable.dy += 1
           }else{
             entity.moveable.dy = 0
           }
           
-          if (EInput.INPUT.a == true){
+          if (EInput.GamePad.LEFT == true){
             entity.moveable.dx -= 1
-          }else if (EInput.INPUT.d == true){
+          }else if (EInput.GamePad.RIGHT == true){
             entity.moveable.dx += 1
           }else{
             entity.moveable.dx = 0
@@ -97,11 +117,12 @@ function keyboardControlSystem (world) {
 
 function movementSystem (world) {
   const onUpdate = function (dt) {
-      for (const entity of ECS.getEntities(world, [ 'position', 'moveable' ])) {
-          entity.position.x += entity.moveable.dx
-          entity.position.y += entity.moveable.dy
-          console.log(entity.position);
-      }
+    for (const entity of ECS.getEntities(world, [ 'position', 'moveable' ])) {
+      entity.position.x += entity.moveable.dx
+      entity.position.y += entity.moveable.dy
+      //check pos
+      console.log(entity.position);
+    }
   }
 
   return { onUpdate }
@@ -136,20 +157,17 @@ function rendererSystem (world) {
 
 ECS.addSystem(world, keyboardControlSystem)
 ECS.addSystem(world, movementSystem)
-ECS.addSystem(world, rendererSystem)
+//ECS.addSystem(world, rendererSystem)
 
 
 function variablesSystem(world) {
-
-  console.log("variables init??")
-
+  //console.log("variables init??")
   const onUpdate = function (dt) {
-    console.log("variables")
+    //console.log("variables")
   }
   return { onUpdate }
 }
-
-ECS.addSystem(world, variablesSystem)
+//ECS.addSystem(world, variablesSystem)
 
 var currentTime = performance.now()
 function gameLoop () {
@@ -177,31 +195,8 @@ function timedCount() {
   }
 }
 
-//timedCount();
-class Timer extends EventTarget {
-  start() {
-    this.dispatchEvent(new Event("start"))
-  }
-
-  pause() {
-    this.dispatchEvent(new Event("paused"))
-  }
-
-  unpause() {
-    this.dispatchEvent(new Event("unpaused"))
-  }
-
-  stop() {
-    this.dispatchEvent(new Event("stop"))
-  }
-}
-
-const WorkerEL = () => {
+const ECS_LOOP_EL = () => {
   const renderEL = div({id:'ECS'});
-  const mytimer = new Timer()
-
-  mytimer.addEventListener("start", () => console.log("timer started!"))
-  mytimer.addEventListener("stop", () => console.log("timer stopped!"))
 
   function start(){
     console.log("click...")
@@ -219,45 +214,10 @@ const WorkerEL = () => {
     //}
   }
 
-  function timerStart(){
-    mytimer.start();
-  }
-
-  function timerStop(){
-    mytimer.stop();
-  }
-
   function init(){
-    //const renderer = new THREE.WebGLRenderer();
-    //engine.val = new CraftMobile({canvas:renderEL,isPhysics:true});
-    //console.log(engine.val);//
-    
     van.add(renderEL,button({onclick:()=>start()},'start'))
     van.add(renderEL,button({onclick:()=>stop()},'stop'))
-
-    van.add(renderEL,button({onclick:()=>timerStart()},'timer start'))
-    van.add(renderEL,button({onclick:()=>timerStop()},'timer stop'))
-
-    window.addEventListener('keydown', pressDownKeyBoard)
-    window.addEventListener('keyup', releaseUpKeyBoard)
-  }
-
-  function InputKeys(event){
-    //console.log(event)
-    if(pool.val){
-      pool.val.postMessage({type:"input",input:event.key})
-    }
-  }
-
-  function pressDownKeyBoard(event){
-    //console.log(event)
-    EINPUT.INPUT[event.key]=true;
-    //GameKeyBoard[event.key]=true;
-  }
-
-  function releaseUpKeyBoard(event){
-    EINPUT.INPUT[event.key]=false;
-    //GameKeyBoard[event.key]=false;
+    van.add(renderEL,label('WASD = movement, check console.log'))
   }
 
   init();
@@ -267,4 +227,4 @@ const WorkerEL = () => {
   )
 };
 
-van.add(document.body,WorkerEL())
+van.add(document.body,ECS_LOOP_EL());

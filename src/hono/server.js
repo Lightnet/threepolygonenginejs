@@ -108,10 +108,12 @@ app.get('/', (c) => {
   return c.html(pageHtml);
 });
 
-app.route('/', pages);
-
 //set up static folder for public access
 app.use('/*', serveStatic({ root: './assets' }));
+
+app.route('/', pages);
+
+
 
 //https://stackoverflow.com/questions/4224606/how-to-check-whether-a-script-is-running-under-node-js
 let typeServer = 'none';
@@ -162,24 +164,29 @@ if(typeServer=='node'){
   //console.log(io);
   console.log('Process Type:',typeServer)
   console.log(`hono server  http://localhost:${PORT}`)
-  console.log(`hono server  http://localhost:${PORT}/chat`)
-  console.log(`hono server  http://localhost:${PORT}/craft`)
-  console.log(`hono server  http://localhost:${PORT}/three`)
-  console.log(`hono server  http://localhost:${PORT}/threecss`)
-  console.log(`hono server  http://localhost:${PORT}/resizecssrender`)
-  console.log(`hono server  http://localhost:${PORT}/threeswitch`)
-  console.log(`hono server  http://localhost:${PORT}/threeammo`)//nope
-  console.log(`hono server  http://localhost:${PORT}/threerapier`)
-  console.log(`hono server  http://localhost:${PORT}/threerapierjsm`)
-  console.log(`hono server  http://localhost:${PORT}/entitiesomponentssystems`)
-  console.log(`hono server  http://localhost:${PORT}/worker`)
-  console.log(`hono server  http://localhost:${PORT}/ecs_worker`)
-  console.log(`hono server  http://localhost:${PORT}/triecs_sample`)
-  console.log(`hono server  http://localhost:${PORT}/triecs_sample02`)
-  console.log(`hono server  http://localhost:${PORT}/triecs_sample03`)
+  let urlList = [
+    `http://localhost:${PORT}/chat`,
+    `http://localhost:${PORT}/craft`,
+    `http://localhost:${PORT}/three`,
+    `http://localhost:${PORT}/threecss`,
+    `http://localhost:${PORT}/resizecssrender`,
+    `http://localhost:${PORT}/threeswitch`,
+    `http://localhost:${PORT}/threeammo`,
+    `http://localhost:${PORT}/threerapier`,
+    `http://localhost:${PORT}/threerapierjsm`,
+    `http://localhost:${PORT}/entitiesomponentssystems`,
+    `http://localhost:${PORT}/worker`,
+    `http://localhost:${PORT}/ecs_worker`,
+    `http://localhost:${PORT}/triecs_sample`,
+    `http://localhost:${PORT}/triecs_sample02`,
+    `http://localhost:${PORT}/triecs_sample03`,
+    `http://localhost:${PORT}/css3dthree`,
+    `http://localhost:${PORT}/css2dthree`,
+  ];
 
-  console.log(`hono server  http://localhost:${PORT}/css3dthree`)
-  console.log(`hono server  http://localhost:${PORT}/css2dthree`)
+  for(var myurl in urlList){
+    console.log(urlList[myurl]);
+  }
 }
 
 //const server = serve(app)

@@ -1,3 +1,5 @@
+//testing
+
 // https://threejs.org/examples/#css2d_label
 // https://github.com/mrdoob/three.js/blob/master/examples/css2d_label.html
 import { 
@@ -11,13 +13,11 @@ import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer
 
 function init(){
 
-
   const renderer = new THREE.WebGLRenderer();
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	renderer.setClearColor( 0xffffff, 0);
 	
-
   const cssRenderer = new CSS2DRenderer();
   cssRenderer.setSize( window.innerWidth, window.innerHeight );
   cssRenderer.domElement.style.position = 'absolute';
@@ -48,7 +48,6 @@ function init(){
   scene.add(group)
   //group.add( new Element( 'SJOz3qjfQXU', 0, 0, 240, 0 ) );
 
-
   const earthDiv = document.createElement( 'div' );
 	earthDiv.className = 'label';
 	earthDiv.textContent = 'Earth';
@@ -60,7 +59,6 @@ function init(){
   });
   //van.add(document.body, earthDiv);
 
-  
   const earthLabel = new CSS2DObject( earthDiv );
   earthLabel.position.set( 0, 0, 0 );
 	earthLabel.center.set( 0, 1 );
@@ -70,7 +68,6 @@ function init(){
   
   const controls = new TrackballControls( camera, cssRenderer.domElement );
 	controls.rotateSpeed = 4;
-  
   
   window.addEventListener( 'resize', onWindowResize );
 

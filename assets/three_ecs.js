@@ -1,12 +1,10 @@
 // simple test three and ecs
-
 // rework build
-
 
 // https://www.geeksforgeeks.org/enums-in-javascript/#:~:text=Enums%20in%20JavaScript%20are%20used,readability%2C%20maintainability%20and%20prevent%20errors.
 import { THREE, OrbitControls, ECS  } from "./dps.js";
 import van from "https://cdn.jsdelivr.net/gh/vanjs-org/van/public/van-1.2.1.min.js";
-import { PhysicsFrameWork } from './physicsframework.js';
+//import { PhysicsFrameWork } from './physicsframework.js';
 
 const {canvas, div} = van.tags;
 
@@ -78,8 +76,6 @@ class TriECSEngine{
       //alpha: true,
     //});
     this.renderer = _renderer;
-
-
     this.renderer.setSize( window.innerWidth, window.innerHeight );
 
     this.scene = new THREE.Scene();

@@ -1,11 +1,8 @@
+//testing
 
-
-
-//import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
 import { THREE } from "./triengine/dps.js";
 import van from "https://cdn.jsdelivr.net/gh/vanjs-org/van/public/van-1.2.1.min.js";
 import { TriEngine } from './triengine/triengine.js';
-//import RAPIER from 'https://cdn.skypack.dev/@dimforge/rapier3d-compat';
 
 const {button, canvas, input, label, div} = van.tags;
 

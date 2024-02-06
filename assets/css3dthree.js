@@ -1,4 +1,4 @@
-
+//testing...
 
 import { 
   THREE, 
@@ -36,7 +36,6 @@ function Element( id, x, y, z, ry ) {
   object.rotation.y = ry;
 
   return object;
-
 }
 
 function init(){

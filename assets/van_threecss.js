@@ -1,9 +1,7 @@
-
+//testing
 
 import { THREE, van } from "./triengine/dps.js";
-const {button, canvas, input, label, div} = van.tags;
-//import {ThreeEL} from './triengine/triengine.js';
-//van.add(document.body,ThreeEL())
+const {div} = van.tags;
 
 import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
 
