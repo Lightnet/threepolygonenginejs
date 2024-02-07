@@ -144,6 +144,20 @@ class TriEngine {
     }
   }
 
+  //
+  resizeParent(){
+    let parent = this.renderer.domElement.parentNode;
+
+    let _width = parseFloat(String(parent.style.width).replace("px",""));
+    let _height = parseFloat(String(parent.style.height).replace("px",""));
+    //console.log("_width:",_width);
+    //console.log("_height:",_height);
+    this.camera.aspect = _width / _height;
+    this.camera.updateProjectionMatrix();
+    this.renderer.domElement.style.width = parent.style.width;
+    this.renderer.domElement.style.height = parent.style.height;
+  }
+
   domElement(){
     return this.renderer.domElement;
   }

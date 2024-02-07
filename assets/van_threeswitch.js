@@ -1,30 +1,19 @@
 // testing
 
 import { THREE, van } from "./triengine/dps.js";
-const {button, canvas, input, label, div} = van.tags;
-
+const {button, canvas, div} = van.tags;
 
 import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
 import { ThreeScene } from "./triengine/threescene.js";
-/*
-var content = '<div>' +
-      '<h1>This is an H1 Element.</h1>' +
-      '<span class="large">Hello Three.js cookbook</span>' +
-      '<textarea> And this is a textarea</textarea>' +
-    '</div>';
-*/
-var content = '<div>' +
-'</div>';
 
-
-class CSSRender{
+class TriCSS3DRenderer{
 
   renderer = null;
   camera = null;
   scene = null;
   clock=null;
-  divEl=null;
-  cssScreen=null;//cssObject for threejs render
+  viewDiv=null;
+  ViewSize={x:0,y:0};
 
   constructor(args){
     console.log("init...")
@@ -44,18 +33,27 @@ class CSSRender{
       //throw new Error('Parameter is need Canvas Element!');
     }
 
-    this.setup_render();
-    this.setup_window_resize();
     // init set up
     this.init();
   }
 
   init(){
+    this.setupRenderer();
+    this.setupWindowResize();
+    this.setupView();
+    this.run();
+  }
+
+  setupView(){
     //div
-    var cssElement = this.createTriCSS3DObject(content);
-    cssElement.position.set(0, 0, 0);
-    this.cssScreen = cssElement;
-    this.scene.add(cssElement);
+    let width =  window.innerWidth;
+    let height = window.innerHeight;
+    const viewDiv = div({id:'VIEWDIV',style:`width:${width};height:${height};`});
+    viewDiv.style.background = new THREE.Color(Math.random() * 0xffffff).getStyle();
+    this.viewDiv = viewDiv;
+    var cssObject = new CSS3DObject(viewDiv);
+    cssObject.position.set(0, 0, 0);
+    this.scene.add(cssObject);
   }
 
   createCSS3DObject(content, args) {
@@ -81,66 +79,33 @@ class CSSRender{
     return object;
   }
 
-  createTriCSS3DObject(content, args) {
-    let width = args?.width || 800;
-    let height = args?.height || 600;
-    // convert the string to dome elements
-    var wrapper = document.createElement('div');
-    if(typeof content == 'string'){
-      wrapper.innerHTML = content;
-    }else{
-      wrapper.appendChild(content);
-    }
-    
-    var div = wrapper.firstChild;
-    // set some values on the div to style it.
-    // normally you do this directly in HTML and 
-    // CSS files.
-    div.style.width = width+'px';
-    div.style.height = height+'px';
-    //div.style.opacity = 0.7;
-    div.style.background = new THREE.Color(Math.random() * 0xffffff).getStyle();
-    this.divEl = div;
-    // create a CSS3Dobject and return it.
-    var object = new CSS3DObject(div);
-    return object;
-  }
-
   appendChild(_canvas){
-    if(this.divEl){
-      console.log("ADD CSS?")
-      //console.log(this.divEl);
+    //console.log(this.viewDiv);
+    if(this.viewDiv){
       //console.log(_canvas);
-      this.divEl.appendChild(_canvas);
+      this.viewDiv.appendChild(_canvas);
+      window.dispatchEvent(new Event('resize'));
     }else{
       console.log("ERROR APPENDCHILD?");
     }
   }
 
-  init_editor(){
-    //van.add(document.body,editorAreaEL())
-  }
-
-  setup_render(){
+  setupRenderer(){
     this.renderer.setSize( window.innerWidth, window.innerHeight );
     //console.log(this.renderer);
 
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 5000 );
     //this.camera.position.z = 5;
-
-    //this.camera.position.set( 600, 400, 1500 );
     this.camera.position.set( 0, 0, 630 );
-    //this.camera.position.set( 0, 100, 0 );
-    //this.camera.position.set( 100, 0, 0 );
     //this.camera.lookAt( 0, 0, 0 );
 
     //this.controls = new OrbitControls(this.camera, this.renderer.domElement)
-    this.update();
+    //this.update();
   }
 
-  setup_window_resize(){
-    window.addEventListener('resize',this.resize_window.bind(this));
+  setupWindowResize(){
+    window.addEventListener('resize',this.resizeWindow.bind(this));
   }
 
   //update render for css
@@ -149,41 +114,59 @@ class CSSRender{
     this.renderer.render( this.scene, this.camera );
   }
 
-  resize_window(){
+  //https://discourse.threejs.org/t/convert-screen-2d-to-world-3d-coordiate-system-without-using-raycaster/13739/6
+  screenToWorld({ x, y, canvasWidth, canvasHeight, camera }) {
+    const coords = new THREE.Vector3(
+        (x / canvasWidth) * 2 - 1,
+        -(y / canvasHeight) * 2 + 1,
+        0.5
+    )
+    const worldPosition = new THREE.Vector3()
+    const plane = new THREE.Plane(new THREE.Vector3(0.0, 0.0, 1.0))//face camera?
+    const raycaster = new THREE.Raycaster()
+    raycaster.setFromCamera(coords, camera)
+    return raycaster.ray.intersectPlane(plane, worldPosition)
+  }
+
+  resizeWindow(){
     this.camera.aspect = window.innerWidth / window.innerHeight;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize( window.innerWidth, window.innerHeight );
-    this.resize_screen_three()
+    const pos = this.screenToWorld({
+      x: 1,
+      y: 1,
+      canvasWidth: window.innerWidth,
+      canvasHeight: window.innerHeight,
+      camera:this.camera
+    });
+    this.viewSize={
+      x:Math.abs(pos.x*2),
+      y:(pos.y*2)
+    };
+
+    this.resizeViewDiv()
   }
 
-  resize_screen_three(){
-    if(this.cssScreen){
-      //let width = window.innerWidth / 2;
-      //let height = window.innerHeight / 2;
-      //this.cssScreen.position.set(width*-1,height*-1,0);
+  resizeViewDiv(){
+    if(this.viewDiv){
+      //this.viewDiv.style.width = window.innerWidth+'px';
+      //this.viewDiv.style.height = window.innerHeight+'px';
 
-      this.divEl.style.width = window.innerWidth+'px';
-      this.divEl.style.height = window.innerHeight+'px';
+      this.viewDiv.style.width = (this.viewSize.x)+'px';
+      this.viewDiv.style.height = (this.viewSize.y)+'px';
     }
   }
 
-  get_screen_el(){
-    if(this.divEl){
-      //console.log(this.divEl);
-      //console.log(this.divEl.getBoundingClientRect());
-      return this.divEl;
-    }
-    return null;
+  run(){
+    this.update();
   }
-
 }
 
-
-const toggleThreeSwitch = ()=>{
+const toggleViewSwitchEL = ()=>{
 
   const isEditor = van.state(false);
   const cssRenderEL = div({id:'CSSRENDER',style:"position:fixed;top:0px;left:0px;height:100%;width:100%;"});
-  const divEL = div({id:'CSSRENDER',style:"height:100%;width:100%;"});
+  const divEL = div({id:'RENDERER',style:"height:100%;width:100%;"});
   const canvasEL = canvas({id:'CANVAS',style:"position:fixed;top:0px;left:0px;height:100%;width:100%;"});
 
   //base scene
@@ -193,7 +176,7 @@ const toggleThreeSwitch = ()=>{
   //console.log(threeScene.domElement());
 
   //screen for ui in div css format.
-  const screenCSS = new CSSRender({
+  const screenCSS = new TriCSS3DRenderer({
     parent:cssRenderEL // div element
   });
 
@@ -202,27 +185,17 @@ const toggleThreeSwitch = ()=>{
     //console.log("Hello?",isEditor.val);
   }
 
-  const setup_window_resize = ()=>{
-    window.addEventListener('resize',resize_window.bind(this));
-  }
-
   function resize_window(){
     if(isEditor.val == false){
       threeScene.resize(window.innerWidth,window.innerHeight);
     }
     if(isEditor.val == true){
-      let _divEl = screenCSS.get_screen_el();
-      let rect = _divEl.getBoundingClientRect();
-      //console.log(rect.height);
-      //console.log(rect);
-      //threeScene.resize(rect.width,rect.height);
-      threeScene.resize(window.innerWidth,window.innerHeight);
-
+      threeScene.resizeParent();
     }
   }
 
   function init(){
-    setup_window_resize();
+    window.addEventListener('resize',resize_window.bind(this));
   }
 
   init();
@@ -250,4 +223,4 @@ const toggleThreeSwitch = ()=>{
 }
 
 //set up canvas and editor element
-van.add(document.body,toggleThreeSwitch())
+van.add(document.body,toggleViewSwitchEL())

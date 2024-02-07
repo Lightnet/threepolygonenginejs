@@ -8,6 +8,7 @@ import van from "https://cdn.jsdelivr.net/gh/vanjs-org/van/public/van-1.2.1.min.
 
 const {canvas, div} = van.tags;
 
+//protoype test build
 class TriECSEngine{
 
   renderer = null;
@@ -54,6 +55,7 @@ class TriECSEngine{
     this.world = ECS.createWorld();
   }
 
+  //setup for doc> body to attach element for renderer
   setupElement(){
     this.divEL = div({id:'CSSRENDER',style:"height:100%;width:100%;"});
     this.canvasEL = canvas({id:'CANVAS',style:"position:fixed;top:0px;left:0px;height:100%;width:100%;"});
@@ -107,12 +109,6 @@ class TriECSEngine{
     return { onUpdate }
   }
 
-  setupInput(world){
-    var keys={
-      "q":false,
-    }
-  }
-
   setupSystems(){
     ECS.addSystem(this.world, this.setupECSRender.bind(this));
   }
@@ -128,13 +124,6 @@ class TriECSEngine{
     ECS.update(this.world, frameTime)
     // necessary cleanup step at the end of each frame loop
     ECS.cleanup(this.world)
-
-    //if(this.renderer){
-      //this.renderer.render( this.scene, this.camera );
-    //}
-    //if(this.physics){
-      //this.physics.update();
-    //}
 
     requestAnimationFrame(()=>{
       this.update();
@@ -153,8 +142,8 @@ class TriECSEngine{
 
   run(){
     this.isRun=true;
-    //this.renderer.setAnimationLoop(this.update.bind(this));
     this.currentTime = performance.now()
+    //this.renderer.setAnimationLoop(this.update.bind(this));
     this.update();
   }
 
