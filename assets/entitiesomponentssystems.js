@@ -1,8 +1,9 @@
 //testing ECS only
+// https://github.com/mreinstein/ecs
 
-import ECS from "https://unpkg.com/ecs@0.20.0/ecs.js";
+import ECS from 'https://cdn.skypack.dev/ecs';
 import van from "https://cdn.jsdelivr.net/gh/vanjs-org/van/public/van-1.2.1.min.js";
-const {button,label, div} = van.tags;
+const {button, label, br, div} = van.tags;
 
 // generates a new entity component system
 const world = ECS.createWorld()
@@ -121,7 +122,7 @@ function movementSystem (world) {
       entity.position.x += entity.moveable.dx
       entity.position.y += entity.moveable.dy
       //check pos
-      console.log(entity.position);
+      //console.log(entity.position);
     }
   }
 
@@ -129,27 +130,38 @@ function movementSystem (world) {
 }
 
 function rendererSystem (world) {
-
+  console.log("render init??")
   const RENDERABLE_FILTER = [ 'renderable' ]
 
   // data structure to store all entities that were added or removed last frame
   const resultEntries = {
-      count: 0,
-      entries: new Array(100)
+    count: 0,
+    entries: new Array(100)
   }
-  console.log("render init??")
-
+  
   const onUpdate = function (dt) {
     //console.log("update...");
 
+    console.log(ECS.getEntities(world, RENDERABLE_FILTER, 'added', resultEntries));
+
     // optional 3rd parameter, can be 'added' or 'removed'. provides the list of entities that were
     // added since the last ECS.cleanup(...) call
-    //for (ECS.getEntities(world, RENDERABLE_FILTER, 'added', resultEntries)) {
-      // resultEntries will now be filled in with a reference to all entries added last frame
-    //}
-    //for (ECS.getEntities(world, RENDERABLE_FILTER, 'removed', resultEntries)) {
-      // resultEntries will now be filled in with a reference to all entries removed last frame
-    //}
+    let results = ECS.getEntities(world, RENDERABLE_FILTER, 'added', resultEntries);
+    if(results){
+      if(results.count > 0){
+        console.log("added...")
+        console.log(results.entries);
+      }
+    }
+    // resultEntries will now be filled in with a reference to all entries removed last frame
+    results = ECS.getEntities(world, RENDERABLE_FILTER, 'removed', resultEntries);
+      
+    if(results){
+      if(results.count > 0){
+        console.log("remove...")
+        console.log(results.entries);
+      }
+    }
 
   }
   return { onUpdate }
@@ -157,8 +169,7 @@ function rendererSystem (world) {
 
 ECS.addSystem(world, keyboardControlSystem)
 ECS.addSystem(world, movementSystem)
-//ECS.addSystem(world, rendererSystem)
-
+ECS.addSystem(world, rendererSystem)
 
 function variablesSystem(world) {
   //console.log("variables init??")
@@ -199,25 +210,44 @@ const ECS_LOOP_EL = () => {
   const renderEL = div({id:'ECS'});
 
   function start(){
-    console.log("click...")
-    //if(gloop.val == null){
-      currentTime = performance.now()
-      timedCount();
-    //}
+    console.log("loop...")
+    currentTime = performance.now()
+    timedCount();
   }
 
   function stop(){
-    //if(pool.val){
-      isLoop=false;
-      //gloop.val.terminate();
-      //gloop.val=undefined;
-    //}
+    isLoop=false;
+  }
+
+  function addEntity(){
+    const PH_Entity = ECS.createEntity(world)
+    ECS.addComponentToEntity(world, PH_Entity, 'pos', { x: 15, y: 23 })
+    ECS.addComponentToEntity(world, PH_Entity, 'renderable')
+  }
+
+  function removeEntity(){
+    const deferredRemoval = false  // by default this is true. setting it to false immediately removes the component
+
+    const PH_Entity = ECS.getEntity(world,['pos']);
+    console.log(PH_Entity);
+    ECS.removeEntity(world, PH_Entity, deferredRemoval);
+  }
+
+  function checkEntity(){
+    console.log(world);
+    console.log(ECS.getEntities(world, [ 'pos' ]).length)
   }
 
   function init(){
+    van.add(renderEL,label('Run Loop >>:'))
     van.add(renderEL,button({onclick:()=>start()},'start'))
     van.add(renderEL,button({onclick:()=>stop()},'stop'))
+    van.add(renderEL,br())
     van.add(renderEL,label('WASD = movement, check console.log'))
+
+    van.add(renderEL,button({onclick:()=>addEntity()},'add'))
+    van.add(renderEL,button({onclick:()=>removeEntity()},'remove'))
+    van.add(renderEL,button({onclick:()=>checkEntity()},'check'))
   }
 
   init();

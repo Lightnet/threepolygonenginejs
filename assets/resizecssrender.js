@@ -1,5 +1,9 @@
 // testing resize
 
+// https://threejs.org/docs/#api/en/core/Raycaster.intersectObject
+// https://discourse.threejs.org/t/convert-screen-2d-to-world-3d-coordiate-system-without-using-raycaster/13739
+
+
 import { THREE, van } from "./triengine/dps.js";
 const {button, canvas, div} = van.tags;
 
@@ -9,14 +13,14 @@ import { ThreeScene } from "./triengine/threescene.js";
 var content = '<div>' +
 '</div>';
 
-class CSSRender{
+class TriCSS3DRenderer{
 
   renderer = null;
   camera = null;
   scene = null;
   clock=null;
-  divEl=null;
-  cssScreen=null;//cssObject for threejs render
+  viewDiv=null;
+  viewSize={x:0,y:0};
 
   constructor(args){
     console.log("init...")
@@ -36,18 +40,28 @@ class CSSRender{
       //throw new Error('Parameter is need Canvas Element!');
     }
 
-    this.setup_render();
-    this.setup_window_resize();
-    // init set up
     this.init();
   }
 
   init(){
-    //div
-    var cssElement = this.createTriCSS3DObject(content);
-    cssElement.position.set(0, 0, 0);
-    this.cssScreen = cssElement;
-    this.scene.add(cssElement);
+    this.setup();  
+  }
+
+  setup(){
+    this.setupRenderer();
+    this.setup_window_resize();
+    this.setupViewDiv();
+  }
+
+  setupViewDiv(){
+    let width =  window.innerWidth;
+    let height = window.innerHeight;
+    const viewDiv = div({id:'VIEWDIV',style:`width:${width};height:${height};`});
+    viewDiv.style.background = new THREE.Color(Math.random() * 0xffffff).getStyle();
+    this.viewDiv = viewDiv;
+    var cssObject = new CSS3DObject(viewDiv);
+    cssObject.position.set(0, 0, 0);
+    this.scene.add(cssObject);
   }
 
   createCSS3DObject(content, args) {
@@ -73,49 +87,20 @@ class CSSRender{
     return object;
   }
 
-  createTriCSS3DObject(content, args) {
-    let width = args?.width || window.innerWidth;
-    let height = args?.height || window.innerHeight;
-    // convert the string to dome elements
-    var wrapper = document.createElement('div');
-    if(typeof content == 'string'){
-      wrapper.innerHTML = content;
-    }else{
-      wrapper.appendChild(content);
-    }
-    
-    var div = wrapper.firstChild;
-    // set some values on the div to style it.
-    // normally you do this directly in HTML and 
-    // CSS files.
-    div.style.width = width+'px';
-    div.style.height = height+'px';
-    //div.style.opacity = 0.7;
-    div.style.background = new THREE.Color(Math.random() * 0xffffff).getStyle();
-    this.divEl = div;
-    // create a CSS3Dobject and return it.
-    var object = new CSS3DObject(div);
-    return object;
-  }
-
   appendChild(_canvas){
-    if(this.divEl){
-      console.log("ADD CSS?")
-      //console.log(this.divEl);
+    //console.log(this.viewDiv);
+    if(this.viewDiv){
       //console.log(_canvas);
-      this.divEl.appendChild(_canvas);
+      this.viewDiv.appendChild(_canvas);
+      window.dispatchEvent(new Event('resize'));
     }else{
       console.log("ERROR APPENDCHILD?");
     }
   }
 
-  init_editor(){
-    //van.add(document.body,editorAreaEL())
-  }
-
-  setup_render(){
+  setupRenderer(){
+    // setup renderer
     this.renderer.setSize( window.innerWidth, window.innerHeight );
-    //console.log(this.renderer);
 
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 5000 );
@@ -127,9 +112,6 @@ class CSSRender{
     //this.controls = new OrbitControls(this.camera, this.renderer.domElement)
     this.update();
   }
-  // https://threejs.org/docs/#api/en/core/Raycaster.intersectObject
-  // https://discourse.threejs.org/t/convert-screen-2d-to-world-3d-coordiate-system-without-using-raycaster/13739
-
 
   setup_window_resize(){
     window.addEventListener('resize', this.resize_window.bind(this));
@@ -168,12 +150,9 @@ class CSSRender{
 
   //update render for css
   update(){
-    requestAnimationFrame( this.update.bind(this) );
     this.renderer.render( this.scene, this.camera );
+    requestAnimationFrame( this.update.bind(this) );
   }
-
-  vec = new THREE.Vector3(); // create once and reuse
-  pos = new THREE.Vector3(); // create once and reuse
 
   resize_window(event){
 
@@ -191,44 +170,28 @@ class CSSRender{
         camera:this.camera
     })
     //console.log(pos);
-    this.resize_screen_three(pos);
+    this.viewSize={
+      x:Math.abs(pos.x*2),
+      y:(pos.y*2)
+    };
+    this.resizeViewDiv();
   }
 
-  resize_screen_three(pos){
-    if(this.cssScreen){
-      //console.log(x,y);
-      //let width = window.innerWidth / 2;
-      //let height = window.innerHeight / 2;
-      //this.cssScreen.position.set(width*-1,height*-1,0);
-
-      //this.divEl.style.width = window.innerWidth+'px';
-      //this.divEl.style.height = window.innerHeight+'px';//not working or is by ratio fixed?
-      //console.log(pos);
-      let width = Math.abs(pos.x*2);
-      //console.log(pos);
-      //console.log("width:",width);
-      this.divEl.style.width = (width)+'px';
-      this.divEl.style.height = (pos.y*2)+'px';
+  //resize view port div element
+  resizeViewDiv(){
+    if(this.viewDiv){
+      //console.log(this.viewSize);
+      this.viewDiv.style.width = (this.viewSize.x)+'px';
+      this.viewDiv.style.height = (this.viewSize.y)+'px';
     }
   }
-
-  get_screen_el(){
-    if(this.divEl){
-      //console.log(this.divEl);
-      //console.log(this.divEl.getBoundingClientRect());
-      return this.divEl;
-    }
-    return null;
-  }
-
 }
-
-
-const toggleThreeSwitch = ()=>{
+//render element and set up for doc body
+const toggleViewSwitchEL = ()=>{
 
   const isEditor = van.state(false);
   const cssRenderEL = div({id:'CSSRENDER',style:"position:fixed;top:0px;left:0px;height:100%;width:100%;"});
-  const divEL = div({id:'CSSRENDER',style:"height:100%;width:100%;"});
+  const divEL = div({id:'DIVRENDER',style:"height:100%;width:100%;"});
   const canvasEL = canvas({id:'CANVAS',style:"position:fixed;top:0px;left:0px;height:100%;width:100%;"});
 
   //base scene
@@ -238,7 +201,7 @@ const toggleThreeSwitch = ()=>{
   //console.log(threeScene.domElement());
 
   //screen for ui in div css format.
-  const screenCSS = new CSSRender({
+  const screenCSS = new TriCSS3DRenderer({
     parent:cssRenderEL // div element
   });
 
@@ -256,15 +219,7 @@ const toggleThreeSwitch = ()=>{
       threeScene.resize(window.innerWidth,window.innerHeight);
     }
     if(isEditor.val == true){
-      let _divEl = screenCSS.get_screen_el();
-      let rect = _divEl.getBoundingClientRect();
-      //console.log(rect.height);
-      //console.log(rect);
-      //threeScene.resize(rect.width,rect.height);
-      //threeScene.resize(window.innerWidth,window.innerHeight);
       threeScene.resize(null,null,{parent:'sub'});
-      //console.log("rect HEIGHT:",rect.height)
-      //console.log("WINDOW HEIGHT:",window.innerHeight)
     }
   }
 
@@ -297,4 +252,4 @@ const toggleThreeSwitch = ()=>{
 }
 
 //set up canvas and editor element
-van.add(document.body,toggleThreeSwitch())
+van.add(document.body,toggleViewSwitchEL())

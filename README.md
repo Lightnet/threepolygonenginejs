@@ -45,6 +45,8 @@
 
   The modules would handle set up for render, input, physics and other things. As well server and client filter or configure settings.
 
+  It base on the BevyEngine design. But still wanted to keep loop very simple as possible for the module set up.
+
 # Main server:
  It depend on the packages.
  Hono js is cross platform for nodejs and bun.
@@ -83,8 +85,8 @@ npm run devh
    * simple test
    * setup renderer
 
-# Code Build:
-  By using the class and ECS setup funs. Work in progress.
+# Code Build ( Work in progress. ):
+  By using the class and ECS setup funs. It is base on bevy engine design or simalar to setup but need some logic and layout design correctly for module work correct without any conflicts.
 
 ```js
 class TriECS_Sample extends TriECSEngine {
@@ -135,4 +137,4 @@ app.run();
   Note it work in progress. As the world can made to another instance world to handle scenes manage and can run back ground update. Plan ideas.
 
 # Links:
- * 
+ * https://github.com/mreinstein/ecs
