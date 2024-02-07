@@ -1,4 +1,5 @@
 //testing
+// TrackballControls block click event UI since there another element layer over top for mouse handle.
 
 // https://threejs.org/examples/#css2d_label
 // https://github.com/mrdoob/three.js/blob/master/examples/css2d_label.html
@@ -66,8 +67,8 @@ function init(){
 	earthLabel.layers.set( 0 );
   scene.add(earthLabel)
   
-  const controls = new TrackballControls( camera, cssRenderer.domElement );
-	controls.rotateSpeed = 4;
+  //const controls = new TrackballControls( camera, cssRenderer.domElement );
+	//controls.rotateSpeed = 4;
   
   window.addEventListener( 'resize', onWindowResize );
 
@@ -86,7 +87,7 @@ function init(){
     //console.log('update...');
     cssRenderer.render( scene, camera );
     renderer.render( scene, camera );
-    controls.update();
+    //controls.update();
     requestAnimationFrame( animate );
   }
 

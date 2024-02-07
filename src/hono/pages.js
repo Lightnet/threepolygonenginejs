@@ -39,7 +39,7 @@ function scriptHtml02(_script){
     "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
     "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
     "remove-array-items": "https://unpkg.com/remove-array-items@3.0.0/src/remove-array-items.js",
-    "ecs":"https://unpkg.com/ecs@0.20.0/ecs.js"
+    "ecs":"https://cdn.skypack.dev/ecs"
   }
 }
 `),

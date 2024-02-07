@@ -1,19 +1,18 @@
 // for broswer and bun server test ...
 // does not work for worker on import call for external site only local host
 
-import {van, ECS} from './baseapi.js';
+import {van} from './baseapi.js';
 
-const {button, div} = van.tags;
+const {button, div, label} = van.tags;
 
 const WorkerEL = () => {
-  const engine = van.state(null);
-  const renderEL = div({id:'threejs'});
+  const renderEL = div({id:'ECS'});
   const pool = van.state(null);
 
   function start(){
     console.log("click...")
     if(pool.val == null){
-      console.log("init...")
+      console.log("init worker...")
       try{
         pool.val = new Worker(new URL("./ecs_worker.js",import.meta.url), {
           type:"module",
@@ -22,7 +21,10 @@ const WorkerEL = () => {
         console.log(pool.val)
         pool.val.onmessage = function(event) {
           //document.getElementById("result").innerHTML = event.data;
-          console.log(event.data);
+          //console.log(event.data);
+          if(event.data?.pos){
+            console.log(event.data.pos);
+          }
         };
       }
       catch(e){
@@ -39,29 +41,20 @@ const WorkerEL = () => {
   }
 
   function init(){
-    //const renderer = new THREE.WebGLRenderer();
-    //engine.val = new CraftMobile({canvas:renderEL,isPhysics:true});
-    //console.log(engine.val);//
-    
     van.add(renderEL,button({onclick:()=>start()},'start'))
     van.add(renderEL,button({onclick:()=>stop()},'stop'))
+    van.add(renderEL,label('wasd=Key Movement test.'))
+    van.add(renderEL,label('Worker ECS Test!'))
 
-    window.addEventListener('input', InputKeys);
-    //console.log(document);
-
+    window.addEventListener('onInput', (e)=>{
+      console.log(e);
+    });//not here?
     window.addEventListener('keydown', pressDownKeyBoard)
     window.addEventListener('keyup', releaseUpKeyBoard)
   }
 
-  function InputKeys(event){
-    console.log(event)
-    if(pool.val){
-      pool.val.postMessage({type:"input",input:event.key})
-    }
-  }
-
   function pressDownKeyBoard(event){
-    console.log(event)
+    //console.log(event)
     if(pool.val){
       pool.val.postMessage({type:"keydown",input:event.key})
     }
@@ -70,7 +63,7 @@ const WorkerEL = () => {
   function releaseUpKeyBoard(event){
     //console.log(event.code)
     if(pool.val){
-      pool.val.postMessage({type:"keyup",input:event.code})
+      pool.val.postMessage({type:"keyup",input:event.key})
     }
   }
 
