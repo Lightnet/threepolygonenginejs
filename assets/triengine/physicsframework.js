@@ -37,12 +37,12 @@ class PhysicsFrameWork{
 
     // Step the simulation forward.  
     this.world.step();
-    this.updateBodies();
+    //this.updateBodies();
   }
 
   create_body_ground(){
-    let groundColliderDesc = RAPIER.ColliderDesc.cuboid(10.0, 0.1, 10.0);
-    console.log(this.world)
+    let groundColliderDesc = RAPIER.ColliderDesc.cuboid(10.0, 0.5, 10.0);
+    //console.log(this.world)
     this.world.createCollider(groundColliderDesc);
   }
 
@@ -86,7 +86,7 @@ class PhysicsFrameWork{
     let colliderDesc = RAPIER.ColliderDesc.cuboid(size.x, size.y, size.z);
     let collider = this.world.createCollider(colliderDesc, rigidBody);
 
-    console.log(rigidBody);
+    //console.log(rigidBody);
 
     //ball.userData.physicsBody = rigidBody;
     return rigidBody;

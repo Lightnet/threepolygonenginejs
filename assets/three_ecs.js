@@ -44,7 +44,7 @@ class TriECSEngine{
     //Element html
     this.setupElement();
     this.setupRenderer();
-    //window listen
+    //window listen resize
     this.setupWindowResize();
     //ECS
     this.setupECS();
