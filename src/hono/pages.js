@@ -91,22 +91,26 @@ route.get('/threeammo', (c) => {
 
 var urlandjs = [
   //{url:'/spacemobile',file:'/van_spacemobile.js'},
-  {url:'/threerapier',file:'/van_threerapier.js'},
-  {url:'/craft',file:'/van_craft.js'},
-  {url:'/three',file:'/van_three.js'},
-  {url:'/threecss',file:'/van_threecss.js'},
-  {url:'/threeswitch',file:'/van_threeswitch.js'},
-  {url:'/resizecssrender',file:'/resizecssrender.js'},
-  {url:'/entitiesomponentssystems',file:'/entitiesomponentssystems.js'},
   {url:'/chat',file:'/van_chat.js'},
-  {url:'/worker',file:'/worker_main.js'},
-  {url:'/ecs_worker',file:'/ecs_worker_main.js'},
-  {url:'/triecs_sample',file:'/three_ecs_sample.js'},
+  {url:'/craft',file:'/craft.js'},
+  {url:'/three',file:'/three_framework00.js'},
+  
+  {url:'/entitiesomponentssystems',file:'/entitiesomponentssystems.js'},
+  
+  {url:'/triecs_sample01',file:'/three_ecs_sample01.js'},
   {url:'/triecs_sample02',file:'/three_ecs_sample02.js'},
   {url:'/triecs_sample03',file:'/three_ecs_sample03.js'},
+
+  {url:'/worker',file:'/worker_main.js'},
+  {url:'/ecs_worker',file:'/ecs_worker_main.js'},
+
+  {url:'/threeammo',file:'/three_ammo.js'},
+  {url:'/threerapier',file:'/three_rapier.js'},
   {url:'/threerapierjsm',file:'/three_reapier_jsm.js'},
-  {url:'/css2dthree',file:'/css2dthree.js'},
-  {url:'/css3dthree',file:'/css3dthree.js'},
+
+  {url:'/threecss2d',file:'/three_css2drenderer.js'},
+  {url:'/threecss3d',file:'/three_css3drenderer.js'},
+  {url:'/three_css3srenderer_resize',file:'/three_css3drenderer_resize.js'},
 ]
 //console.log("URLS...");
 route.get("/:name", (c, next) => {

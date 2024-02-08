@@ -2,7 +2,6 @@
 
 import { THREE, ECS, van } from "./triengine/dps.js";
 import { TriECSEngine } from "./triengine/triecsengine.js";
-//import { TriEngine } from './triengine/triengine.js';
 
 const {button, canvas, input, label, div} = van.tags;
 
@@ -126,10 +125,7 @@ class TriCraft extends TriECSEngine{
     // ECS api
     return { onUpdate }
   }
-
-
-
-
+  
   update(){
     super.update();
     //console.log("update?");
@@ -137,26 +133,5 @@ class TriCraft extends TriECSEngine{
 
 }
 
-//set up render element to body
-const TriRenderEL = () => {
-  const engine = van.state(null);
-  const renderEL = canvas({id:'threejs'});
-
-  function init(){
-    engine.val = new TriCraft({isPhysics:true});
-    //console.log(engine.val);//
-    engine.val.run();
-  }
-
-  init();
-
-  return div(
-    renderEL
-  )
-};
-
-van.add(document.body,TriRenderEL())
-
-
-
-
+const app = new TriCraft({isPhysics:true});
+app.run();

@@ -33,6 +33,7 @@ class TriECSEngine{
   //html
   canvasEL=null;//this is for renderer canvas
   divEl=null;// CSSRENDERER
+  cssScreen=null//view for render ref.
   //ECS
   world=null;// ECS
   //browser
@@ -508,15 +509,15 @@ class TriECSEngine{
     requestAnimationFrame(this.update.bind(this));
   }
 
-  setupWindowResize(){
-    window.addEventListener('resize',this.resizeWindowHander.bind(this));
-  }
+  //setupWindowResize(){
+    //window.addEventListener('resize',this.resizeWindowHander.bind(this));
+  //}
 
-  resizeWindowHander(){
-    this.camera.aspect = window.innerWidth / window.innerHeight;
-    this.camera.updateProjectionMatrix();
-    this.renderer.setSize( window.innerWidth, window.innerHeight );
-  }
+  //resizeWindowHander(){
+    //this.camera.aspect = window.innerWidth / window.innerHeight;
+    //this.camera.updateProjectionMatrix();
+    //this.renderer.setSize( window.innerWidth, window.innerHeight );
+  //}
 
   run(){
     this.isRun=true;
@@ -530,13 +531,13 @@ class TriECSEngine{
   }
 
   // test
-  querySystemTest(world){
-    const onUpdate = function (dt) {
+  //querySystemTest(world){
+    //const onUpdate = function (dt) {
       //const entity = ECS.getEntity(world, ['scene'])
       //console.log(entity);
-    }
-    return { onUpdate }
-  }
+    //}
+    //return { onUpdate }
+  //}
 
 }
 
