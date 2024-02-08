@@ -1,7 +1,12 @@
-// rework build
+/*
+  Layout:
+    There are predefine setup for UI. There are two renders Renderer and CSS3DRenderer.
 
+*/
 
 // https://www.geeksforgeeks.org/enums-in-javascript/#:~:text=Enums%20in%20JavaScript%20are%20used,readability%2C%20maintainability%20and%20prevent%20errors.
+
+
 import { 
   THREE,
   CSS3DRenderer,
@@ -15,19 +20,26 @@ import { PhysicsFrameWork } from './physicsframework.js';
 const {canvas, div} = van.tags;
 
 class TriECSEngine{
-
-  renderer = null;
-  camera = null;
-  scene = null;
-  clock=null;
-  physics=null
+  //three.js
+  renderer=null;
+  camera=null;
+  scene=null;
+  cssRenderer=null;
+  cssScene=null;
+  cssCamera=null;
+  clock=null;//
+  //rapier
+  physics=null;//
+  isPhysics=false; // internal Physics?
+  //html
   canvasEL=null;//this is for renderer canvas
-  divEl=null;
-  world=null;
+  divEl=null;// CSSRENDERER
+  //ECS
+  world=null;// ECS
+  //browser
   currentTime = performance.now()
-  isRun=false;
-  isPhysics=false;
-
+  isRun=false; //run game loop
+  
   constructor(args={}){
     //console.log("init...");
     this.clock = new THREE.Clock();
@@ -374,7 +386,7 @@ class TriECSEngine{
     this.cssScene = new THREE.Scene();
     this.cssCamera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
     
-    //config
+    //setup
     this.cssCamera.position.set( 0, 0, 600 );
     this.cssCamera.lookAt(0,0,0);
     
