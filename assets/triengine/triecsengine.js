@@ -21,7 +21,7 @@ class TriECSEngine{
   scene = null;
   clock=null;
   physics=null
-  canvasEL=null;
+  canvasEL=null;//this is for renderer canvas
   divEl=null;
   world=null;
   currentTime = performance.now()
@@ -56,12 +56,10 @@ class TriECSEngine{
 
   //ECS
   blankSystem(world){
-    const onUpdate = function (dt) {
-
-    }
+    const onUpdate = function (dt){ };
 
     return { 
-      onUpdate 
+      onUpdate
     }
   }
 
@@ -86,22 +84,7 @@ class TriECSEngine{
     //console.log("ECS set up...")
     //console.log(this.physics)
     this.setupECS();
-    this.setupRenderer();
-    this.setupCSSRenderer();
     this.setupViews();
-
-    //testing...
-    setTimeout(()=>{
-      //console.log("update???")
-      window.dispatchEvent(new Event('resize'));
-      const ECSWin = ECS.getEntity(this.world, ['innerWidth', 'innerHeight','isResize']);
-      //console.log(ECSWin)
-      ECSWin.innerWidth = window.innerWidth+10;
-      ECSWin.innerHeight = window.innerHeight+10;
-      ECSWin.isResize = true;
-    },500)
-    
-
   }
 
   setupECS(){
@@ -110,12 +93,19 @@ class TriECSEngine{
     if(this.isPhysics){
       this.setupECSPhysics();
     }
-    
-    ECS.addSystem(this.world, this.querySystemTest);
+    // set up window listern for mouse to system
     ECS.addSystem(this.world, this.mousePositionSystem.bind(this));
     //ECS.addSystem(this.world, this.mousePositionLogSystem.bind(this));
+    // set up window inner resize to system
     ECS.addSystem(this.world, this.resizeWindowInnerSystem);
     //ECS.addSystem(this.world, this.resizeWindowInnerlogSystem); //test
+    //set up canvas renderer and system loop
+    ECS.addSystem(this.world, this.ECSRendererSystem.bind(this));
+    //setup CSS3DRenderer and system loop
+    ECS.addSystem(this.world, this.cssRendererSystem.bind(this));
+    
+
+    //ECS.addSystem(this.world, this.querySystemTest);
   }
 
   setupElement(){
@@ -127,8 +117,9 @@ class TriECSEngine{
     van.add(document.body,this.divEL);
   }
 
-  //canvas
-  setupRenderer(){
+  //ECS render system
+  ECSRendererSystem(world){
+
     let config = {}
     if(this.canvasEL){
       config.canvas = this.canvasEL;
@@ -142,10 +133,6 @@ class TriECSEngine{
     this.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
     this.camera.position.z = 5;
 
-    ECS.addSystem(this.world, this.ECSRenderSystem.bind(this));
-  }
-  //ECS render system
-  ECSRenderSystem(world){
     //set up
     const renderer = this.renderer;
     const camera = this.camera;
@@ -168,12 +155,16 @@ class TriECSEngine{
     return { onUpdate }
   }
   //INPUT user control
-  setupInput(world){
-    var keys={
-      "q":false,
+  GamePadSystem(world){
+    var KEY={
+      LEFT:false,
+      RIGHT:false,
+      UP:false,
+      DOWN:false,
     }
   }
 
+  //detect window resize only when user that will update when move to resize
   resizeWindowInnerSystem(world){
 
     const ECSInner = ECS.createEntity(world);
@@ -181,7 +172,6 @@ class TriECSEngine{
     ECS.addComponentToEntity(world, ECSInner, 'innerHeight', window.innerHeight || 0);
     ECS.addComponentToEntity(world, ECSInner, 'isResize', true);
 
-    //let isResize = false;
     let width = window.innerWidth;
     let height = window.innerHeight;
     //console.log(ECSInner);
@@ -211,9 +201,8 @@ class TriECSEngine{
       onUpdate
     };
   }
-
+  //log test resize window 
   resizeWindowInnerlogSystem(world){
-    
     const onUpdate = function (dt) {
       const ECSWin = ECS.getEntity(world, ['innerWidth', 'innerHeight']);
       if(ECSWin){
@@ -221,34 +210,22 @@ class TriECSEngine{
         console.log(ECSWin);
       }
     }
-
-    return { 
-      onUpdate
-    };
+    return { onUpdate}
   }
-  //get entity by unique id
+  // setup mouse event to get position x,y
   mousePositionSystem(world){
     //console.log("init mouse pointer...")
     const ECSPointer = ECS.createEntity(world);
-    //ECS.addComponentToEntity(world, ECSPointer, 'clientX', 0);//fail undefined
-    //ECS.addComponentToEntity(world, ECSPointer, 'clientY', 0);//fail undefined
-
     ECS.addComponentToEntity(world, ECSPointer, 'clientX', 1);// 0=will not work.
     ECS.addComponentToEntity(world, ECSPointer, 'clientY', 1);
+
+    //ECS.addComponentToEntity(world, ECSPointer, 'clientX', 0);//fail undefined
+    //ECS.addComponentToEntity(world, ECSPointer, 'clientY', 0);//fail undefined
 
     function mouseMovePoint(event){
       //console.log(event.clientX)
       ECSPointer.clientX = event.clientX;
       ECSPointer.clientY = event.clientY;
-      //console.log(world);
-      //const ECSPoint = ECS.getEntity(world, ['clientX', 'clientY']);
-      //console.log(ECSPoint)
-      //const id1 = ECS.getEntityId(world, ECSPointer);
-      //const e = ECS.getEntityById(world, id1);
-      //console.log(id1);
-      //console.log(e);
-      //e.clientX = event.clientX;
-      //e.clientY = event.clientY;
     }
 
     window.addEventListener('mousemove', mouseMovePoint);
@@ -266,9 +243,8 @@ class TriECSEngine{
       //onUpdate
     };
   }
-
+  //log mouse postion loop system
   mousePositionLogSystem(world){
-
     const onUpdate = function (dt) {
       const ECSPoint = ECS.getEntity(world, ['clientX','clientY']);
       //console.log("update pointer", ECSPoint);
@@ -276,16 +252,13 @@ class TriECSEngine{
         console.log(ECSPoint);
       }
     }
-
-    return { 
-      onUpdate
-    };
+    return { onUpdate }
   }
 
+  //CSS3DRenderer for plane view size (width, height)
   resizeCSSScreenSystem(world){
 
     const screenToWorld = this.screenToWorld;//no variable from class
-    const resizeViewPort = this.resizeViewPort.bind(this);//has variable from class
 
     const mainViewPort = ECS.createEntity(world);
     ECS.addComponentToEntity(world, mainViewPort, 'cssWindowWidth', window.innerWidth);
@@ -314,19 +287,15 @@ class TriECSEngine{
           //console.log(pos);
           CSSWin.cssWindowWidth = pos.x;
           CSSWin.cssWindowHeight = pos.y;
-          //resizeViewPort(pos);
         }
       }
     }
 
-    return { 
-      onUpdate 
-    }
+    return { onUpdate }
   }
-
-  resizeCSSScreenDivSystem(world){
+  //CSS3DObject resize Div element for canvas to fit to rendererwebgl screen
+  resizeCSSViewDivSystem(world){
     const resizeViewPort = this.resizeViewPort.bind(this)
-    const resizeRendererFromParent = this.resizeRendererFromParent.bind(this)
 
     const onUpdate = function (dt) {
       const ECSWin = ECS.getEntity(world, ['innerWidth', 'innerHeight']);
@@ -338,6 +307,21 @@ class TriECSEngine{
             x:CSSWin.cssWindowWidth,
             y:CSSWin.cssWindowHeight
           });
+        }
+      }
+    }
+    return { onUpdate }
+  }
+  // CSS3DOBJECT > CANVAS RENDERER resize to fit CSS3DRENDER for UI for html
+  resizeCSS3DRendererToCanvasRenderer(world){
+    const resizeRendererFromParent = this.resizeRendererFromParent.bind(this)
+
+    const onUpdate = function (dt) {
+      const ECSWin = ECS.getEntity(world, ['innerWidth', 'innerHeight']);
+      const CSSWin = ECS.getEntity(world, ['cssWindowWidth', 'cssWindowHeight']);
+      //console.log(CSSWin);
+      if(ECSWin && CSSWin){
+        if(ECSWin.isResize){
           resizeRendererFromParent({
             x:CSSWin.cssWindowWidth,
             y:CSSWin.cssWindowHeight
@@ -345,13 +329,11 @@ class TriECSEngine{
         }
       }
     }
-
-    return { 
-      onUpdate 
-    }
+    return { onUpdate }
   }
 
   //need better code for resize update...
+  // div element resize to fit the inner window
   resizeViewPort(size){
     //console.log(this.cssScreen)
     if(this.cssScreen){//this is div element
@@ -359,13 +341,13 @@ class TriECSEngine{
       var offset = 0;//testing...
       this.cssScreen.style.width = ((width) + offset)+'px';
       this.cssScreen.style.height = ((size.y*2) + offset)+'px';
-      //this.resizeCanvasRenderer();
     }
   }
 
+  //canvas render element resize width, height and camera update
   resizeRendererFromParent(size){
     //console.log(size);
-    if(this.renderer){
+    if(this.renderer){//make sure if renderer exist
       //let parent = this.renderer.domElement.parentNode;
       //let _width = parseFloat(String(parent.style.width).replace("px",""));
       //let _height = parseFloat(String(parent.style.height).replace("px",""));
@@ -378,32 +360,10 @@ class TriECSEngine{
       this.camera.updateProjectionMatrix();
     }
   }
+  //create CSS3DRenderer and system loop
+  //needs work on?
+  cssRendererSystem(world){
 
-  //css camera renderer scene
-  //working...
-  resizeCanvasRenderer(){
-    //console.log(this.renderer);
-    if(this.renderer && this.cssScreen){
-      //const rect = this.cssScreen.getBoundingClientRect();
-      //console.log(rect);
-      //this.renderer.setSize(rect.width,rect.height);
-      // get parnet from css div element.
-      let parent = this.renderer.domElement.parentNode;
-      //let _width = parent.getBoundingClientRect().width;
-      //let _height = parent.getBoundingClientRect().height;
-
-      let _width = parseFloat(String(parent.style.width).replace("px",""));
-      let _height = parseFloat(String(parent.style.height).replace("px",""));
-
-      this.renderer.domElement.style.width = _width + 'px';
-      this.renderer.domElement.style.height = _height + 'px';
-      this.camera.aspect = _width / _height;
-      this.camera.updateProjectionMatrix();
-    }
-  }
-
-  //div element 
-  setupCSSRenderer(){
     const _cssrenderer = new CSS3DRenderer();
     //STYLE
     _cssrenderer.domElement.style.position='fixed';
@@ -413,8 +373,7 @@ class TriECSEngine{
     this.cssRenderer = _cssrenderer;
     this.cssScene = new THREE.Scene();
     this.cssCamera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-    //setup ECS loop
-    ECS.addSystem(this.world, this.cssRendererSystem.bind(this));
+    
     //config
     this.cssCamera.position.set( 0, 0, 600 );
     this.cssCamera.lookAt(0,0,0);
@@ -423,27 +382,14 @@ class TriECSEngine{
     van.add(document.body, _cssrenderer.domElement);
     //resize window
     window.addEventListener('resize',this.resizeCSSRenderer.bind(this));
-    //setup
-    //this.createCssScreen();
-  }
 
-  resizeCSSRenderer(){
-    this.cssCamera.aspect = window.innerWidth / window.innerHeight;
-    this.cssCamera.updateProjectionMatrix();
-    this.cssRenderer.setSize( window.innerWidth, window.innerHeight );
-  }
-
-  cssRendererSystem(world){
     //console.log("init cssrenderer system...")
     const renderer = this.cssRenderer;
     const camera = this.cssCamera;
     const scene = this.cssScene;
-    //console.log(renderer)
-    //console.log(camera)
-    //console.log(scene)
 
+    //set up ECS entity for update CSS3DRenderer
     const ECSCSSRender = ECS.createEntity(world);
-
     ECS.addComponentToEntity(world, ECSCSSRender, 'cssrenderer', renderer);
     ECS.addComponentToEntity(world, ECSCSSRender, 'cssCamera', camera);
     ECS.addComponentToEntity(world, ECSCSSRender, 'cssScene', scene);
@@ -452,9 +398,18 @@ class TriECSEngine{
       //console.log("update???")
       const ECSCSS = ECS.getEntity(world, [ 'cssrenderer', 'cssCamera','cssScene']);
       //console.log(ECSCSS);
+      //update CSS3Drenderer
       ECSCSS.cssrenderer.render(ECSCSS.cssScene,ECSCSS.cssCamera);
     }
     return { onUpdate }
+  }
+
+  resizeCSSRenderer(){
+    if(this.cssRenderer){
+      this.cssCamera.aspect = window.innerWidth / window.innerHeight;
+      this.cssCamera.updateProjectionMatrix();
+      this.cssRenderer.setSize( window.innerWidth, window.innerHeight );
+    }
   }
 
   createCssScreen(){
@@ -473,9 +428,6 @@ class TriECSEngine{
     //cssElement.position.set(0, 0, 0);
     this.cssScene.add(cssElement);
     //console.log(this.cssScene);
-
-    //window.addEventListener('resize',this.cssResizeScreen.bind(this));
-    //window.addEventListener('resize',this.cssResizeScreen);//nope
   }
 
   //https://discourse.threejs.org/t/convert-screen-2d-to-world-3d-coordiate-system-without-using-raycaster/13739/6
@@ -492,21 +444,14 @@ class TriECSEngine{
     return raycaster.ray.intersectPlane(plane, worldPosition)
   }
 
-  cssResizeScreen(event){
-    //console.log(this.cssScene);
-    if(this.cssScreen){
-      this.cssScreen.style.width = window.innerWidth + 'px';
-      this.cssScreen.style.height = window.innerHeight + 'px';
-    }
-  }
-
   setupViews(){
     this.createCssScreen();
     //console.log(this.renderer.domElement);
     this.cssScreen.appendChild(this.renderer.domElement);
     //this.setupWindowResize();
     ECS.addSystem(this.world, this.resizeCSSScreenSystem.bind(this)); //
-    ECS.addSystem(this.world, this.resizeCSSScreenDivSystem.bind(this)); //
+    ECS.addSystem(this.world, this.resizeCSSViewDivSystem.bind(this)); //CSS3D Div resize
+    ECS.addSystem(this.world, this.resizeCSS3DRendererToCanvasRenderer.bind(this)); // CSS3D Renderer resize
   }
 
   //set up phyiscs ECS
@@ -524,7 +469,7 @@ class TriECSEngine{
 
     const onUpdate = function (dt) {
       const entity = ECS.getEntity(world, [ 'physicsWorld' ])
-      if(entity.physicsWorld){
+      if(entity?.physicsWorld){
         entity.physicsWorld.update();
       }
     }
@@ -539,20 +484,14 @@ class TriECSEngine{
     const newTime = performance.now();
     const frameTime = newTime - this.currentTime;  // in milliseconds, e.g. 16.64356
     this.currentTime = newTime
-    //console.log(frameTime); //display 
+    // console.log(frameTime); //display 
     // run onUpdate for all added systems
-    //console.log(this.world);
     if(this.world){//check if world exist if physics is enable is delay update var
       ECS.update(this.world, frameTime)
       // necessary cleanup step at the end of each frame loop
       ECS.cleanup(this.world)
     }
-    //if(this.renderer){
-      //this.renderer.render( this.scene, this.camera );
-    //}
-    //if(this.physics){
-      //this.physics.update();
-    //}
+
     requestAnimationFrame(this.update.bind(this));
   }
 
@@ -577,16 +516,12 @@ class TriECSEngine{
     this.isRun = false;
   }
 
-  //
+  // test
   querySystemTest(world){
-
     const onUpdate = function (dt) {
-
       //const entity = ECS.getEntity(world, ['scene'])
       //console.log(entity);
-
     }
-
     return { onUpdate }
   }
 
