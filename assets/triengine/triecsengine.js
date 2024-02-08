@@ -11,7 +11,6 @@ import {
   THREE,
   CSS3DRenderer,
   CSS3DObject,
-  OrbitControls, 
   ECS,
   van
 } from "./dps.js";
@@ -67,13 +66,10 @@ class TriECSEngine{
   }
 
   //ECS
-  blankSystem(world){
-    const onUpdate = function (dt){ };
-
-    return { 
-      onUpdate
-    }
-  }
+  //blankSystem(world){
+    //const onUpdate = function (dt){ };
+    //return { onUpdate }
+  //}
 
   getScene(){
     return this.scene;
@@ -88,13 +84,12 @@ class TriECSEngine{
   }
 
   setup(){
-    //Element html
+    //canvas and deiv element
     this.setupElement();
     //window listen
     //this.setupWindowResize();
     //ECS
     //console.log("ECS set up...")
-    //console.log(this.physics)
     this.setupECS();
     this.setupViews();
   }
@@ -173,6 +168,12 @@ class TriECSEngine{
       RIGHT:false,
       UP:false,
       DOWN:false,
+    }
+    const onUpdate = function (dt) {
+
+    }
+    return {
+      //onUpdate
     }
   }
 
@@ -269,7 +270,7 @@ class TriECSEngine{
 
   //CSS3DRenderer for plane view size (width, height)
   resizeCSSScreenSystem(world){
-
+    // 2D mouse to plane 3D pos
     const screenToWorld = this.screenToWorld;//no variable from class
 
     const mainViewPort = ECS.createEntity(world);

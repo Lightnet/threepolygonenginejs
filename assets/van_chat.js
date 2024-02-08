@@ -1,6 +1,7 @@
 // testing chat message
 
-import van from "https://cdn.jsdelivr.net/gh/vanjs-org/van/public/van-1.2.1.min.js";
+//import van from "https://cdn.jsdelivr.net/gh/vanjs-org/van/public/van-1.2.1.min.js";
+import { van } from "./triengine/dps.js";
 const {button, canvas, input, label, div} = van.tags;
 import '/socket.io/socket.io.js';
 

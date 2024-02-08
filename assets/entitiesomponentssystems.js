@@ -1,8 +1,9 @@
 //testing ECS only
 // https://github.com/mreinstein/ecs
 
-import ECS from 'https://cdn.skypack.dev/ecs';
-import van from "https://cdn.jsdelivr.net/gh/vanjs-org/van/public/van-1.2.1.min.js";
+//import ECS from 'https://cdn.skypack.dev/ecs';
+//import van from "https://cdn.jsdelivr.net/gh/vanjs-org/van/public/van-1.2.1.min.js";
+import { ECS, van } from "./triengine/dps";
 const {button, label, br, div} = van.tags;
 
 // generates a new entity component system

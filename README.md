@@ -47,9 +47,22 @@
 
   It base on the BevyEngine design. But still wanted to keep loop very simple as possible for the module set up.
 
+## How many many entities?(Notes):
+  Have not test how many enities that depend on how to set up. One reason is the system loop up for mesh and physics sync.
+
+  The longer the loop call the lag? There is logic loop for each entities for example pathing and A.I behavior.
+
+  It needs to be tested for offloading some worker threads.
+
 # Main server:
  It depend on the packages.
  Hono js is cross platform for nodejs and bun.
+
+ It would use socket.io.
+
+ It will use ECS.js package for easy handle loop update. As well worker threads. To handle game instances.
+
+ It will use default SQLITE and helper package.
 
 # Server:
 ```
@@ -58,6 +71,46 @@ npm run devh
 
 # Layout:
   Work in progress build.
+
+
+```
+|| = browser  = ||
+|| = Packages = ||
+|| three        ||
+|| socket.io    ||
+|| van          ||
+|| ecs          ||      || ==================||
+|| phyiscs ()   || == > || Pyhiscs Framework || (physicsframework.js)
+|| =============||      || prefab            ||
+    | |                 || world             ||
+    | |                 || ==================||
+    | |                        | |
+    | |                        | |
+     V                          V
+
+|| ==================================== ||
+|| 
+|| Class Engine Frame Work (triecsengine.js)
+|| -Entities Components Systems
+|| -html element UI
+|| -Physics
+|| -Prefabs
+|| -Editor UI
+|| -UI
+|| ==================================== ||
+ | |
+ | |
+ | |
+  V
+|| = ================================== ||
+|| Class sample extends Engine Frame Work
+|| setup
+|| create
+|| run
+|| = ================================== ||
+
+```
+Work in progress current prototype build.
 
 ## files:
  * triecsengine.js

@@ -1,7 +1,7 @@
 // for broswer and bun server test ...
 // does not work for worker on import call for external site only local host
 
-import {van} from './baseapi.js';
+import { van } from "./triengine/dps";
 
 const {button, div, label} = van.tags;
 
