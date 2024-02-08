@@ -64,13 +64,24 @@ npm run devh
    * server (node/bun n/a)
    * client (browser wip)
    * ECS
+     * setup (wip)
      * update (part done)
      * remove (n/a)
-   * renderer (part done)
-   * physics (part done)
-     * rapier (wip)
-     * ammo (prototype)
-     * cannon-es (n/a)
+     * Renderer (part done)
+       * setup (added)
+       * update (added)
+     * CSS3DRenderer (part done)
+       * setup (added)
+       * update (added)
+     * Resize (part done)
+       * Renderer
+       * CSS3DRender
+     * physics (part done)
+       * rapier (wip)
+         * setup (added)
+         * update (added)
+       * ammo (prototype)
+       * cannon-es (n/a)
    * socket.io (N/A)
      * login
      * multiplayer
