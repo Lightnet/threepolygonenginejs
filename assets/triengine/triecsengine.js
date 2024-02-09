@@ -16,7 +16,12 @@ import {
 } from "./dps.js";
 import { PhysicsFrameWork } from './physicsframework.js';
 
-const {canvas, div} = van.tags;
+const {
+  canvas, 
+  div, 
+  button, 
+  input
+} = van.tags;
 
 class TriECSEngine{
   //three.js
@@ -39,6 +44,8 @@ class TriECSEngine{
   //browser
   currentTime = performance.now()
   isRun=false; //run game loop
+  //
+  isEditor=false;
   
   constructor(args={}){
     //console.log("init...");
@@ -55,6 +62,9 @@ class TriECSEngine{
       });
     }else{
       this.setup();
+    }
+    if(args?.isEditor==true){
+      this.isEditor=true;
     }
   }
 
@@ -93,6 +103,8 @@ class TriECSEngine{
     //console.log("ECS set up...")
     this.setupECS();
     this.setupViews();
+    //testing...
+    this.setupEditor()
   }
 
   setupECS(){
@@ -528,6 +540,35 @@ class TriECSEngine{
 
   stop(){
     this.isRun = false;
+  }
+
+  setupEditor(){
+    this.setupEditorLeftBar();
+  }
+
+  setupEditorLeftBar(){
+    const cssDiv = div({id:'CSS3DEditor',style:"width:800px;height:600px;"})
+    //cssDiv.style.width = window.innerWidth + 'px';
+    cssDiv.style.width = 200 + 'px';
+    cssDiv.style.height = window.innerHeight + 'px';
+    cssDiv.style.backgroundColor ="lightblue";
+    //cssDiv.style.opacity = "0.5";//test
+    this.CSS3DEditorLeftBar = cssDiv;
+    var cssElement = new CSS3DObject(cssDiv);
+    console.log(cssElement);
+    cssElement.position.set(//left side bar
+      ((window.innerWidth/2) - (200/2))*-1   , //0, //x
+      0, //y
+      0.5//front
+    );
+    this.cssScene.add(cssElement);
+    //function clickTest(){
+      //console.log("test");
+    //}
+    //const _panel = div({},
+      //button({onclick:()=>clickTest()},'Hello')
+    //);
+    //cssDiv.appendChild(_panel);
   }
 
   // test

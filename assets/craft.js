@@ -80,6 +80,7 @@ class TriCraft extends TriECSEngine{
     //this.setupGround();
     //this.setupBall();
     ECS.addSystem(this.world,this.boxSampleSystem.bind(this));
+    ECS.addSystem(this.world,this.editorSystem.bind(this));
   }
 
   boxSampleSystem(world){
@@ -125,7 +126,31 @@ class TriCraft extends TriECSEngine{
     // ECS api
     return { onUpdate }
   }
-  
+  // https://rapier.rs/docs/user_guides/javascript/rigid_bodies/#position
+  editorSystem(world){
+    function clickTest(){
+      console.log("test");
+      const Entity = ECS.getEntity(world, [ 'mesh','rigbody']);
+      console.log(Entity);
+      if(Entity){
+        Entity.rigbody.setTranslation({ x: 0.0, y: 5.0, z: 0.0 }, true);
+      }
+
+    }
+    const _panel = div({},
+      button({onclick:()=>clickTest()},'Reset')
+    );
+    this.CSS3DEditorLeftBar.appendChild(_panel);
+
+
+    const onUpdate = function (dt) {
+
+    }
+    return { 
+      //onUpdate
+    }
+  }
+
   update(){
     super.update();
     //console.log("update?");
@@ -133,5 +158,5 @@ class TriCraft extends TriECSEngine{
 
 }
 
-const app = new TriCraft({isPhysics:true});
+const app = new TriCraft({isPhysics:true,isEditor:true});
 app.run();

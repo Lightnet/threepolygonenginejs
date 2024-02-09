@@ -1,6 +1,14 @@
 //prototype
 
-import RAPIER from 'https://cdn.skypack.dev/@dimforge/rapier3d-compat';
+// https://rapier.rs/docs/user_guides/javascript/colliders#collision-groups-and-solver-groups
+// https://rapier.rs/docs/user_guides/javascript/colliders#active-events
+// https://rapier.rs/docs/user_guides/javascript/advanced_collision_detection_js
+// 
+// 
+// 
+// 
+//import RAPIER from 'https://cdn.skypack.dev/@dimforge/rapier3d-compat';
+import { RAPIER } from './dps.js';
 import Observable from './Observable.js';
 
 class PhysicsFrameWork{
@@ -13,6 +21,7 @@ class PhysicsFrameWork{
   gravity = { x: 0.0, y: -9.81, z: 0.0 };
 
   event=null;
+  eventQueue=null;
 
   constructor(args){
     this.event = new Observable();
@@ -24,8 +33,25 @@ class PhysicsFrameWork{
     await RAPIER.init();
     // set up world
     this.world = new RAPIER.World(this.gravity);
+    this.eventQueue = new RAPIER.EventQueue(true);
+    this.setupEventQueue();
+
     // fire event when ready to init other
     this.event.fireEvent("Ready");
+  }
+  // https://rapier.rs/docs/user_guides/javascript/advanced_collision_detection_js
+  //need better callback handler...
+  //need to be on three framework?
+  setupEventQueue(){
+    this.eventQueue.drainCollisionEvents((handle1, handle2, started) => {
+      /* Handle the collision event. */
+    });
+  
+    this.eventQueue.drainContactForceEvents(event => {
+      let handle1 = event.collider1(); // Handle of the first collider involved in the event.
+      let handle2 = event.collider2(); // Handle of the second collider involved in the event.
+      /* Handle the contact force event. */
+    });
   }
 
   update(delta){
