@@ -104,7 +104,9 @@ class TriECSEngine{
     this.setupECS();
     this.setupViews();
     //testing...
-    this.setupEditor()
+    if(this.isEditor){
+      this.setupEditor();
+    }
   }
 
   setupECS(){

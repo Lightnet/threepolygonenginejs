@@ -1,6 +1,8 @@
 //testing
-import { THREE, ECS } from "./triengine/dps.js";
+// cube rotate test
+import { THREE, ECS, van } from "./triengine/dps.js";
 import { TriECSEngine } from "./triengine/triecsengine.js";
+const {button, canvas, input, label, div} = van.tags;
 
 class TriECS_Sample extends TriECSEngine {
   constructor(args={}){
