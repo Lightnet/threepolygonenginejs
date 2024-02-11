@@ -180,6 +180,7 @@ if(typeServer=='node'){
     `http://localhost:${PORT}/triecs_sample01`,
     `http://localhost:${PORT}/triecs_sample02`,
     `http://localhost:${PORT}/triecs_sample03`,
+    `http://localhost:${PORT}/triecs_sample04`,
   ];
 
   for(var myurl in urlList){

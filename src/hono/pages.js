@@ -100,6 +100,7 @@ var urlandjs = [
   {url:'/triecs_sample01',file:'/three_ecs_sample01.js'},
   {url:'/triecs_sample02',file:'/three_ecs_sample02.js'},
   {url:'/triecs_sample03',file:'/three_ecs_sample03.js'},
+  {url:'/triecs_sample04',file:'/three_ecs_sample04.js'},
 
   {url:'/worker',file:'/worker_main.js'},
   {url:'/ecs_worker',file:'/ecs_worker_main.js'},
