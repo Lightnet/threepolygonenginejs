@@ -29,39 +29,45 @@ class TriECS_Sample extends TriECSEngine {
     const scene = this.getScene();
     const camera = this.getCamera();
     camera.position.z = 5;
-    //GEO BOX 
+
+    //OBJ GROUND
     const geometry = new THREE.BoxGeometry( 1, 1, 1 );
     const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-    const cube = new THREE.Mesh( geometry, material );
-    //ECS BOX
-    const ECSEntity = ECS.createEntity(world);
-    ECS.addComponentToEntity(world, ECSEntity, 'mesh', cube);
-    const rigbodyBox = this.physics.create_body_ground();
-
-
-    scene.add(cube);
-    //GROUND
-    const geoGround = new THREE.BoxGeometry( 1, 1, 1 );
-    const matGround = new THREE.MeshBasicMaterial( { color: 0x00ffff } );
-    const ground = new THREE.Mesh( geoGround, matGround );
-    ground.position.y=-1;
-
-    const rigbodyGround = this.physics.create_body_cube({pos:{y:2}});
-
-    const ECSGROUND = ECS.createEntity(world);
-    ECS.addComponentToEntity(world, ECSGROUND, 'mesh', ground);
-    ECS.addComponentToEntity(world, ECSGROUND, 'rigbody', rigbodyGround);
-
+    const ground = new THREE.Mesh( geometry, material );
+    //PHYSICS
+    const rigbodyGround = this.physics.create_body_ground();
+    //ECS GROUND
+    const entity_Ground = ECS.createEntity(world);
+    ECS.addComponentToEntity(world, entity_Ground, 'mesh', ground);
+    ECS.addComponentToEntity(world, entity_Ground, 'rigbody', rigbodyGround);
+    ECS.addComponentToEntity(world, entity_Ground, 'id', 'ground');
+    //SCENE
     scene.add(ground);
+
+    //OBJ CUBE
+    const geoCube = new THREE.BoxGeometry( 1, 1, 1 );
+    const matCube = new THREE.MeshBasicMaterial( { color: 0x00ffff } );
+    const cube = new THREE.Mesh( geoCube, matCube );
+    //PHYSICS
+    const rigbodyCube = this.physics.create_body_cube({pos:{y:2}});
+    //ECS
+    const entity_Cube = ECS.createEntity(world);
+    ECS.addComponentToEntity(world, entity_Cube, 'mesh', cube);
+    ECS.addComponentToEntity(world, entity_Cube, 'rigbody', rigbodyCube);
+    ECS.addComponentToEntity(world, entity_Cube, 'id', 'cube');
+    //SCENE
+    scene.add(cube);
 
     //loop update for ECS
     const onUpdate = function (dt) {
-      const Entity = ECS.getEntity(world, [ 'mesh','rigbody']);
-      if(Entity){
-        //Entity.mesh.rotation.x += 0.01;
-        //Entity.mesh.rotation.y += 0.01;
-        //console.log(Entity.rigbody.translation())
-        Entity.mesh.position.copy(Entity.rigbody.translation())
+      const Entities = ECS.getEntities(world, [ 'mesh','rigbody']);
+      for(const entity of Entities){
+        if(entity){
+          //console.log(entity);
+          //console.log(Entity.rigbody.translation())
+          entity.mesh.position.copy(entity.rigbody.translation())
+          entity.mesh.quaternion.copy(entity.rigbody.rotation())
+        }
       }
     }
     // ECS api
@@ -72,12 +78,17 @@ class TriECS_Sample extends TriECSEngine {
   editorSystem(world){
     function clickReset(){
       console.log("test");
-      const Entity = ECS.getEntity(world, [ 'mesh','rigbody']);
-      console.log(Entity);
-      if(Entity){
-        Entity.rigbody.setTranslation({ x: 0.0, y: 5.0, z: 0.0 }, true);
+      const Entities = ECS.getEntities(world, [ 'mesh','rigbody']);
+      for(const entity of Entities){
+        if(entity?.id=='cube'){
+          console.log(entity);
+          entity.rigbody.setTranslation({ x: 0.0, y: 5.0, z: 0.0 }, true);
+          entity.rigbody.setRotation({ w: 1.0, x: 0.0, y: 0.0, z: 0.0 }, true)
+          entity.rigbody.setLinvel({ x: 0.0, y: 0.0, z: 0.0 }, true);//need to reset zero
+          entity.rigbody.setAngvel({ x: 0.0, y: 0.0, z: 0.0 }, true);//need to reset zero
+          break;
+        }
       }
-
     }
     const _panel = div({},
       button({onclick:()=>clickReset()},'Reset')

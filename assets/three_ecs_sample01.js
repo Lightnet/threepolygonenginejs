@@ -25,16 +25,16 @@ class TriECS_Sample extends TriECSEngine {
     const camera = this.getCamera();
 
     camera.position.z = 5;
-
+    //MESH
     const geometry = new THREE.BoxGeometry( 1, 1, 1 );
     const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
     const cube = new THREE.Mesh( geometry, material );
-
+    //ECS
     const ECSEntity = ECS.createEntity(this.world);
     ECS.addComponentToEntity(this.world, ECSEntity, 'mesh', cube);
-
+    //SCENE
     scene.add(cube);
-
+    
     //loop update
     const onUpdate = function (dt) {
       const Entity = ECS.getEntity(world, [ 'mesh']);

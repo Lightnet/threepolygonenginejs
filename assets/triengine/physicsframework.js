@@ -56,9 +56,9 @@ class PhysicsFrameWork{
   
   create_body_ground(){
     let rigidBodyDesc = RAPIER.RigidBodyDesc.fixed()
-      .setTranslation(0,-2,0);
+      .setTranslation(0.0,-2.0,0.0);
     let rigidBody = this.world.createRigidBody(rigidBodyDesc);
-    let groundColliderDesc = RAPIER.ColliderDesc.cuboid(10.0, 0.5, 10.0);
+    let groundColliderDesc = RAPIER.ColliderDesc.cuboid(0.5, 0.5, 0.5);
     let collider = this.world.createCollider(groundColliderDesc, rigidBody);
     console.log(collider);
     return rigidBody;
