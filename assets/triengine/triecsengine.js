@@ -126,10 +126,10 @@ class TriECSEngine{
     //setup CSS3DRenderer and system loop
     ECS.addSystem(this.world, this.cssRendererSystem.bind(this));
     
-
     //ECS.addSystem(this.world, this.querySystemTest);
   }
 
+  //HTML ELEMENT for render attach to doc > body > div > render
   setupElement(){
     this.divEL = div({id:'CSSRENDER',style:"height:100%;width:100%;"});
     this.canvasEL = canvas({id:'CANVAS',style:"position:fixed;top:0px;left:0px;height:100%;width:100%;"});
