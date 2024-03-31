@@ -97,6 +97,15 @@ app.get('/', (c) => {
         margin: 0px 0px 0px 0px;
         overflow: hidden;
       }
+      `),
+      script({type:"importmap"},`{
+        "imports": {
+          "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+          "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
+          "remove-array-items": "https://unpkg.com/remove-array-items@3.0.0/src/remove-array-items.js",
+          "ecs":"https://cdn.skypack.dev/ecs"
+        }
+      }
       `)
     ),
     body(

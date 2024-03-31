@@ -1,6 +1,6 @@
 // https://stackoverflow.com/questions/12446317/change-url-without-redirecting-using-javascript
 
-import van from "https://cdn.jsdelivr.net/gh/vanjs-org/van/public/van-1.2.1.min.js";
+import van from "https://cdn.jsdelivr.net/gh/vanjs-org/van/public/van-1.5.0.min.js";
 const {button, input, label, div, script, pre, p, ul, li, a} = van.tags;
 
 import appState from "./context.js";
@@ -101,15 +101,3 @@ const IndexEL = () => {
 export{
   IndexEL,
 }
-
-
-
-
-
-
-
-
-
-
-
-
