@@ -1,4 +1,4 @@
-import van from "https://cdn.jsdelivr.net/gh/vanjs-org/van/public/van-1.2.1.min.js";
+import van from "van";
 const {button, input, label, div, script, pre, p, ul, li, a} = van.tags;
 
 const AccountEL = () => {

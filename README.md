@@ -11,8 +11,11 @@
 
 # Created By: Lightnet
 
+# Status:
+ * Unstable.
+
 # Programings Languages:
- * javascript
+ * javascript module
  * nodejs
  * bun
 

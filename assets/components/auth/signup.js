@@ -1,67 +1,10 @@
 
-import van from "https://cdn.jsdelivr.net/gh/vanjs-org/van/public/van-1.2.1.min.js";
-const {button, input, label, div, table, tbody, td, tr,  a} = van.tags;
 
-// https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
-
-async function useFetch(url, option){
-  try {
-    let options = option || {};
-    options.headers={
-      'Content-Type':'application/json',
-    };
-    const rep = await fetch(url, options);
-    const data = await rep.json();
-    return data;
-  } catch (error) {
-    console.log(error);
-    return {api:'ERROR'};
-  }
-}
-
-
-const LoginEL = () => {
-  const user = van.state('guest');
-  const pass = van.state('guest');
-
-  async function c_login(){
-    console.log("Login...")
-    console.log(user.val)
-    console.log(pass.val)
-
-    let data = await useFetch('/api/auth/signin',{
-      method:'POST',
-      body:JSON.stringify({
-        alias:user.val,
-        passphrase:pass.val,
-      })
-    });
-    console.log(data);
-  }
-
-  return div({id:'login'},
-  label('Login'),
-  table(
-    tbody(
-      tr(
-        td(label('User:')),
-        td(input({value:user, oninput:e=>user.val=e.target.value}))
-      ),
-      tr(
-        td(label('Passphrase:')),
-        td(input({value:pass, oninput:e=>pass.val=e.target.value}))
-      ),
-      tr(
-        td(
-          button({onclick:c_login},'Login')
-        )
-      )
-    )
-  )
-  )
-}
+import van from "van";
+const {button, input, label, div, table, tbody, tr, td} = van.tags;
 
 const SignUpEL = () => {
+
   const displayuser = van.state('guest');
   const username = van.state('guest');
   const pass = van.state('guest');
@@ -122,13 +65,6 @@ const SignUpEL = () => {
   )
 }
 
-const ForgotEL = () => {
-  return div({id:'Forgot'},)
-
-}
-
-export {
-  LoginEL,
+export{
   SignUpEL,
-  ForgotEL,
 }

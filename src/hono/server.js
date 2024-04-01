@@ -103,7 +103,12 @@ app.get('/', (c) => {
           "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
           "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
           "remove-array-items": "https://unpkg.com/remove-array-items@3.0.0/src/remove-array-items.js",
-          "ecs":"https://cdn.skypack.dev/ecs"
+          "ecs":"https://cdn.skypack.dev/ecs",
+          "vanjs-core":"https://cdn.jsdelivr.net/npm/vanjs-core@1.5.0/src/van.min.js",
+          "van":"https://cdn.jsdelivr.net/gh/vanjs-org/van/public/van-1.5.0.min.js",
+          "vanjs-ui":"https://cdn.jsdelivr.net/npm/vanjs-ui@0.10.0/dist/van-ui.min.js",
+          "vanjs-ext":"https://cdn.jsdelivr.net/npm/vanjs-ext@0.4.0/src/van-x.js",
+          "vanjs-routing":"https://cdn.jsdelivr.net/npm/vanjs-routing@1.1.3/dist/index.min.js"
         }
       }
       `)
@@ -111,7 +116,8 @@ app.get('/', (c) => {
     body(
       //p("Your user-agent is: ", req.headers["user-agent"] ?? "Unknown"),
       //p("👋Hello"),
-      script({type:"module",src:"/vanjs_client.js"})
+      //script({type:"module",src:"/vanjs_client.js"})
+      script({type:"module",src:"/index.js"})
     ),
   );
   return c.html(pageHtml);

@@ -1,37 +1,8 @@
+
 import van from "van";
 const {button, input, label, div, br, textarea, script, ul, li, a} = van.tags;
 
-const GameEL = () => {
-
-  const view = van.state('entity');
-
-  return div({id:'game'},
-  div(
-    button({onclick:()=>view.val='home'},'home'),
-    button({onclick:()=>view.val='entity'},'entity'),
-    button({onclick:()=>view.val='settings'},'settings'),
-  ),
-  van.derive(()=>{
-    let _view = view.val;
-    if(_view=='home'){
-      return EntityEL();
-    }
-    if(_view=='entity'){
-      return EntityEL();
-    }
-    if(_view=='settings'){
-      return EntityEL();
-    }
-  }),
-  label('END')
-  )
-}
-
-function create_entity(){
-  console.log('TEST');
-}
-
-const EntityEL = () => {
+const GameObjectEntity = () => {
 
   const entities = van.state([]);
 
@@ -66,6 +37,6 @@ const EntityEL = () => {
   )
 };
 
-export{
-  GameEL
+export {
+  GameObjectEntity
 }
