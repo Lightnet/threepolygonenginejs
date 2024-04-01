@@ -1,4 +1,10 @@
-
+/*
+  Project Name: threepolygonenginejs
+  License: MIT
+  Created By: Lightnet
+  GitHub: https://github.com/Lightnet/threepolygonenginejs
+  
+*/
 
 import van from "van";
 import { Router, Link, getRouterParams, navigate, getRouterQuery } from "vanjs-routing";

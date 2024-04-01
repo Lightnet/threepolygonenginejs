@@ -6,14 +6,11 @@
   
 */
 
-const isDebug = true;
+//testing sandbox
 
-function log(args){
-  if(isDebug){
-    console.log(args)
-  }
-}
+console.log('test test');
 
-export{
-  log
+export function sayHello() {
+  console.log("say hello");
+  return "hello"
 }

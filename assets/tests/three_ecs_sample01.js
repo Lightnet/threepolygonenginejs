@@ -1,7 +1,15 @@
+/*
+  Project Name: threepolygonenginejs
+  License: MIT
+  Created By: Lightnet
+  GitHub: https://github.com/Lightnet/threepolygonenginejs
+  
+*/
+
 //testing
 // cube rotate test
-import { THREE, ECS, van } from "./triengine/dps.js";
-import { TriECSEngine } from "./triengine/triecsengine.js";
+import { THREE, ECS, van } from "../triengine/dps.js";
+import { TriECSEngine } from "../triengine/triecsengine.js";
 const {button, canvas, input, label, div} = van.tags;
 
 class TriECS_Sample extends TriECSEngine {

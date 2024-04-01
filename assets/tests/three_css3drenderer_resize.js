@@ -1,14 +1,22 @@
+/*
+  Project Name: threepolygonenginejs
+  License: MIT
+  Created By: Lightnet
+  GitHub: https://github.com/Lightnet/threepolygonenginejs
+  
+*/
+
 // testing resize
 
 // https://threejs.org/docs/#api/en/core/Raycaster.intersectObject
 // https://discourse.threejs.org/t/convert-screen-2d-to-world-3d-coordiate-system-without-using-raycaster/13739
 
 
-import { THREE, van } from "./triengine/dps.js";
+import { THREE, van } from "../triengine/dps.js";
 const {button, canvas, div} = van.tags;
 
 import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
-import { ThreeScene } from "./triengine/threescene.js";
+import { ThreeScene } from "../triengine/threescene.js";
 
 var content = '<div>' +
 '</div>';

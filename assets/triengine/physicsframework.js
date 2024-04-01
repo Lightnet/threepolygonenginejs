@@ -1,3 +1,11 @@
+/*
+  Project Name: threepolygonenginejs
+  License: MIT
+  Created By: Lightnet
+  GitHub: https://github.com/Lightnet/threepolygonenginejs
+  
+*/
+
 //prototype
 
 // https://rapier.rs/docs/user_guides/javascript/colliders#collision-groups-and-solver-groups

@@ -1,3 +1,11 @@
+/*
+  Project Name: threepolygonenginejs
+  License: MIT
+  Created By: Lightnet
+  GitHub: https://github.com/Lightnet/threepolygonenginejs
+  
+*/
+
 // https://stackoverflow.com/questions/9671995/javascript-custom-event-listener
 
 /***************************************************************

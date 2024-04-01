@@ -1,16 +1,26 @@
-
+/*
+  Project Name: threepolygonenginejs
+  License: MIT
+  Created By: Lightnet
+  GitHub: https://github.com/Lightnet/threepolygonenginejs
+  
+*/
 
 import van from "vanjs-core";
 import { Router, Link, getRouterParams, navigate } from "vanjs-routing";
 
 import { AboutComponent } from "./pages/about.js";
-import { HelpComponent } from "./pages/help.js";
+import { HelpPage } from "./pages/help.js";
 import { HomeComponent } from "./pages/home.js";
 import { GamePage } from "./pages/game.js";
 import { GameEditorPage } from "./pages/gameeditor.js";
 import { GameObjectPage } from "./pages/gameobject.js";
-import { SignInPage, SignOutPage, SignUpPage } from "./pages/auth.js";
+import { ForgotPage, SignInPage, SignOutPage, SignUpPage } from "./pages/auth.js";
 import { MessagePage } from "./pages/message.js";
+import { BlogPage } from "./pages/blog.js";
+import { ForumPage } from "./pages/forum.js";
+import { AccountPage } from "./pages/account.js";
+import { SettingPage } from "./pages/settings.js";
 //import van from 'van';
 
 const {button, div, pre, p} = van.tags
@@ -23,11 +33,12 @@ const App = () => {
     routes: [
       { path: "/", component: HomeComponent },
       { path: "/about", component: AboutComponent },
-      { path: "/account", component: BlankComponent },
+      { path: "/account", component: AccountPage },
       { path: "/signin", component: SignInPage },
       { path: "/signup", component: SignUpPage },
       { path: "/signout", component: SignOutPage },
-      { path: "/forgot", component: BlankComponent },
+      { path: "/forgot", component: ForgotPage },
+      { path: "/settings", component: SettingPage },
 
 
       { path: "/game", component: GamePage },
@@ -38,10 +49,11 @@ const App = () => {
 
       { path: "/message", component: MessagePage },
 
-      { path: "/blog", component: MessagePage },
-      { path: "/forum", component: MessagePage },
+      { path: "/blog", component: BlogPage },
+      { path: "/forum", component: ForumPage },
 
-      { path: "/help/:section", component: BlankComponent },
+      { path: "/help", component: HelpPage },
+      { path: "/help/:section", component: HelpPage },
     ]
   });
 }
@@ -88,3 +100,5 @@ function BlankComponent() {
 export{
   App
 }
+
+export default App;

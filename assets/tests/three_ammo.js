@@ -1,4 +1,12 @@
 /*
+  Project Name: threepolygonenginejs
+  License: MIT
+  Created By: Lightnet
+  GitHub: https://github.com/Lightnet/threepolygonenginejs
+  
+*/
+
+/*
   Information:
     vanjs main client entry point
     Note working... odd way to load.
@@ -15,8 +23,8 @@
 //console.log(Ammo);//check if loaded...
 
 import { AmmoPhysics } from 'https://unpkg.com/three@0.160.0/examples/jsm/physics/AmmoPhysics.js';
-import {TriEngine} from './triengine/triengine.js';
-import { THREE, van } from './triengine/dps.js';
+import {TriEngine} from '../triengine/triengine.js';
+import { THREE, van } from '../triengine/dps.js';
 const {button, canvas, input, label, div} = van.tags;
 
 let colGroupPlane = 1, colGroupRedBall = 2, colGroupGreenBall = 4;

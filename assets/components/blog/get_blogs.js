@@ -1,8 +1,17 @@
-import van from "https://cdn.jsdelivr.net/gh/vanjs-org/van/public/van-1.2.1.min.js"
-import { waitForElement } from "./helper.js";
+/*
+  Project Name: threepolygonenginejs
+  License: MIT
+  Created By: Lightnet
+  GitHub: https://github.com/Lightnet/threepolygonenginejs
+  
+*/
+
+import van from "van";
 //import EditorJS from '/editorjs.js';
 
 const {button, textarea, input, label, div, br, h1, p} = van.tags;
+
+
 
 const BlogEL = () => {
   const isBlogPost = van.state(false);
@@ -192,8 +201,6 @@ const BlogEL = () => {
     blogsEL,
   )
 }
-
-//van.add(document.body, BlogEL())
 
 const BlogPostEL = ({onClose}) =>{
 

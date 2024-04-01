@@ -1,4 +1,12 @@
-import van from "https://cdn.jsdelivr.net/gh/vanjs-org/van/public/van-1.2.1.min.js"
+/*
+  Project Name: threepolygonenginejs
+  License: MIT
+  Created By: Lightnet
+  GitHub: https://github.com/Lightnet/threepolygonenginejs
+  
+*/
+
+import van from "van";
 const {button, input, label, div, script, pre, p, ul, li, a, table, tbody, tr,td} = van.tags;
 
 async function useFetch(url, option){

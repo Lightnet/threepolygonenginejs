@@ -1,3 +1,11 @@
+/*
+  Project Name: threepolygonenginejs
+  License: MIT
+  Created By: Lightnet
+  GitHub: https://github.com/Lightnet/threepolygonenginejs
+  
+*/
+
 //testing...
 
 import { 
@@ -6,7 +14,7 @@ import {
   CSS3DRenderer,
   CSS3DObject,
   OrbitControls
-} from "./triengine/dps.js";
+} from "../triengine/dps.js";
 import { TrackballControls } from 'three/addons/controls/TrackballControls.js';
 
 const { 

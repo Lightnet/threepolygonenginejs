@@ -1,6 +1,14 @@
+/*
+  Project Name: threepolygonenginejs
+  License: MIT
+  Created By: Lightnet
+  GitHub: https://github.com/Lightnet/threepolygonenginejs
+  
+*/
+
 //testing
 
-import { THREE, van } from "./triengine/dps.js";
+import { THREE, van } from "../triengine/dps.js";
 const {div} = van.tags;
 
 import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';

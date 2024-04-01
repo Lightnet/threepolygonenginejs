@@ -7,15 +7,16 @@
 */
 
 import van from "van";
-const {button, input, label, div, script, pre, p, ul, li, a} = van.tags;
 
-function MessagePage(){
+const {button, input, label, div, table, tbody, tr, td} = van.tags;
 
-  return div({id:'message'},
-    label('Message')
+const SettingPage = () => {
+
+  return div(
+    label('Settings')
   )
 }
 
 export {
-  MessagePage
+  SettingPage
 }

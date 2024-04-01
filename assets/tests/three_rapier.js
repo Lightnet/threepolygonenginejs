@@ -1,4 +1,12 @@
 /*
+  Project Name: threepolygonenginejs
+  License: MIT
+  Created By: Lightnet
+  GitHub: https://github.com/Lightnet/threepolygonenginejs
+  
+*/
+
+/*
   Information:
     vanjs main client entry point
 
@@ -16,8 +24,8 @@ import {
   THREE, 
   van, 
   RAPIER
-} from './triengine/dps.js';
-import {TriEngine} from './triengine/triengine.js';
+} from '../triengine/dps.js';
+import {TriEngine} from '../triengine/triengine.js';
 
 const {canvas, div} = van.tags;
 

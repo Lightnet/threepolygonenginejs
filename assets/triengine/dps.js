@@ -1,3 +1,10 @@
+/*
+  Project Name: threepolygonenginejs
+  License: MIT
+  Created By: Lightnet
+  GitHub: https://github.com/Lightnet/threepolygonenginejs
+  
+*/
 
 //import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
 //import * as THREE from 'https://cdn.skypack.dev/three@0.160.0/build/three.module.js';

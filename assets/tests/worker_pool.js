@@ -6,14 +6,13 @@
   
 */
 
-const isDebug = true;
+var i = 0;
+console.log("init...");
 
-function log(args){
-  if(isDebug){
-    console.log(args)
-  }
+function timedCount() {
+  i = i + 1;
+  postMessage(i);
+  setTimeout("timedCount()",500);
 }
 
-export{
-  log
-}
+timedCount();

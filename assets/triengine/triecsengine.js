@@ -1,4 +1,12 @@
 /*
+  Project Name: threepolygonenginejs
+  License: MIT
+  Created By: Lightnet
+  GitHub: https://github.com/Lightnet/threepolygonenginejs
+  
+*/
+
+/*
   Layout:
     There are predefine setup for UI. There are two renders Renderer and CSS3DRenderer.
 

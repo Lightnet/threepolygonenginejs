@@ -1,19 +1,27 @@
-import van from "https://cdn.jsdelivr.net/gh/vanjs-org/van/public/van-1.2.1.min.js";
+/*
+  Project Name: threepolygonenginejs
+  License: MIT
+  Created By: Lightnet
+  GitHub: https://github.com/Lightnet/threepolygonenginejs
+  
+*/
 
-// https://github.com/vanjs-org/van/discussions/78
-van._mount = function (target, component) {
-	if (!!target) {
-		van._mount.__ = van.state(true);
-		van.add(target, () => {
-			if (!van._mount.__.val) {
-				return null;
-			}
-			return component();
-		});
-	} else {
-		van._mount.__.val = false;
-	}
-};
+import van from "van";
+
+// // https://github.com/vanjs-org/van/discussions/78
+// van._mount = function (target, component) {
+// 	if (!!target) {
+// 		van._mount.__ = van.state(true);
+// 		van.add(target, () => {
+// 			if (!van._mount.__.val) {
+// 				return null;
+// 			}
+// 			return component();
+// 		});
+// 	} else {
+// 		van._mount.__.val = false;
+// 	}
+// };
 
 const ufetch = async (url, options)=>{
   try {
@@ -64,5 +72,4 @@ function waitForElement(querySelector, timeout){
 export {
   ufetch,
   waitForElement,
-
 }
