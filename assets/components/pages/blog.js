@@ -8,6 +8,8 @@
 
 import van from "vanjs-core";
 import { Router, Link, getRouterParams, navigate, getRouterQuery } from "vanjs-routing";
+import { Blog_NavMenu } from "../blog/blog_navmenu.js";
+import { BlogEL } from "../blog/blogpost.js";
 
 const {button, div, pre, p} = van.tags
 
@@ -16,7 +18,10 @@ function BlogPage() {
   //   console.log(getRouterQuery()); // { section: "profile" }
   // });
 
-  return div(p("Blog"), Link({ href: "/" }, "Back to Home"));
+  return div(
+    Blog_NavMenu(),
+    BlogEL(),
+  );
 }
 
 export{

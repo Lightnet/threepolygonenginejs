@@ -11,16 +11,13 @@ import van from "van";
 
 const {button, textarea, input, label, div, br, h1, p} = van.tags;
 
-
-
 const BlogEL = () => {
+
   const isBlogPost = van.state(false);
-  
   const blogs = van.state([]);
   const blogId = van.state('');
   const blogEditTitle = van.state('');
   const blogEditContent = van.state('');
-
   const blogsEL = div({id:'blogs'});
 
   async function get_blogs(){ 
@@ -149,14 +146,6 @@ const BlogEL = () => {
     }
   })
 
-
-  //waitForElement("#editorjs", 3000).then(function(){
-    //alert("element is loaded.. do stuff");
-    //loadEditor();
-  //}).catch(()=>{
-    //alert("element did not load in 3 seconds");
-  //});
-
   function toggleBlog(){
     console.log(isBlogPost.val);
     if(isBlogPost.val==true){
@@ -165,9 +154,6 @@ const BlogEL = () => {
       isBlogPost.val=true;
     }
   }
-
-  //const isBlogText = van.derive(()=>String(isBlogPost.val))
-  const isBlogText = 'test'
 
   function onClose(){
     console.log("CLOSE RIGHT?")
@@ -187,13 +173,13 @@ const BlogEL = () => {
       van.derive(()=>{
         //console.log(isBlogPost.val)
         let el = null;
-        if(isBlogPost.val){
-          console.log("new blog???")
-          //el = label('test my blog');
-          el = BlogPostEL({onClose:onClose});
-        }else{
-          el = label('None');
-        }
+        // if(isBlogPost.val){
+        //   console.log("new blog???")
+        //   //el = label('test my blog');
+        //   el = BlogPostEL({onClose:onClose});
+        // }else{
+        //   el = label('None');
+        // }
         console.log(el)
         return el;
       }),
@@ -202,7 +188,7 @@ const BlogEL = () => {
   )
 }
 
-const BlogPostEL = ({onClose}) =>{
+function BlogPostEL({onClose}){
 
   const title = van.state('');
   const content = van.state('');
@@ -225,19 +211,13 @@ const BlogPostEL = ({onClose}) =>{
     }
   }
 
-  function delete_post(){
-
-  }
-
-  function edit_post(){
-
-  }
-
+  function delete_post(){}
+  function edit_post(){}
   function click_close(){
     console.log("close")
-    if(typeof onClose == 'function'){
-      onClose();
-    }
+    // if(typeof onClose == 'function'){
+    //   onClose();
+    // }
   }
 
   return div({},
@@ -258,5 +238,5 @@ const BlogPostEL = ({onClose}) =>{
 
 export {
   BlogEL,
-  BlogPostEL
+  //BlogPostEL
 }

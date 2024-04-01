@@ -9,14 +9,19 @@
 import van from "vanjs-core";
 import { Router, Link, getRouterParams, navigate, getRouterQuery } from "vanjs-routing";
 
-const {button, div, pre, p} = van.tags
+const {button, div, pre, p, br} = van.tags
 
 function AboutComponent() {
   van.derive(() => {
     console.log(getRouterQuery()); // { section: "profile" }
   });
 
-  return div(p("About"), Link({ href: "/" }, "Back to Home"));
+  return div(
+    button({onclick:()=>navigate("/") }, "Back"),
+    p("About"), 
+    p("Work in progress builds."), 
+    
+  );
 }
 
 export{

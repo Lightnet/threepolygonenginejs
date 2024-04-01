@@ -20,6 +20,8 @@ const HomeNavMenu=()=>{
     ' ',
     button({onclick:()=>navigate("/blog")},'Blog'),
     ' ',
+    button({onclick:()=>navigate("/forum")},'Forum'),
+    ' ',
     button({onclick:()=>navigate("/account")},'Account'),
     ' ',
     button({onclick:()=>navigate("/game")},'Game'),

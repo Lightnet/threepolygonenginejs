@@ -8,15 +8,24 @@
 
 import van from "vanjs-core";
 import { Router, Link, getRouterParams, navigate, getRouterQuery } from "vanjs-routing";
+import { createForumEL, getForumsEL } from "../forum/forum.js";
+import { Forum_NavMenu } from "../forum/forum_navmenu.js";
 
-const {button, div, pre, p} = van.tags
+const { div } = van.tags
 
 function ForumPage() {
   // van.derive(() => {
   //   console.log(getRouterQuery()); // { section: "profile" }
   // });
 
-  return div(p("Forum"), Link({ href: "/" }, "Back to Home"));
+  return div(
+    Forum_NavMenu(),
+    div(
+      createForumEL(),
+      getForumsEL()
+    )
+    
+  );
 }
 
 export{

@@ -33,7 +33,7 @@ const ForumPageEL = () => {
   label('Forum'),
   //BoardEL()
   createForumEL(),
-  getForumsEL,
+  getForumsEL(),
   )
 }
 
@@ -120,39 +120,8 @@ const createForumEL = () => {
   )
 }
 
-const ForumEL = () => {
-  return div({id:'forum'},
-  label('Forum'),
-  )
-}
-
-const BoardEL = () => {
-
-  return div(
-    div(
-      label('Board')
-    ),
-    div(
-      label('Content')
-    )
-  )
-}
-
-const TopicEL = () => {
-
-  return div(
-
-  )
-}
-
-const CommentEL = () => {
-
-  return div(
-
-  )
-}
-
 export {
-  ForumEL,
-  ForumPageEL
+  ForumPageEL,
+  createForumEL,
+  getForumsEL
 }
