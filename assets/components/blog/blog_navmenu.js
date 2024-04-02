@@ -18,9 +18,9 @@ function Blog_NavMenu(){
     label("Blog"),
     ' ',
     button({onclick:()=>navigate("/blog")},"Home"),
-    button({onclick:()=>navigate("/blog")},"Create Post"),
-    button({onclick:()=>navigate("/forum/settings")},"settings"),
-    button({onclick:()=>navigate("/forum/admin")},"admin"),
+    //button({onclick:()=>navigate("/blog")},"Create Post"),
+    //button({onclick:()=>navigate("/forum/settings")},"Settings"),
+    button({onclick:()=>navigate("/forum/admin")},"Admin"),
   );
 }
 

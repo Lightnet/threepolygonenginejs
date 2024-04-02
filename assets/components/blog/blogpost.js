@@ -7,13 +7,14 @@
 */
 
 import van from "van";
+import { Modal } from "vanjs-ui";
 //import EditorJS from '/editorjs.js';
 
 const {button, textarea, input, label, div, br, h1, p} = van.tags;
 
 const BlogEL = () => {
 
-  const isBlogPost = van.state(false);
+  const isCreatePost = van.state(false);
   const blogs = van.state([]);
   const blogId = van.state('');
   const blogEditTitle = van.state('');
@@ -146,54 +147,29 @@ const BlogEL = () => {
     }
   })
 
-  function toggleBlog(){
-    console.log(isBlogPost.val);
-    if(isBlogPost.val==true){
-      isBlogPost.val=false;
-    }else{
-      isBlogPost.val=true;
-    }
+  function btnCreateBlog(){
+    van.add(document.body, Modal({closed:isCreatePost},
+      BlogPostEL({closed:isCreatePost})
+    ));
   }
 
-  function onClose(){
-    console.log("CLOSE RIGHT?")
-    isBlogPost.val=false
-  }
-
-  //console.log(editor);
   return div({id:'blog'},
     div(
       label('Blog'),
       div({id:'editorjs',style:"background:lightgray;"}),
-      button({onclick:()=>toggleBlog()},`Toggle Post`),
-      //button({onclick:()=>postBlog()},'Post Blog'),
+      button({onclick:()=>btnCreateBlog()},`Create Post`),
     ),
     label('test blog'),
-    div(
-      van.derive(()=>{
-        //console.log(isBlogPost.val)
-        let el = null;
-        // if(isBlogPost.val){
-        //   console.log("new blog???")
-        //   //el = label('test my blog');
-        //   el = BlogPostEL({onClose:onClose});
-        // }else{
-        //   el = label('None');
-        // }
-        console.log(el)
-        return el;
-      }),
-    ),
     blogsEL,
   )
 }
 
-function BlogPostEL({onClose}){
+function BlogPostEL({closed}){
 
   const title = van.state('');
   const content = van.state('');
 
-  async function click_post(){ 
+  async function bntCreatePost(){ 
     console.log("post")
     try{
       const resp = await fetch('/api/blog',{
@@ -206,18 +182,15 @@ function BlogPostEL({onClose}){
           content:content.val
         })
       })
+      closed.val = true;
     }catch(e){
       console.log("ERROR: ", e)
     }
   }
 
-  function delete_post(){}
-  function edit_post(){}
-  function click_close(){
-    console.log("close")
-    // if(typeof onClose == 'function'){
-    //   onClose();
-    // }
+  function clickClose(){
+    console.log("close");
+    closed.val = true;
   }
 
   return div({},
@@ -230,8 +203,8 @@ function BlogPostEL({onClose}){
     br(),
     textarea({value:content, oninput:e=>content.val=e.target.value}),
     br(),
-    button({onclick:()=>click_post()},'Create Post'),
-    button({onclick:()=>click_close()},'Close Post'),
+    button({onclick:()=>bntCreatePost()},'Create'),
+    button({onclick:()=>clickClose()},'Cancel'),
     
   );
 }

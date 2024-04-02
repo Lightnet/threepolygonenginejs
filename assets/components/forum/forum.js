@@ -7,6 +7,7 @@
 */
 
 import van from "van";
+import { Modal } from "vanjs-ui";
 const {button, input, label, div, script, pre, p, ul, li, a, table, tbody, tr,td} = van.tags;
 
 async function useFetch(url, option){
@@ -22,19 +23,6 @@ async function useFetch(url, option){
     console.log(error);
     return {api:'ERROR'};
   }
-}
-
-const ForumPageEL = () => {
-
-  const isFourm = van.state(false);
-  const forumID = van.state('');
-
-  return div({id:'forum'},
-  label('Forum'),
-  //BoardEL()
-  createForumEL(),
-  getForumsEL(),
-  )
 }
 
 const getForumsEL = () => {
@@ -77,14 +65,28 @@ const getForumsEL = () => {
   return div(forumList);
 }
 
-const createForumEL = () => {
+function displayButtonCreateForum(){
+
+  const isCreated = van.state(false);
+
+  function btnCreateForum(){
+    isCreated.val = false;
+    van.add(document.body, Modal({closed:isCreated},
+      createForumForm({closed:isCreated})
+    ));
+  }
+
+  return button({onclick:()=>btnCreateForum()},"Create Forum");
+}
+
+
+function createForumForm({closed}){
 
   const forumTitle = van.state('test');
   const forumContent = van.state('test');
 
-  async function c_createForum(){
+  async function btnCreateForum(){
     console.log("create forum")
-    
     try{
       const data = await useFetch('/api/forum',{
         method:'POST',
@@ -94,34 +96,35 @@ const createForumEL = () => {
         })
       });
       console.log(data);
+      if(closed){
+        closed.val = true;
+      }
     }catch(e){
-
+      console.log("ERROR",e)
     }
-    
   }
 
   return div({id:'createForum'},
-  table(
-    tbody(
-      tr(
-        td(label('Title:')),
-        td(input({value:forumTitle, oninput:e=>forumTitle.val=e.target.value})),
-      ),
-      tr(
-        td(label('Content:')),
-        td(input({value:forumContent, oninput:e=>forumContent.val=e.target.value})),
-      ),
-      tr(
-        button({onclick:c_createForum},'Create'),
-        button('Cancel'),
+    table(
+      tbody(
+        tr(
+          td(label('Title:')),
+          td(input({value:forumTitle, oninput:e=>forumTitle.val=e.target.value})),
+        ),
+        tr(
+          td(label('Content:')),
+          td(input({value:forumContent, oninput:e=>forumContent.val=e.target.value})),
+        ),
+        tr(
+          button({onclick:btnCreateForum},'Create'),
+          button({onclick:()=>closed.val=true},'Cancel'),
+        )
       )
     )
-  )
   )
 }
 
 export {
-  ForumPageEL,
-  createForumEL,
+  displayButtonCreateForum,
   getForumsEL
 }

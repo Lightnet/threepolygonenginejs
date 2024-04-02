@@ -8,7 +8,7 @@
 
 import van from "vanjs-core";
 import { Router, Link, getRouterParams, navigate, getRouterQuery } from "vanjs-routing";
-import { createForumEL, getForumsEL } from "../forum/forum.js";
+import { displayButtonCreateForum, getForumsEL } from "../forum/forum.js";
 import { Forum_NavMenu } from "../forum/forum_navmenu.js";
 
 const { div } = van.tags
@@ -21,7 +21,7 @@ function ForumPage() {
   return div(
     Forum_NavMenu(),
     div(
-      createForumEL(),
+      displayButtonCreateForum(),
       getForumsEL()
     )
     
