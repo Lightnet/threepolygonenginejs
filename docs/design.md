@@ -19,4 +19,14 @@
   * loop
   * access
 
-  
+ # url
+  * login
+  * signup
+  * signout
+  * admin
+  * mods
+  * docs
+  * wiki
+  * pages
+  * account
+  * ticket

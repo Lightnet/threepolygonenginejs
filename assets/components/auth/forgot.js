@@ -8,6 +8,8 @@
 
 import van from "van";
 import { useFetch } from "./useFetch.js";
+import { Router, Link, getRouterParams, navigate } from "vanjs-routing";
+
 const {button, input, label, div, table, tbody, tr, td} = van.tags;
 
 const ForgotEL = () => {
@@ -28,6 +30,10 @@ const ForgotEL = () => {
     console.log(data);
   }
 
+  async function c_cancel(){
+    navigate("/");
+  }
+
   return div({id:'forgot'},
   label('Forgot'),
   table(
@@ -40,9 +46,14 @@ const ForgotEL = () => {
         td(label('E-Mail:')),
         td(input({value:email, oninput:e=>email.val=e.target.value}))
       ),
-      tr(
-        td(
-          button({onclick:btnForgot},'Recovery')
+      tr({colspan:"2"},
+        td({colspan:"2"},
+          button({onclick:btnForgot,style:"width:100%"},'Recovery')
+        )
+      ),
+      tr({colspan:"2"},
+        td({colspan:"2"},
+          button({onclick:c_cancel,style:"width:100%"},'Cancel')
         )
       )
     )

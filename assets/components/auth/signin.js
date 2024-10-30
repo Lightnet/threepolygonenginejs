@@ -9,6 +9,11 @@
 import van from "van";
 import { useFetch } from "./useFetch.js";
 const {button, input, label, div, table, tbody, tr, td} = van.tags;
+import { Router, Link, getRouterParams, navigate } from "vanjs-routing";
+import {
+  aliasState,
+  loginState
+} from "/components/context.js";
 
 const SignInEL = () => {
   const user = van.state('guest');
@@ -27,6 +32,20 @@ const SignInEL = () => {
       })
     });
     console.log(data);
+    if(data){
+      if(data.api){
+        if(data.api == 'PASS'){
+          aliasState.val = user.val
+          loginState.val = true;
+          pass.val = '';
+          navigate('/')
+        }
+      }
+    }
+  }
+
+  async function c_cancel(){
+    navigate("/");
   }
 
   return div({id:'login'},
@@ -42,8 +61,13 @@ const SignInEL = () => {
         td(input({value:pass, oninput:e=>pass.val=e.target.value}))
       ),
       tr(
-        td(
-          button({onclick:c_login},'Login')
+        td({colspan:"2"},
+          button({onclick:c_login,style:"width:100%"},'Login')
+        )
+      ),
+      tr(
+        td({colspan:"2"},
+          button({onclick:c_cancel,style:"width:100%"},'Cancel')
         )
       )
     )

@@ -16,3 +16,6 @@ async function useFetch(url, option){
 }
 
 export default useFetch;
+export {
+  useFetch
+}

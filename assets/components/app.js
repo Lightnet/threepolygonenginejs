@@ -21,6 +21,11 @@ import { BlogPage } from "./pages/blog.js";
 import { ForumPage } from "./pages/forum.js";
 import { AccountPage } from "./pages/account.js";
 import { SettingPage } from "./pages/settings.js";
+import useFetch from "../libs/useFetch.js";
+import {
+  aliasState,
+  loginState
+} from "/components/context.js";
 //import van from 'van';
 
 const {button, div, pre, p} = van.tags
@@ -28,6 +33,25 @@ const {button, div, pre, p} = van.tags
 //const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 const App = () => {
+
+  async function login_check(){
+    let data = await useFetch('/api/auth/user');
+    console.log('DATA: ', data);
+    if(data){
+      if(data.api){
+        if(data.api == 'PASS'){
+          console.log("[[ data.alias: ", data.alias)
+          aliasState.val = data.alias
+          loginState.val = true;
+        }else{
+          loginState.val = false;
+        }
+      }
+    }
+  }
+
+  login_check();
+
   return Router({
     //basename: "/", // Optional base name (All links are now prefixed with '/vanjs-routing')
     routes: [
@@ -58,13 +82,13 @@ const App = () => {
   });
 }
 
-function BlankComponent() {
-  //return div(p("About"), Link({ href: "/" }, "Back to Home"));
-  return div(
-    label("Blank"), 
-    button({onclick:()=>navigate("/") }, "Home")
-  );
-}
+// function BlankComponent() {
+//   //return div(p("About"), Link({ href: "/" }, "Back to Home"));
+//   return div(
+//     label("Blank"), 
+//     button({onclick:()=>navigate("/") }, "Home")
+//   );
+// }
 
 // function HomeComponent() {
 //   return div(

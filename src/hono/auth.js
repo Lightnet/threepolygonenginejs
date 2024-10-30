@@ -71,6 +71,7 @@ app.post('/api/auth/signin', async (c) => {
 app.post('/api/auth/signout', async (c) => {
   const tokenCookie = getCookie(c, 'token');
   if(tokenCookie){
+    console.log("tokenCookie: ", tokenCookie)
     deleteCookie(c, 'token');
     return c.json({api:"PASS"});
   }
@@ -87,8 +88,19 @@ export async function checkAccess(c, next){
 
 //get user data that is secure
 app.get('/api/auth/user', async (c) => {
-  //const data = c.req.query()
+  const tokenCookie = getCookie(c, 'token');
+  if(tokenCookie){
+    //deleteCookie(c, 'token');
+    console.log('tokenCookie:', tokenCookie);
+    console.log('tokenCookie type:', typeof tokenCookie);
+    let jsonCookie = JSON.parse(tokenCookie);
+    console.log('tokenCookie:', jsonCookie);
+    console.log('tokenCookie alias:', jsonCookie.alias);
+    return c.json({api:"PASS",alias: jsonCookie.alias});
+    //return c.json({api:"PASS"});
+  }
 
+  //const data = c.req.query()
   //return c.text('Hono!')
   return c.json({api:"ERROR"});
 });

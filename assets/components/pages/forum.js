@@ -11,7 +11,7 @@ import { Router, Link, getRouterParams, navigate, getRouterQuery } from "vanjs-r
 import { displayButtonCreateForum, getForumsEL } from "../forum/forum.js";
 import { Forum_NavMenu } from "../forum/forum_navmenu.js";
 
-const { div } = van.tags
+const { div } = van.tags;
 
 function ForumPage() {
   // van.derive(() => {
@@ -24,8 +24,7 @@ function ForumPage() {
       displayButtonCreateForum(),
       getForumsEL()
     )
-    
-  );
+  )
 }
 
 export{

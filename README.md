@@ -1,15 +1,15 @@
 # Name: threepolygonenginejs
 
+# License: MIT
+
+# Created By: Lightnet
+
 # Status:
  * work in progress
  * hono js server
  * three.js module design
  * ECS
  * socket.io
-
-# License: MIT
-
-# Created By: Lightnet
 
 # Status:
  * Unstable.

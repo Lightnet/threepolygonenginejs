@@ -9,6 +9,9 @@
 import van from "van";
 const {button, input, label, div, table, tbody, tr, td} = van.tags;
 
+import { Router, Link, getRouterParams, navigate } from "vanjs-routing";
+import { useFetch } from "/libs/useFetch.js";
+
 const SignUpEL = () => {
 
   const displayuser = van.state('guest');
@@ -31,6 +34,10 @@ const SignUpEL = () => {
       })
     });
     console.log(data);
+  }
+
+  async function c_cancel(){
+    navigate("/");
   }
 
   return div({id:'Signup'},
@@ -62,8 +69,13 @@ const SignUpEL = () => {
         td(input({value:email2, oninput:e=>email2.val=e.target.value}))
       ),
       tr(
-        td(
-          button({onclick:c_signup},'Login')
+        td({colspan:"2"},
+          button({onclick:c_signup,style:"width:100%"},'Register')
+        )
+      ),
+      tr(
+        td({colspan:"2"},
+          button({onclick:c_cancel,style:"width:100%"},'Cancel')
         )
       )
     )

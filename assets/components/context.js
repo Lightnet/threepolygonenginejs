@@ -10,7 +10,8 @@
   Informtion: Context
 */
 
-import van from 'van';
+//import van from 'van';
+import van from "vanjs-core";
 import { MessageBoard } from 'vanjs-ui';
 
 const board = new MessageBoard({top: "20px"});
@@ -19,7 +20,7 @@ const aliasState = van.state('Guest');
 const aliasDataState = van.state({});
 const tokenState = van.state({});
 
-export{
+export {
   board,
   loginState,
   aliasState,

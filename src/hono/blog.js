@@ -16,9 +16,8 @@ route.post('/api/blog', async(c)=>{
   //console.log(data);
 
   const results = db.blog_create(data.title,data.content);
-  console.log("results");
-  console.log(results);
-
+  console.log("results", results);
+  //console.log(results);
 
   return c.json(results);
 })
