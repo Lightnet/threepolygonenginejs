@@ -13,10 +13,8 @@
 // https://rapier.rs/docs/user_guides/javascript/advanced_collision_detection_js
 // https://rapier.rs/docs/user_guides/javascript/advanced_collision_detection/#contact-and-intersection-filtering
 // 
-// 
-// 
 // import RAPIER from 'https://cdn.skypack.dev/@dimforge/rapier3d-compat';
-import { RAPIER } from './dps.js';
+import { RAPIER } from '/dps.js';
 import Observable from './Observable.js';
 
 class PhysicsFrameWork{

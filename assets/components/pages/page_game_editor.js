@@ -6,11 +6,10 @@
   
 */
 
-import { THREE, ECS, van } from "./triengine/_dps.js";
-import { TriECSEngine } from "./triengine/triecsengine.js";
+import { THREE, ECS, van } from "/dps.js";
+import { TriECSEngine } from "../../triengine/van_triecsengine.js";
 
 const {button, canvas, input, label, div} = van.tags;
-console.log("init editor...");
 
 class TriEditor extends TriECSEngine{
 
@@ -165,51 +164,17 @@ class TriEditor extends TriECSEngine{
     super.update();
     //console.log("update?");
   }
-
-  // setupBall(){
-  //   let pos = {x: 0, y: 20, z: 0};
-  //   let radius = 1;
-  //   let quat = {x: 0, y: 0, z: 0, w: 1};
-  //   let mass = 1;
-
-  //   //threeJS Section
-  //   let ball = new THREE.Mesh(new THREE.SphereGeometry(radius), new THREE.MeshPhongMaterial({color: 0xff0505}));
-  //   ball.position.set(pos.x, pos.y, pos.z);
-    
-  //   ball.castShadow = true;
-  //   ball.receiveShadow = true;
-  //   console.log(this.scene);
-
-  //   this.scene.add(ball);
-
-  //   let rigidBody = this.physics.create_body_cube({pos:{y:20}});
-  //   //ball.userData.physicsBody = rigidBody;
-  //   //this.physics.add_body_sync(ball);
-  // }
-
-  // setupGround(){
-  //   let pos = {x: 0, y: -1, z: 0};
-  //   let scale = {x: 10, y: 0.1, z: 10};
-  //   let quat = {x: 0, y: 0, z: 0, w: 1};
-  //   let mass = 0;
-
-  //   //threeJS Section
-  //   let blockPlane = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshPhongMaterial({color: 0xa0afa4}));
-
-  //   blockPlane.position.set(pos.x, pos.y, pos.z);
-  //   blockPlane.scale.set(scale.x, scale.y, scale.z);
-
-  //   blockPlane.castShadow = true;
-  //   blockPlane.receiveShadow = true;
-
-  //   this.scene.add(blockPlane);
-  //   //this.physics.create_body_ground();
-  // }
 }
 
-const app = new TriEditor({isPhysics:true,isEditor:true});
-app.run();
+function Page_Game_Editor() {
 
+  const app = new TriEditor({isPhysics:true,isEditor:true});
+  app.run();
+  //return div('vanthreejs')
+  //return app
+  return app.domElement();
+}
 
-
-
+export{
+  Page_Game_Editor
+}

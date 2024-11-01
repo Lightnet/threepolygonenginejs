@@ -8,7 +8,9 @@
 
 import van from "van";
 import { Modal } from "vanjs-ui";
-const {button, input, label, div, script, pre, p, ul, li, a, table, tbody, tr,td} = van.tags;
+import { Router, Link, getRouterParams, navigate } from "vanjs-routing";
+
+const {button, input, label, div, span, script, pre, p, ul, li, a, table, tbody, tr,td} = van.tags;
 
 async function useFetch(url, option){
   try {
@@ -37,6 +39,11 @@ const getForumsEL = () => {
 
   }
 
+  function enterForum(id){
+    console.log("Forum ID: ",id)
+    navigate('/forum/'+id);
+  }
+
   async function getForums(){
     try{
       const data = await useFetch('/api/forum');
@@ -45,12 +52,17 @@ const getForumsEL = () => {
         for(let i=0; i < data.length;i++){
           van.add(forumList,
             div(
-              div({style:'background-color:lightblue;'},
+              div({style:'background-color:#66a3ff;'},
+                label(' [ Forum ] '),
                 label(data[i].title),
-                button({onclick:editForum(data[i].id)},'edit'),
-                button({onclick:editForum(data[i].id)},'Delete'),
+                span({style:"float:right;"},
+                  button({onclick:editForum(data[i].id)},'edit'),
+                  button({onclick:editForum(data[i].id)},'Delete'),
+                )
               ),
-              div(data[i].content),
+              div({style:'background-color:lightblue;height:40px;',onclick:()=>enterForum(data[i].id)},
+                data[i].content
+              ),
             )
           );
         }

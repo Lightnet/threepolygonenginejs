@@ -13,10 +13,10 @@
 
 // https://www.geeksforgeeks.org/enums-in-javascript/#:~:text=Enums%20in%20JavaScript%20are%20used,readability%2C%20maintainability%20and%20prevent%20errors.
 
-import { THREE, CSS3DRenderer, CSS3DObject, ECS, van } from "./_dps.js";
+import { THREE, CSS3DRenderer, CSS3DObject, ECS, van } from "/dps.js";
 import { PhysicsFrameWork } from './physicsframework.js';
 
-const { canvas, div, button, input } = van.tags;
+const { canvas, div } = van.tags;
 
 class TriECSEngine{
   //three.js
@@ -41,26 +41,35 @@ class TriECSEngine{
   isRun=false; //run game loop
   //
   isEditor=false;
+  van_threejs=null;
   
   constructor(args={}){
     //console.log("init...");
     this.clock = new THREE.Clock();
-
+    this.van_threejs = div({style:"width:100%;height:100%;",id:'van_threejs'});
+    let self = this;
     if(args?.isPhysics==true){
       this.isPhysics=true
       //console.log('init physics');
       this.physics = new PhysicsFrameWork();
+      
       this.physics.event.listen("Ready",()=>{
-        //console.log('Physics ready!');
-        this.setup();
+        console.log('Physics ready!');
+        self.setup();
         //this.init_editor();
       });
     }else{
-      this.setup();
+      self.setup();
     }
     if(args?.isEditor==true){
       this.isEditor=true;
     }
+
+    //return this.van_threejs;
+  }
+
+  domElement(){
+    return this.van_threejs;
   }
 
   addSystem(world=null,_system){
@@ -129,9 +138,17 @@ class TriECSEngine{
     this.divEL = div({id:'CSSRENDER',style:"height:100%;width:100%;"});
     this.canvasEL = canvas({id:'CANVAS',style:"position:fixed;top:0px;left:0px;height:100%;width:100%;"});
 
-    van.add(this.divEL,this.canvasEL);
+    //van.add(this.divEL,this.canvasEL);
     //set up doc for three, ecs and css
-    van.add(document.body,this.divEL);
+    //van.add(document.body,this.divEL);
+    //van.add(this.van_threejs,this.divEL);
+    //console.log(this.canvasEL)
+    //console.log(this.van_threejs)
+    //this.van_threejs.appendChild(this.divEL)
+    this.van_threejs.appendChild(this.canvasEL)
+    //van.add(this.van_threejs,this.canvasEL);
+    //van.add(this.divEL,this.canvasEL);
+
   }
 
   //ECS render system
@@ -402,7 +419,8 @@ class TriECSEngine{
     this.cssCamera.lookAt(0,0,0);
     
     //add doc body for renderer
-    van.add(document.body, _cssrenderer.domElement);
+    //van.add(document.body, _cssrenderer.domElement);
+    van.add(this.van_threejs, _cssrenderer.domElement);
     //resize window
     window.addEventListener('resize',this.resizeCSSRenderer.bind(this));
 

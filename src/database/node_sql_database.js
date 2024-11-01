@@ -9,8 +9,9 @@ class SQLDB{
 
   constructor(){
     this.initDB();
-    //this.blog_create_table()
-    //this.forum_create_table()
+    //this.create_table_blog();
+    this.create_table_forum();
+    this.create_table_board();
     return this;
   }
 
@@ -23,34 +24,75 @@ class SQLDB{
     }
   }
 
-  async user_create_table(){
+  async create_table_user(){
     await this.db.exec(`CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       alias varchar(255) NOT NULL,
       passphrase varchar(255) NOT NULL,
-      create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );`);
   }
 
-  async blog_create_table(){
+  async create_table_blog(){
     await this.db.exec(`CREATE TABLE IF NOT EXISTS blog (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       aliasId varchar(255),
       title varchar(255) NOT NULL,
       content varchar(255) NOT NULL,
-      create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );`);
   }
 
-  async forum_create_table(){
+  async create_table_forum(){
     await this.db.exec(`CREATE TABLE IF NOT EXISTS forum (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       aliasId varchar(255),
       title varchar(255) NOT NULL,
       content varchar(255) NOT NULL,
-      create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );`);
   }
+
+  async create_table_board(){
+    await this.db.exec(`CREATE TABLE IF NOT EXISTS board (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      parentid varchar(255), 
+      aliasId varchar(255),
+      title varchar(255) NOT NULL,
+      content varchar(255) NOT NULL,
+      create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );`);
+  }
+
+  async entity_create_table(){
+    await this.db.exec(`CREATE TABLE IF NOT EXISTS entity (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      aliasId varchar(255),
+      name varchar(255) NOT NULL,
+      content text NOT NULL,
+      create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );`);
+  }
+
+  async scene_create_table(){
+    await this.db.exec(`CREATE TABLE IF NOT EXISTS scene (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      aliasId varchar(255),
+      name varchar(255) NOT NULL,
+      content text,
+      create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );`);
+  }
+
+//===============================================
+// USER
+//===============================================
   //
   async user_delete_table(){
     await this.db.exec(`DROP TABLE users;`);
@@ -82,6 +124,9 @@ class SQLDB{
     }
   }
 
+//===============================================
+// BLOG
+//===============================================
   blog_create(_title,_content){
     const stmt = this.db.prepare('INSERT INTO blog (title, content) VALUES (?, ?)');
     stmt.run(_title, _content);
@@ -116,7 +161,9 @@ class SQLDB{
     }
   }
 
-
+//===============================================
+// FORUM
+//===============================================
   //=============================================
   // FORUM
   get_forums(){
@@ -152,11 +199,46 @@ class SQLDB{
       return {api:'DBERROR'};
     }
   }
+//===============================================
+// BOARD
+//===============================================
+  get_boards(){
+    let stmt = this.db.prepare(`SELECT * FROM board;`);
+    const result = stmt.all();
+    //console.log(result);
+    return result;
+  }
 
+  board_create(_title,_content){
+    const stmt = this.db.prepare('INSERT INTO board (title, content) VALUES (?, ?)');
+    stmt.run(_title, _content);
+    return {api:"CREATED"};
+  }
 
-  //===================================
-  // entity
-  //===================================
+  board_delete(_id){
+    try{
+      const stmt = this.db.prepare('DELETE FROM board WHERE id=?')
+      stmt.run(_id);
+      return {api:'DELETE'};
+    }catch(e){
+      return {api:'DBERROR'};
+    }
+  }
+
+  board_update(_id,_title,_content){
+    try{
+      const stmt = this.db.prepare('UPDATE board SET title=?, content=? WHERE id=?;')
+      stmt.run(_title, _content, _id);
+      return {api:'UPDATE'};
+    }catch(e){
+      console.log(e)
+      return {api:'DBERROR'};
+    }
+  }
+
+//===================================
+// entity
+//===================================
   //
   entity_create(_title,_content){
     const stmt = this.db.prepare('INSERT INTO entity (title, content) VALUES (?, ?)');

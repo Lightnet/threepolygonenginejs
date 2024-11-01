@@ -28,7 +28,7 @@ class ORMSQLITE{
   static db = null;
   sqlite = null;
   constructor(){
-
+    console.log("init ORMSQLITE...");
     this.initDB();
 
     return this;

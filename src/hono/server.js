@@ -14,8 +14,8 @@ import { Hono } from 'hono';
 //import { jwt } from 'hono/jwt'
 // https://hono.dev/helpers/cookie
 
-//import SQLDB from '../database/node_sql_database.js';
-import { ORMSQLITE } from '../database/orm_sqlite.js';
+import SQLDB from '../database/node_sql_database.js';
+//import { ORMSQLITE } from '../database/orm_sqlite.js';
 import game from './game.js';
 import auth from './auth.js';
 import blog from './blog.js';
@@ -43,8 +43,8 @@ export function useDB(options){
   }
 }
 // DATABASE
-//const db = new SQLDB();
-const db = new ORMSQLITE();
+const db = new SQLDB();
+//const db = new ORMSQLITE();
 
 const PORT = process.env.PORT || 3000;
 const {head, body, style, script} = van.tags
@@ -98,8 +98,8 @@ app.get('/', (c) => {
       `),
       script({type:"importmap"},`{
         "imports": {
-          "three": "https://unpkg.com/three@0.169.0/build/three.module.js",
-          "three/addons/": "https://unpkg.com/three@0.169.0/examples/jsm/",
+          "three": "https://unpkg.com/three@0.170.0/build/three.module.js",
+          "three/addons/": "https://unpkg.com/three@0.170.0/examples/jsm/",
           "remove-array-items": "https://unpkg.com/remove-array-items@3.0.0/src/remove-array-items.js",
           "ecs":"https://cdn.skypack.dev/ecs",
           "vanjs-core":"https://cdn.jsdelivr.net/npm/vanjs-core@1.5.2/src/van.min.js",

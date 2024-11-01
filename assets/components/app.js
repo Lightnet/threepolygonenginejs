@@ -13,7 +13,6 @@ import { AboutComponent } from "./pages/about.js";
 import { HelpPage } from "./pages/help.js";
 import { HomeComponent } from "./pages/home.js";
 import { GamePage } from "./pages/game.js";
-import { GameEditorPage } from "./pages/gameeditor.js";
 import { GameObjectPage } from "./pages/gameobject.js";
 import { ForgotPage, SignInPage, SignOutPage, SignUpPage } from "./pages/auth.js";
 import { MessagePage } from "./pages/message.js";
@@ -26,6 +25,9 @@ import {
   aliasState,
   loginState
 } from "/components/context.js";
+//import { getForumBoardEL } from "./forum/forum_board.js";
+import { PageBoard } from "./pages/forum_board.js";
+import { Page_Game_Editor } from "./pages/page_game_editor.js";
 //import van from 'van';
 
 const {button, div, pre, p} = van.tags
@@ -64,17 +66,18 @@ const App = () => {
       { path: "/forgot", component: ForgotPage },
       { path: "/settings", component: SettingPage },
 
-
       { path: "/game", component: GamePage },
       { path: "/gameobject", component: GameObjectPage },
       { path: "/gameobject/entity/:id", component: GameObjectPage },
       { path: "/gameobject/settings/:id", component: GameObjectPage },
-      { path: "/editor", component: GameEditorPage },
+      { path: "/editor", component: Page_Game_Editor },
 
       { path: "/message", component: MessagePage },
 
       { path: "/blog", component: BlogPage },
       { path: "/forum", component: ForumPage },
+
+      { path: "/forum/:id", component: PageBoard },
 
       { path: "/help", component: HelpPage },
       { path: "/help/:section", component: HelpPage },

@@ -16,3 +16,11 @@ const editor = new EditorJS({
 * 
 * 
 * 
+
+
+ * https://www.tiny.cloud/blog/javascript-rich-text-editor/
+ * https://www.npmjs.com/package/tiny-editor
+ * 
+ * 
+ * 
+ * 

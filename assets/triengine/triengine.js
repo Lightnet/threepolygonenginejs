@@ -12,7 +12,7 @@ import {
   THREE, 
   OrbitControls, 
   van  
-} from "./dps.js";
+} from "./_dps.js";
 import { PhysicsFrameWork } from './physicsframework.js';
 const {canvas} = van.tags;
 
@@ -169,7 +169,6 @@ class TriEngine {
   domElement(){
     return this.renderer.domElement;
   }
-
 };
 
 const ThreeEL = () => {
@@ -185,7 +184,6 @@ const ThreeEL = () => {
     renderEL
   )
 };
-
 
 export default TriEngine;
 export {

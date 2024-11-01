@@ -3,13 +3,14 @@
 import { Hono } from 'hono';
 
 const route = new Hono();
+// GET BLOGS
 route.get('/api/blog',(c)=>{
   const db = c.get('db');
   const results = db.get_blogs();
   //console.log(results);
   return c.json(results);
 })
-
+// CREATE
 route.post('/api/blog', async(c)=>{
   const data = await c.req.json();
   const db = c.get('db');
@@ -21,7 +22,7 @@ route.post('/api/blog', async(c)=>{
 
   return c.json(results);
 })
-
+// UPDATE
 route.put('/api/blog/:id',async (c)=>{
   const id = await c.req.param('id')
   const data = await c.req.json();
@@ -35,7 +36,7 @@ route.put('/api/blog/:id',async (c)=>{
   
   return c.json({api:'ERROR'});
 })
-
+//DELETE
 route.delete('/api/blog/:id',(c)=>{
   const id = c.req.param('id');
   console.log('ID: ', id);

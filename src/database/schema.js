@@ -38,3 +38,44 @@ export const forums = sqliteTable('forums', {
   date: text("date").default(sql`CURRENT_DATE`),
   timestamp: text("timestamp").default(sql`CURRENT_TIMESTAMP`),
 });
+
+export const Board = sqliteTable('board', {
+  id: integer('id').primaryKey(),  // 'id' is the column name
+  aliasid: text("aliasid"),
+  parentid: text("parentid"),
+  title: text("title"),
+  content: text("content"),
+  create_at: text("create_at").default(sql`CURRENT_TIME`),
+  update_at: text("update_at").default(sql`CURRENT_TIME`),
+});
+
+export const Topic = sqliteTable('topic', {
+  id: integer('id').primaryKey(),  // 'id' is the column name
+  aliasid: text("aliasid"),
+  parentid: text("parentid"),
+  title: text("title"),
+  content: text("content"),
+  create_at: text("create_at").default(sql`CURRENT_TIME`),
+  update_at: text("update_at").default(sql`CURRENT_TIME`),
+});
+
+export const Comment = sqliteTable('comment', {
+  id: integer('id').primaryKey(),  // 'id' is the column name
+  aliasid: text("aliasid"),
+  parentid: text("parentid"),
+  title: text("title"),
+  content: text("content"),
+  create_at: text("create_at").default(sql`CURRENT_TIME`),
+  update_at: text("update_at").default(sql`CURRENT_TIME`),
+});
+
+export const entity = sqliteTable('entity', {
+  id: integer('id').primaryKey(),  // 'id' is the column name
+  aliasid: text("aliasid"),
+  name: text("name"),
+  gameobjectid: text("gameobjectid"),
+  content: text("content"),
+  create_at: text("create_at").default(sql`CURRENT_TIME`),
+  update_at: text("update_at").default(sql`CURRENT_TIME`),
+});
+
