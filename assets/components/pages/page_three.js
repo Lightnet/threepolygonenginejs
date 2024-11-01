@@ -11,7 +11,7 @@ import { Router, Link, getRouterParams, navigate, getRouterQuery } from "vanjs-r
 
 const {button, div, pre, p} = van.tags
 
-function GamePage() {
+function Page_Threejs() {
   van.derive(() => {
     console.log(getRouterQuery()); // { section: "profile" }
   });
@@ -22,5 +22,5 @@ function GamePage() {
 }
 
 export{
-  GamePage
+  Page_Threejs
 }

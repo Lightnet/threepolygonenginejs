@@ -8,28 +8,31 @@
 
 import van from "vanjs-core";
 import { Router, Link, getRouterParams, navigate } from "vanjs-routing";
-
-import { AboutComponent } from "./pages/about.js";
-import { HelpPage } from "./pages/help.js";
-import { HomeComponent } from "./pages/home.js";
-import { GamePage } from "./pages/game.js";
-import { GameObjectPage } from "./pages/gameobject.js";
-import { ForgotPage, SignInPage, SignOutPage, SignUpPage } from "./pages/auth.js";
-import { MessagePage } from "./pages/message.js";
-import { BlogPage } from "./pages/blog.js";
-import { ForumPage } from "./pages/forum.js";
-import { AccountPage } from "./pages/account.js";
-import { SettingPage } from "./pages/settings.js";
 import useFetch from "../libs/useFetch.js";
+
 import {
   aliasState,
   loginState
 } from "/components/context.js";
-//import { getForumBoardEL } from "./forum/forum_board.js";
-import { PageBoard } from "./pages/forum_board.js";
-import { Page_Game_Editor } from "./pages/page_game_editor.js";
-//import van from 'van';
 
+import { HomeComponent } from "./pages/page_home.js";
+import { AboutComponent } from "./pages/page_about.js";
+import { HelpPage } from "./pages/page_help.js";
+import { BlogPage } from "./pages/page_blog.js";
+
+import { ForgotPage, SignInPage, SignOutPage, SignUpPage } from "./pages/page_auth.js";
+import { MessagePage } from "./pages/page_message.js";
+
+import { AccountPage } from "./pages/page_account.js";
+import { SettingPage } from "./pages/page_settings.js";
+
+//import { getForumBoardEL } from "./forum/forum_board.js";
+import { Page_Forum, Page_ForumID } from "./pages/page_forum.js";
+import { PageBoard } from "./pages/page_forum_board.js";
+
+import { Page_Game_Editor } from "./pages/page_game_editor.js";
+import { GamePage } from "./pages/page_game.js";
+import { GameObjectPage } from "./pages/page_gameobject.js";
 const {button, div, pre, p} = van.tags
 
 //const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
@@ -38,11 +41,11 @@ const App = () => {
 
   async function login_check(){
     let data = await useFetch('/api/auth/user');
-    console.log('DATA: ', data);
+    //console.log('DATA: ', data);
     if(data){
       if(data.api){
         if(data.api == 'PASS'){
-          console.log("[[ data.alias: ", data.alias)
+          //console.log("[[ data.alias: ", data.alias)
           aliasState.val = data.alias
           loginState.val = true;
         }else{
@@ -75,9 +78,10 @@ const App = () => {
       { path: "/message", component: MessagePage },
 
       { path: "/blog", component: BlogPage },
-      { path: "/forum", component: ForumPage },
 
-      { path: "/forum/:id", component: PageBoard },
+      { path: "/forum", component: Page_Forum },
+      { path: "/forum/:id", component: Page_ForumID },
+      { path: "/board/:id", component: PageBoard },
 
       { path: "/help", component: HelpPage },
       { path: "/help/:section", component: HelpPage },

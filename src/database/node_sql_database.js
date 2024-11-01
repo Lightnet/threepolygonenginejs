@@ -9,7 +9,7 @@ class SQLDB{
 
   constructor(){
     this.initDB();
-    //this.create_table_blog();
+    this.create_table_blog();
     this.create_table_forum();
     this.create_table_board();
     return this;
@@ -199,6 +199,22 @@ class SQLDB{
       return {api:'DBERROR'};
     }
   }
+  // https://github.com/WiseLibs/better-sqlite3/blob/master/docs/api.md
+  get_forumID(_id){
+    try{
+      let stmt = this.db.prepare(`SELECT * FROM board WHERE parentid=?;`);
+      //stmt.run(_id);
+      //const result = stmt.all();
+
+      const result = stmt.all(_id);
+      console.log(result);
+      return result;
+      //return {api:'PK'};
+    }catch(e){
+      console.log(e)
+      return {api:'DBERROR'};
+    }
+  }
 //===============================================
 // BOARD
 //===============================================
@@ -209,9 +225,10 @@ class SQLDB{
     return result;
   }
 
-  board_create(_title,_content){
-    const stmt = this.db.prepare('INSERT INTO board (title, content) VALUES (?, ?)');
-    stmt.run(_title, _content);
+  board_create(_parentid,_title,_content){
+    let id = _parentid + '';
+    const stmt = this.db.prepare('INSERT INTO board (parentid, title, content) VALUES (?, ?, ?)');
+    stmt.run(id,_title, _content);
     return {api:"CREATED"};
   }
 

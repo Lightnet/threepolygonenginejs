@@ -13,7 +13,17 @@ route.get('/api/forum',(c)=>{
   const results = db.get_forums();
   //console.log(results);
   return c.json(results);
-})
+});
+
+route.get('/api/forum/:id',(c)=>{
+  const db = c.get('db');
+  const id = c.req.param('id');
+  const results = db.get_forumID(id);
+  //console.log(results);
+  return c.json(results);
+});
+
+
 // FORUM CREATE
 route.post('/api/forum', async(c)=>{
   const data = await c.req.json();
@@ -74,7 +84,7 @@ route.post('/api/board', async(c)=>{
   const data = await c.req.json();
   const db = c.get('db');
   //console.log(data);
-  const results = db.board_create(data.title,data.content);
+  const results = db.board_create(data.parentid,data.title,data.content);
   console.log("results");
   console.log(results);
   return c.json(results);

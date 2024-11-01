@@ -20,10 +20,17 @@ const aliasState = van.state('Guest');
 const aliasDataState = van.state({});
 const tokenState = van.state({});
 
+const forumIDState = van.state("");
+const boardIDState = van.state("");
+const topicIDState = van.state("");
+
 export {
   board,
   loginState,
   aliasState,
   aliasDataState,
   tokenState,
+  forumIDState,
+  boardIDState,
+  topicIDState,
 }

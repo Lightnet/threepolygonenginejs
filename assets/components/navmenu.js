@@ -18,7 +18,7 @@ import {
 
 const HomeNavMenu=()=>{
   const draw_access = van.derive(()=>{
-    console.log(loginState.val);
+    //console.log(loginState.val);
     //return loginState.val;
     if(loginState.val){
       return AccessNavMenu();

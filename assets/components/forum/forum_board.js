@@ -9,7 +9,14 @@
 import van from "vanjs-core";
 import { Modal } from "vanjs-ui";
 import {useFetch} from "/libs/useFetch.js";
+import {
+  aliasState,
+  loginState,
+  forumIDState
+} from "/components/context.js";
+
 const {button, input, label, div, span, script, pre, p, ul, li, a, table, tbody, tr,td} = van.tags;
+
 
 const getForumBoardEL = () => {
 
@@ -43,6 +50,7 @@ function createBoardForm({closed}){
       const data = await useFetch('/api/board',{
         method:'POST',
         body:JSON.stringify({
+          parentid:forumIDState.val,
           title:forumTitle.val,
           content:forumContent.val,
         })
@@ -74,6 +82,10 @@ function createBoardForm({closed}){
       )
     )
   )
+}
+
+function getForumBoardId(_id){
+
 }
 
 export {

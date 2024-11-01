@@ -17,7 +17,7 @@ const {button, div, label} = van.tags;
 function HomeComponent() {
 
   const username = van.derive(()=>{
-    console.log("user change name:", aliasState.val);
+    //console.log("user change name:", aliasState.val);
     return aliasState.val
   });
 

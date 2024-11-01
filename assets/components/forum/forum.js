@@ -9,6 +9,7 @@
 import van from "van";
 import { Modal } from "vanjs-ui";
 import { Router, Link, getRouterParams, navigate } from "vanjs-routing";
+import {forumIDState} from "/components/context.js";
 
 const {button, input, label, div, span, script, pre, p, ul, li, a, table, tbody, tr,td} = van.tags;
 
@@ -26,7 +27,7 @@ async function useFetch(url, option){
     return {api:'ERROR'};
   }
 }
-
+// 
 const getForumsEL = () => {
 
   const forumList = div();
@@ -40,7 +41,8 @@ const getForumsEL = () => {
   }
 
   function enterForum(id){
-    console.log("Forum ID: ",id)
+    console.log("Forum ID: ",id);
+    forumIDState.val = id;
     navigate('/forum/'+id);
   }
 
@@ -76,7 +78,7 @@ const getForumsEL = () => {
 
   return div(forumList);
 }
-
+//BUTTON MODAL
 function displayButtonCreateForum(){
 
   const isCreated = van.state(false);
@@ -90,8 +92,7 @@ function displayButtonCreateForum(){
 
   return button({onclick:()=>btnCreateForum()},"Create Forum");
 }
-
-
+// CREATE FORUM
 function createForumForm({closed}){
 
   const forumTitle = van.state('test');
