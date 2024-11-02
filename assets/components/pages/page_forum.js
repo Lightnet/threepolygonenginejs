@@ -13,8 +13,16 @@ import { Forum_NavMenu } from "../forum/forum_navmenu.js";
 import { displayButtonCreateBoard } from "../forum/forum_board.js";
 import useFetch from "../../libs/useFetch.js";
 
+import {
+  aliasState,
+  loginState,
+  boardIDState
+} from "/components/context.js";
+
+
 const { div, label } = van.tags;
 
+// DEFAULT GET PULBIC FORUMS
 function Page_Forum() {
 
   return div({id:'FORUM'},
@@ -26,10 +34,16 @@ function Page_Forum() {
   );
 }
 
+// GET CURRENT FORUM ID
 function Page_ForumID() {
   
   const forumID = van.state("");
   const boardEl = div({id:"BOARDS"});
+
+  function getBoardID(_id){
+    boardIDState.val = _id;
+    navigate('/board/'+_id);
+  }
 
   async function getForumIDBoards(_id){
     try{
@@ -40,8 +54,8 @@ function Page_ForumID() {
         for(let item of data){
           console.log("item: ", item);
           van.add(boardEl, div(
-            div(label(" [ Title ] "+ item.title),),
-            div(label(" [ Content ] "+ item.content),)
+            div(label("[Board] [ Title ] "+ item.title),),
+            div(label({onclick:()=>getBoardID(item.id)}," [ Content ] "+ item.content),)
             
           ));
         }
@@ -60,12 +74,9 @@ function Page_ForumID() {
         forumID.val = id;
         getForumIDBoards(id);
       }
-    }else{
     }
   });
 
-
-  //const render_forum = van.derive(()=>{
   return div({id:'BOARD'},
     Forum_NavMenu(),
     div(

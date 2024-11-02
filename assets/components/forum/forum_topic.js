@@ -9,9 +9,53 @@
 import van from "vanjs-core";
 import { Modal } from "vanjs-ui";
 import {useFetch} from "/libs/useFetch.js";
+
 const {button, input, label, div, span, script, pre, p, ul, li, a, table, tbody, tr,td} = van.tags;
 
+import {
+  aliasState,
+  loginState,
+  forumIDState,
+  boardIDState,
+} from "/components/context.js";
+
 const getForumTopicEL = () => {
+
+  return div(
+    label("Topic...")
+  )
+}
+
+//BOARD ID get topics
+const getBoardIDTopicsEl = (_id) => {
+
+  async function getForums(){
+    try{
+      const data = await useFetch('/api/forum');
+      console.log(data);
+      if(data){
+        for(let i=0; i < data.length;i++){
+          van.add(forumList,
+            div(
+              div({style:'background-color:#66a3ff;'},
+                label(' [ Forum ] '),
+                label(data[i].title),
+                span({style:"float:right;"},
+                  button({onclick:editForum(data[i].id)},'edit'),
+                  button({onclick:editForum(data[i].id)},'Delete'),
+                )
+              ),
+              div({style:'background-color:lightblue;height:40px;',onclick:()=>enterForum(data[i].id)},
+                data[i].content
+              ),
+            )
+          );
+        }
+      }
+    }catch(e){
+      console.log(e);
+    }
+  }
 
   return div(
     label("Topic...")
@@ -44,6 +88,7 @@ function createTopicForm({closed}){
       const data = await useFetch('/api/topic',{
         method:'POST',
         body:JSON.stringify({
+          parentid:boardIDState.val,
           title:forumTitle.val,
           content:forumContent.val,
         })
@@ -69,7 +114,7 @@ function createTopicForm({closed}){
           td(input({value:forumContent, oninput:e=>forumContent.val=e.target.value})),
         ),
         tr(
-          button({onclick:btnCreateBoard},'Create'),
+          button({onclick:btnCreateTopic},'Create'),
           button({onclick:()=>closed.val=true},'Cancel'),
         )
       )
@@ -80,5 +125,6 @@ function createTopicForm({closed}){
 export {
   displayButtonCreateTopic,
   getForumTopicEL,
-  createTopicForm
+  createTopicForm,
+  getBoardIDTopicsEl
 }

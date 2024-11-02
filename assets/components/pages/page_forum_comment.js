@@ -11,7 +11,6 @@ import { Router, Link, getRouterParams, navigate, getRouterQuery } from "vanjs-r
 import { Forum_NavMenu } from "../forum/forum_navmenu.js";
 import { displayButtonCreateBoard, getForumBoardEL } from "../forum/forum_board.js";
 
-
 const { div } = van.tags;
 
 function PageBoard() {

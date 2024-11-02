@@ -12,6 +12,8 @@ class SQLDB{
     this.create_table_blog();
     this.create_table_forum();
     this.create_table_board();
+    this.create_table_topic();
+    this.create_table_comment();
     return this;
   }
 
@@ -58,6 +60,30 @@ class SQLDB{
 
   async create_table_board(){
     await this.db.exec(`CREATE TABLE IF NOT EXISTS board (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      parentid varchar(255), 
+      aliasId varchar(255),
+      title varchar(255) NOT NULL,
+      content varchar(255) NOT NULL,
+      create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );`);
+  }
+
+  async create_table_topic(){
+    await this.db.exec(`CREATE TABLE IF NOT EXISTS topic (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      parentid varchar(255), 
+      aliasId varchar(255),
+      title varchar(255) NOT NULL,
+      content varchar(255) NOT NULL,
+      create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );`);
+  }
+
+  async create_table_comment(){
+    await this.db.exec(`CREATE TABLE IF NOT EXISTS comment (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       parentid varchar(255), 
       aliasId varchar(255),
@@ -225,6 +251,13 @@ class SQLDB{
     return result;
   }
 
+  get_boardID(_id){
+    let stmt = this.db.prepare(`SELECT * FROM topic WHERE parentid=?;`);
+    const result = stmt.all(_id);
+    //console.log(result);
+    return result;
+  }
+
   board_create(_parentid,_title,_content){
     let id = _parentid + '';
     const stmt = this.db.prepare('INSERT INTO board (parentid, title, content) VALUES (?, ?, ?)');
@@ -252,6 +285,32 @@ class SQLDB{
       return {api:'DBERROR'};
     }
   }
+//===================================
+// FORUM TOPIC
+//===================================
+  create_topic(_parentid,_title,_content){
+    let id = _parentid + '';
+    const stmt = this.db.prepare('INSERT INTO topic (parentid, title, content) VALUES (?, ?, ?)');
+    stmt.run(id,_title, _content);
+    return {api:"CREATED"};
+  }
+
+  get_TopicID(_id){
+    let stmt = this.db.prepare(`SELECT * FROM comment WHERE parentid=?;`);
+    const result = stmt.all(_id);
+    //console.log(result);
+    return result;
+  }
+//===================================
+// FORUM COMMENT
+//===================================
+  create_comment(_parentid,_title,_content){
+    let id = _parentid + '';
+    const stmt = this.db.prepare('INSERT INTO comment (parentid, title, content) VALUES (?, ?, ?)');
+    stmt.run(id,_title, _content);
+    return {api:"CREATED"};
+  }
+
 
 //===================================
 // entity

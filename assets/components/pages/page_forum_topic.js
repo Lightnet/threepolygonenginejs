@@ -10,25 +10,68 @@ import van from "vanjs-core";
 import { Router, Link, getRouterParams, navigate, getRouterQuery } from "vanjs-routing";
 import { Forum_NavMenu } from "../forum/forum_navmenu.js";
 import { displayButtonCreateBoard, getForumBoardEL } from "../forum/forum_board.js";
+import useFetch from "/libs/useFetch.js";
+import {
+  aliasState,
+  loginState,
+  boardIDState,
+  topicIDState,
+  commentIDState,
+} from "/components/context.js";
+import { createCommentForm, displayButtonCreateComment } from "../forum/forum_comment.js";
 
+const { div, label } = van.tags;
 
-const { div } = van.tags;
+function Page_Topic() {
+  const topicEl = div();
 
-function PageBoard() {
   van.derive(() => {
-    console.log("[BOARD] FORUM ID:>> ",getRouterQuery()); // { section: "profile" }
-    console.log("getRouterParams >> ",getRouterParams()); 
+    //console.log("[BOARD] FORUM ID:>> ",getRouterQuery()); // { section: "profile" }
+    console.log("Page_Topic getRouterParams >> ",getRouterParams()); 
+    const { id } = getRouterParams();
+
+    if(id){
+      topicIDState.val = id;
+      getTopicIDComments(id);
+    }
   });
+
+  function getCommentID(_id){
+    commentIDState.val = _id;
+    //navigate('/comment/'+_id);
+  }
+
+  async function getTopicIDComments(_id){
+    try{
+      //const data = await useFetch('/api/board/'+_id);
+      const data = await useFetch('/api/topic/'+_id);
+      console.log(data);
+      if(data){
+        for(let item of data){
+          console.log("item: ", item);
+          van.add(topicEl, div(
+            div(label("[Comment] [ Title ] "+ item.title),),
+            div(label({onclick:()=>getCommentID(item.id)}," [ Content ] "+ item.content),)
+          ));
+        }
+      }
+    }catch(e){
+      console.log(e);
+    }
+  }
 
   return div(
     Forum_NavMenu(),
     div(
-      displayButtonCreateBoard(),
-      getForumBoardEL()
+      //displayButtonCreateBoard(),
+      //getForumBoardEL()
+      //createCommentForm(),
+      displayButtonCreateComment(),
+      topicEl
     )
   )
 }
 
 export{
-  PageBoard
+  Page_Topic
 }

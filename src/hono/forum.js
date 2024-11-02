@@ -73,8 +73,9 @@ route.get('/api/board',(c)=>{
 // BOARD GET
 route.get('/api/board/:id',(c)=>{
   const db = c.get('db');
+  const id = c.req.param('id');
   console.log("board ID: ", c.req.param());
-  const results = db.get_boards();
+  const results = db.get_boardID(id);
   //console.log(results);
   return c.json(results);
 })
@@ -113,9 +114,45 @@ route.delete('/api/board/:id',(c)=>{
   return c.json(result);
 })
 
+//===============================================
+// TOPIC
+//===============================================
+// TOPIC CREATE
+route.post('/api/topic', async(c)=>{
+  const data = await c.req.json();
+  const db = c.get('db');
+  //console.log(data);
+  const results = db.create_topic(data.parentid,data.title,data.content);
+  console.log("results");
+  console.log(results);
+  return c.json(results);
+})
+
+//get comments?
+route.get('/api/topic/:id',(c)=>{
+  const db = c.get('db');
+  const id = c.req.param('id');
+  console.log("board ID: ", c.req.param());
+  const results = db.get_TopicID(id);
+  //console.log(results);
+  return c.json(results);
+})
+
 
 //===============================================
-// BOARD
+// COMMENT
 //===============================================
+route.post('/api/comment', async(c)=>{
+  const data = await c.req.json();
+  const db = c.get('db');
+  //console.log(data);
+  const results = db.create_comment(data.parentid,data.title,data.content);
+  console.log("results");
+  console.log(results);
+  return c.json(results);
+})
 
+//===============================================
+// EXPORT
+//===============================================
 export default route;
