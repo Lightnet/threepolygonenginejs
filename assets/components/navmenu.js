@@ -15,6 +15,7 @@ import {
   aliasState,
   loginState
 } from "/components/context.js";
+import { ToggleTheme } from "./theme/toggletheme.js";
 
 const HomeNavMenu=()=>{
   const draw_access = van.derive(()=>{
@@ -51,6 +52,7 @@ const BaseNavMenu=()=>{
     ' ',
     button({onclick:()=>navigate("/forgot")},'Forgot'),
     ' ',
+    ToggleTheme()
   );
 }
 
@@ -79,6 +81,7 @@ const AccessNavMenu=()=>{
     ' ',
     button({onclick:()=>navigate("/signout")},'Sign Out'),
     ' ',
+    ToggleTheme()
   );
 }
 

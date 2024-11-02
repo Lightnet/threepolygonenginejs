@@ -50,8 +50,8 @@ function Page_Topic() {
         for(let item of data){
           console.log("item: ", item);
           van.add(topicEl, div(
-            div(label("[Comment] [ Title ] "+ item.title),),
-            div(label({onclick:()=>getCommentID(item.id)}," [ Content ] "+ item.content),)
+            div({style:'background-color:#66a3ff;'},label("[Comment] [ Title ] "+ item.title),),
+            div({style:'background-color:lightblue;height:40px;',onclick:()=>getCommentID(item.id)},label(" [ Content ] "+ item.content),)
           ));
         }
       }

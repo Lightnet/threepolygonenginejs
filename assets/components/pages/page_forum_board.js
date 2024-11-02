@@ -48,8 +48,8 @@ function PageBoard() {
         for(let item of data){
           console.log("item: ", item);
           van.add(topicEl, div(
-            div(label("[Board] [ Title ] "+ item.title),),
-            div(label({onclick:()=>getBoardID(item.id)}," [ Content ] "+ item.content),)
+            div({style:'',class:"cheader"},label("[Board] [ Title ] "+ item.title),),
+            div({style:'background-color:lightblue;height:40px;',onclick:()=>getBoardID(item.id)},label(" [ Content ] "+ item.content),)
           ));
         }
       }
@@ -57,19 +57,6 @@ function PageBoard() {
       console.log(e);
     }
   }
-
-  // async function getBoards(_id){
-  //   try{
-  //     //const data = await useFetch('/api/board/'+_id);
-  //     const data = await useFetch('/api/board/');
-  //     console.log(data);
-  //     if(data){
-        
-  //     }
-  //   }catch(e){
-  //     console.log(e);
-  //   }
-  // }
 
   return div(
     Forum_NavMenu(),

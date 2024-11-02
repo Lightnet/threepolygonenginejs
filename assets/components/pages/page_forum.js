@@ -34,7 +34,7 @@ function Page_Forum() {
   );
 }
 
-// GET CURRENT FORUM ID
+// GET CURRENT FORUM ID for boards
 function Page_ForumID() {
   
   const forumID = van.state("");
@@ -54,8 +54,8 @@ function Page_ForumID() {
         for(let item of data){
           console.log("item: ", item);
           van.add(boardEl, div(
-            div(label("[Board] [ Title ] "+ item.title),),
-            div(label({onclick:()=>getBoardID(item.id)}," [ Content ] "+ item.content),)
+            div({style:'background-color:#66a3ff;'},label("[Board+] [ Title ] "+ item.title),),
+            div({style:'background-color:lightblue;height:40px;',onclick:()=>getBoardID(item.id)},label(" [ Content ] "+ item.content),)
             
           ));
         }
@@ -65,6 +65,7 @@ function Page_ForumID() {
     }
   }
 
+  //get forums
   van.derive(() => {
     const { id } = getRouterParams();
     if(id){
