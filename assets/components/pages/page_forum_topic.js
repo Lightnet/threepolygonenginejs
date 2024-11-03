@@ -50,8 +50,8 @@ function Page_Topic() {
         for(let item of data){
           console.log("item: ", item);
           van.add(topicEl, div(
-            div({style:'background-color:#66a3ff;'},label("[Comment] [ Title ] "+ item.title),),
-            div({style:'background-color:lightblue;height:40px;',onclick:()=>getCommentID(item.id)},label(" [ Content ] "+ item.content),)
+            div({style:'',class:"cheader"},label("[Comment] [ Title ] "+ item.title),),
+            div({style:'min-height:40px;',class:"ccontent",onclick:()=>getCommentID(item.id)},label(" [ Content ] "+ item.content),)
           ));
         }
       }

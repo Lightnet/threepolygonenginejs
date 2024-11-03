@@ -49,7 +49,7 @@ function PageBoard() {
           console.log("item: ", item);
           van.add(topicEl, div(
             div({style:'',class:"cheader"},label("[Board] [ Title ] "+ item.title),),
-            div({style:'background-color:lightblue;height:40px;',onclick:()=>getBoardID(item.id)},label(" [ Content ] "+ item.content),)
+            div({style:'min-height:40px;',class:"ccontent",onclick:()=>getBoardID(item.id)},label(" [ Content ] "+ item.content),)
           ));
         }
       }

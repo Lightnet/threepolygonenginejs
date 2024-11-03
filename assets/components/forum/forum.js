@@ -63,7 +63,7 @@ const getForumsEL = () => {
                   button({onclick:editForum(data[i].id)},'Delete'),
                 )
               ),
-              div({style:'height:40px;', class:'ccontent',onclick:()=>enterForum(data[i].id)},
+              div({style:'min-height:40px;', class:'ccontent',onclick:()=>enterForum(data[i].id)},
                 data[i].content
               ),
             )

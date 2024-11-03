@@ -54,8 +54,8 @@ function Page_ForumID() {
         for(let item of data){
           console.log("item: ", item);
           van.add(boardEl, div(
-            div({style:'background-color:#66a3ff;'},label("[Board+] [ Title ] "+ item.title),),
-            div({style:'background-color:lightblue;height:40px;',onclick:()=>getBoardID(item.id)},label(" [ Content ] "+ item.content),)
+            div({style:'',class:"cheader"},label("[Board] [ Title ] "+ item.title),),
+            div({style:'min-height:40px;',class:"ccontent",onclick:()=>getBoardID(item.id)},label(" [ Content ] "+ item.content),)
             
           ));
         }
