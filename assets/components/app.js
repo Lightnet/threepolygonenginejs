@@ -15,8 +15,8 @@ import {
   loginState
 } from "/components/context.js";
 
-import { HomeComponent } from "./pages/page_home.js";
-import { AboutComponent } from "./pages/page_about.js";
+import { Page_Home } from "./pages/page_home.js";
+import { Page_About } from "./pages/page_about.js";
 import { HelpPage } from "./pages/page_help.js";
 import { BlogPage } from "./pages/page_blog.js";
 
@@ -34,6 +34,7 @@ import { GameObjectPage } from "./pages/page_gameobject.js";
 import { Page_Forum, Page_ForumID } from "./pages/page_forum.js";
 import { PageBoard } from "./pages/page_forum_board.js";
 import { Page_Topic } from "./pages/page_forum_topic.js";
+import { Page_Report } from "./pages/page_report.js";
 
 
 const {button, div, pre, p} = van.tags
@@ -63,8 +64,8 @@ const App = () => {
   return Router({
     //basename: "/", // Optional base name (All links are now prefixed with '/vanjs-routing')
     routes: [
-      { path: "/", component: HomeComponent },
-      { path: "/about", component: AboutComponent },
+      { path: "/", component: Page_Home },
+      { path: "/about", component: Page_About },
       { path: "/account", component: AccountPage },
       { path: "/signin", component: SignInPage },
       { path: "/signup", component: SignUpPage },
@@ -86,6 +87,8 @@ const App = () => {
       { path: "/forum/:id", component: Page_ForumID },
       { path: "/board/:id", component: PageBoard },
       { path: "/topic/:id", component: Page_Topic },
+
+      { path: "/report", component: Page_Report },
 
       { path: "/help", component: HelpPage },
       { path: "/help/:section", component: HelpPage },

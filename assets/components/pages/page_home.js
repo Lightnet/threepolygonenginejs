@@ -14,7 +14,7 @@ import {aliasState} from "/components/context.js";
 
 const {button, div, label} = van.tags;
 
-function HomeComponent() {
+function Page_Home() {
 
   const username = van.derive(()=>{
     //console.log("user change name:", aliasState.val);
@@ -22,15 +22,15 @@ function HomeComponent() {
   });
 
   return div(
+    HomeNavMenu(),
     div(
       label("[Home]"), 
       label("User: ", username),
       //button_test(),
     ),
-    HomeNavMenu(),
   );
 }
 
 export{
-  HomeComponent
+  Page_Home
 }

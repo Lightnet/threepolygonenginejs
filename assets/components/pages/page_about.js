@@ -11,7 +11,7 @@ import { Router, Link, getRouterParams, navigate, getRouterQuery } from "vanjs-r
 
 const {button, div, pre, p, br} = van.tags
 
-function AboutComponent() {
+function Page_About() {
   van.derive(() => {
     console.log(getRouterQuery()); // { section: "profile" }
   });
@@ -25,5 +25,5 @@ function AboutComponent() {
 }
 
 export{
-  AboutComponent
+  Page_About
 }
