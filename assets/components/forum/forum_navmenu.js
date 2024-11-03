@@ -8,7 +8,7 @@
 
 import van from "vanjs-core";
 import { Router, Link, getRouterParams, navigate } from "vanjs-routing";
-import { ToggleTheme } from "../theme/toggletheme.js";
+import { ToggleTheme } from "../theme/theme.js";
 const {button, input, label, div, script, pre, p, ul, li, a, table, tbody, tr,td} = van.tags;
 
 function Forum_NavMenu(){

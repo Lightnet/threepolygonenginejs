@@ -9,14 +9,9 @@
 import van from "vanjs-core";
 import { Router, Link, getRouterParams, navigate, getRouterQuery } from "vanjs-routing";
 import { Forum_NavMenu } from "../forum/forum_navmenu.js";
-import { displayButtonCreateBoard, getForumBoardEL } from "../forum/forum_board.js";
 import useFetch from "/libs/useFetch.js";
-import { displayButtonCreateTopic, getForumTopicEL } from "../forum/forum_topic.js";
-import {
-  aliasState,
-  loginState,
-  boardIDState
-} from "/components/context.js";
+import { displayButtonCreateTopic } from "../forum/forum_topic.js";
+import { aliasState, loginState, boardIDState } from "/components/context.js";
 
 const { div, label } = van.tags;
 
@@ -25,7 +20,6 @@ function PageBoard() {
   const topicEl = div('TOPICS');
 
   van.derive(() => {
-    //console.log("[BOARD] FORUM ID:>> ",getRouterQuery()); // { section: "profile" }
     //console.log("getRouterParams >> ",getRouterParams()); 
     const { id } = getRouterParams();
     if(id){
@@ -41,7 +35,6 @@ function PageBoard() {
 
   async function getBoardIDTopics(_id){
     try{
-      //const data = await useFetch('/api/board/'+_id);
       const data = await useFetch('/api/board/'+_id);
       console.log(data);
       if(data){
@@ -61,10 +54,7 @@ function PageBoard() {
   return div(
     Forum_NavMenu(),
     div(
-      //displayButtonCreateBoard(),
-      //getForumBoardEL(),
       displayButtonCreateTopic(),
-      //getForumTopicEL()
       topicEl
     )
   )

@@ -14,21 +14,7 @@ import useFetch from "../../libs/useFetch.js";
 
 const {button, input, label, div, span, script, pre, p, ul, li, a, table, tbody, tr,td} = van.tags;
 
-// async function useFetch(url, option){
-//   try {
-//     let options = option || {};
-//     options.headers={
-//       'Content-Type':'application/json',
-//     };
-//     const rep = await fetch(url, options);
-//     const data = await rep.json();
-//     return data;
-//   } catch (error) {
-//     console.log(error);
-//     return {api:'ERROR'};
-//   }
-// }
-// 
+
 const getForumsEL = () => {
 
   const forumList = div();

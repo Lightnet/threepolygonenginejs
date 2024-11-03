@@ -12,19 +12,7 @@ import {useFetch} from "/libs/useFetch.js";
 
 const {button, input, label, div, span, script, pre, p, ul, li, a, table, tbody, tr,td} = van.tags;
 
-import {
-  aliasState,
-  loginState,
-  forumIDState,
-  boardIDState,
-} from "/components/context.js";
-
-const getForumTopicEL = () => {
-
-  return div(
-    label("Topic...")
-  )
-}
+import { aliasState, loginState, forumIDState, boardIDState } from "/components/context.js";
 
 //BOARD ID get topics
 const getBoardIDTopicsEl = (_id) => {
@@ -76,7 +64,6 @@ function displayButtonCreateTopic(){
   return button({onclick:()=>btnCreateTopic()},"Create Topic");
 }
 
-
 function createTopicForm({closed}){
 
   const forumTitle = van.state('test');
@@ -124,7 +111,6 @@ function createTopicForm({closed}){
 
 export {
   displayButtonCreateTopic,
-  getForumTopicEL,
   createTopicForm,
   getBoardIDTopicsEl
 }

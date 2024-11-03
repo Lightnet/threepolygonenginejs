@@ -15,7 +15,7 @@ import {
   aliasState,
   loginState
 } from "/components/context.js";
-import { ToggleTheme } from "./theme/toggletheme.js";
+import { ToggleTheme } from "./theme/theme.js";
 
 const HomeNavMenu=()=>{
   const draw_access = van.derive(()=>{

@@ -5,11 +5,9 @@
   GitHub: https://github.com/Lightnet/threepolygonenginejs
   
 */
-import { 
-  THREE, 
-  ECS,
-  van 
-} from "/dps.js";
+
+import { THREE, ECS, van } from "/dps.js";
+import { ToggleTheme } from "../theme/theme.js";
 //import van from "vanjs-core";
 import { Router, Link, getRouterParams, navigate } from "vanjs-routing";
 
@@ -44,6 +42,7 @@ function AdminNavMenus(){
       button({onclick:()=>navigate('/admin/reports')},'Reports'),
       button({onclick:()=>navigate('/admin/database')},'Database'),
       button({onclick:()=>navigate('/admin/settings')},'Settings'),
+      ToggleTheme(),
     )
   )
 }

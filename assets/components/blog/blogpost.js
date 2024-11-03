@@ -10,7 +10,7 @@ import van from "van";
 import { Modal } from "vanjs-ui";
 //import EditorJS from '/editorjs.js';
 
-const {button, textarea, input, label, div, br, h1, p} = van.tags;
+const {button, textarea, input, label, div, br, span, h1, p} = van.tags;
 
 const BlogEL = () => {
 
@@ -133,11 +133,13 @@ const BlogEL = () => {
             )
           }else{
             return div(
-              div(
-                button({onclick:()=>delete_blog_id(_blog.id)},`Delete ID: ${_blog.id}`),
-                button({onclick:()=>setEditId(_blog.id )},`Edit ID: ${_blog.id}`),
+              div({style:"background:darkgray;"},
+                label(_blog.title),
+                span({style:'float:right;'},
+                  button({onclick:()=>delete_blog_id(_blog.id)},`Delete ID: ${_blog.id}`),
+                  button({onclick:()=>setEditId(_blog.id )},`Edit ID: ${_blog.id}`),
+                ),
               ),
-              div({style:"background:darkgray;"},_blog.title),
               //br(),
               div({style:"background:lightgray;"},_blog.content),
             )

@@ -9,21 +9,9 @@
 import van from "vanjs-core";
 import { Modal } from "vanjs-ui";
 import {useFetch} from "/libs/useFetch.js";
-import {
-  aliasState,
-  loginState,
-  forumIDState
-} from "/components/context.js";
+import { aliasState, forumIDState } from "/components/context.js";
 
 const {button, input, label, div, span, script, pre, p, ul, li, a, table, tbody, tr,td} = van.tags;
-
-
-const getForumBoardEL = () => {
-
-  return div(
-    label("board...")
-  )
-}
 
 function displayButtonCreateBoard(){
 
@@ -84,12 +72,7 @@ function createBoardForm({closed}){
   )
 }
 
-function getForumBoardId(_id){
-
-}
-
 export {
   displayButtonCreateBoard,
-  getForumBoardEL,
   createBoardForm
 }

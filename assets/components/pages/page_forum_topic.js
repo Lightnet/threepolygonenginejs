@@ -9,15 +9,9 @@
 import van from "vanjs-core";
 import { Router, Link, getRouterParams, navigate, getRouterQuery } from "vanjs-routing";
 import { Forum_NavMenu } from "../forum/forum_navmenu.js";
-import { displayButtonCreateBoard, getForumBoardEL } from "../forum/forum_board.js";
+//import {  } from "../forum/forum_board.js";
 import useFetch from "/libs/useFetch.js";
-import {
-  aliasState,
-  loginState,
-  boardIDState,
-  topicIDState,
-  commentIDState,
-} from "/components/context.js";
+import { aliasState, loginState, boardIDState, topicIDState, commentIDState } from "/components/context.js";
 import { createCommentForm, displayButtonCreateComment } from "../forum/forum_comment.js";
 
 const { div, label } = van.tags;
@@ -26,7 +20,6 @@ function Page_Topic() {
   const topicEl = div();
 
   van.derive(() => {
-    //console.log("[BOARD] FORUM ID:>> ",getRouterQuery()); // { section: "profile" }
     console.log("Page_Topic getRouterParams >> ",getRouterParams()); 
     const { id } = getRouterParams();
 
@@ -63,9 +56,6 @@ function Page_Topic() {
   return div(
     Forum_NavMenu(),
     div(
-      //displayButtonCreateBoard(),
-      //getForumBoardEL()
-      //createCommentForm(),
       displayButtonCreateComment(),
       topicEl
     )

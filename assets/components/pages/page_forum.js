@@ -13,11 +13,7 @@ import { Forum_NavMenu } from "../forum/forum_navmenu.js";
 import { displayButtonCreateBoard } from "../forum/forum_board.js";
 import useFetch from "../../libs/useFetch.js";
 
-import {
-  aliasState,
-  loginState,
-  boardIDState
-} from "/components/context.js";
+import { aliasState, boardIDState } from "/components/context.js";
 
 
 const { div, label } = van.tags;
@@ -83,7 +79,6 @@ function Page_ForumID() {
     div(
       displayButtonCreateBoard(),
       boardEl
-      //getForumsEL()
     )
   ); 
 }

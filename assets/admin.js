@@ -8,9 +8,9 @@
 import { THREE, ECS, van } from "/dps.js";
 import { Page_Admin, Page_Logs, Page_Accounts, Page_Tickets, Page_Reports, Page_Database, Page_Settings } from "/components/admin/admin_access.js";
 import { Router, Link, getRouterParams, navigate } from "vanjs-routing";
-import useFetch from "../libs/useFetch.js";
-
-const {button, div, pre, p} = van.tags;
+//import useFetch from "../libs/useFetch.js";
+import {UIStyle} from "/components/theme/theme.js";
+//const {button, div, pre, p} = van.tags;
 
 
 const PageAdmin = () => {
@@ -28,7 +28,5 @@ const PageAdmin = () => {
   })
 }
 
-van.add(document.body, PageAdmin())
-
-//van.add(document.body, AdminPage())
-//console.log("ADMIN");
+van.add(document.head, UIStyle);
+van.add(document.body, PageAdmin());
