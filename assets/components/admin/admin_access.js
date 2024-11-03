@@ -10,28 +10,12 @@ import { THREE, ECS, van } from "/dps.js";
 import { ToggleTheme } from "../theme/theme.js";
 //import van from "vanjs-core";
 import { Router, Link, getRouterParams, navigate } from "vanjs-routing";
+import useFetch from '/libs/useFetch.js';
+import { El_CreateReportForm } from "../report/report.js";
+const {button, div, span, label} = van.tags;
 
-const {button, div, pre, p, label} = van.tags;
-
-// function AdminPage(){
-//   return div({id:"admin"},
-//     div(
-//       button('Home'),
-//       button('Logs'),
-//       button('Accounts'),
-//       button('Tickets'),
-//       button('Reports'),
-//       button('Database'),
-//       button('Settings'),
-//     ),
-//     div(
-//       ButtonMaintenanceMode()
-//     ),
-//   )
-// }
 
 function AdminNavMenus(){
-
 
   return div({id:"admin"},
     div(
@@ -76,10 +60,53 @@ function Page_Accounts(){
 }
 
 function Page_Reports(){
+
+  const elReports = div();
+
+  function c_IsDone(){
+
+  }
+
+  function c_IsClose(){
+    
+  }
+
+  function isBool(_is){
+    return _is ? 'True' : 'False';
+  }
+
+  async function get_reports() {
+    let data = await useFetch('/api/report');
+    console.log(data);
+    if(data){
+      for(const item of data){
+        console.log(item);
+        van.add(elReports,
+          div(
+            div({style:"background:darkgray;"},
+              label(item.title),
+              span({style:'float:right;'},
+                button({onclick:()=>c_IsDone(item.id)},`Done: ${isBool(item.isdone)}`),
+                button({onclick:()=>c_IsClose(item.id )},`Close: ${isBool(item.isclose)}`),
+              ),
+            ),
+            //br(),
+            div({style:"background:lightgray;"},item.content),
+          )
+        );
+      }
+    }
+  }
+
+  get_reports();
+
+
   return div(
     AdminNavMenus(),
     div(
-      label('Report')
+      label('Report'),
+      El_CreateReportForm(),
+      elReports,
     ),
   )
 }

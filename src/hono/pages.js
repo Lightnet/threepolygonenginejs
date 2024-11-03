@@ -1,4 +1,12 @@
-//pages for testing
+/*
+  Project Name: threepolygonenginejs
+  License: MIT
+  Created By: Lightnet
+  GitHub: https://github.com/Lightnet/threepolygonenginejs
+  
+*/
+
+// pages for url
 
 import { Hono } from 'hono';
 import van from "mini-van-plate/van-plate"

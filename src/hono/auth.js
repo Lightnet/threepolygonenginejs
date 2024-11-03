@@ -1,3 +1,11 @@
+/*
+  Project Name: threepolygonenginejs
+  License: MIT
+  Created By: Lightnet
+  GitHub: https://github.com/Lightnet/threepolygonenginejs
+  
+*/
+
 //https://hono.dev/guides/middleware
 
 //AUTH STUFF

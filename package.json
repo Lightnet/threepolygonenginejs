@@ -22,9 +22,9 @@
     "ecs": "^0.21.0",
     "hono": "^4.5.1",
     "mini-van-plate": "^0.6.0",
+    "nanoid": "^5.0.8",
     "socket.io": "^4.7.5",
-    "sqlite3": "^5.1.7"
-  },
-  "devDependencies": {
+    "sqlite3": "^5.1.7",
+    "uuid": "^11.0.2"
   }
 }

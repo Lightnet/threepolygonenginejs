@@ -1,3 +1,11 @@
+/*
+  Project Name: threepolygonenginejs
+  License: MIT
+  Created By: Lightnet
+  GitHub: https://github.com/Lightnet/threepolygonenginejs
+  
+*/
+
 // 
 // https://github.com/orgs/honojs/discussions/1355
 // 
@@ -21,6 +29,8 @@ import auth from './auth.js';
 import blog from './blog.js';
 import forum from './forum.js';
 import pages from './pages.js';
+import admin from './admin.js';
+
 import { GameManagement, socketGameSetup } from '../game/gamemanagement.js';
 import { GameNetwork } from '../game/network.js';
 
@@ -77,6 +87,7 @@ app.route('/game', game);
 app.route('/', auth);
 app.route('/', blog);
 app.route('/', forum);
+app.route('/', admin);
 
 //<script type="module" src="/client.js"></script>
 //<script type="module" src="/vanjs_client.js"></script>

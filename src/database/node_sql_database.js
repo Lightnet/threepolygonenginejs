@@ -1,4 +1,9 @@
 // NODE SQLITE 
+// https://www.sqlite.org/datatype3.html
+/*
+SQLite does not have a separate Boolean storage class. Instead, Boolean values are stored as integers 0 (false) and 1 (true).
+
+*/
 
 import Database from 'better-sqlite3';
 
@@ -14,6 +19,8 @@ class SQLDB{
     this.create_table_board();
     this.create_table_topic();
     this.create_table_comment();
+
+    this.create_table_report();
     return this;
   }
 
@@ -42,6 +49,19 @@ class SQLDB{
       aliasId varchar(255),
       title varchar(255) NOT NULL,
       content varchar(255) NOT NULL,
+      create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );`);
+  }
+
+  async create_table_report(){
+    await this.db.exec(`CREATE TABLE IF NOT EXISTS report (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      aliasId varchar(255),
+      title varchar(255) NOT NULL,
+      content varchar(255) NOT NULL,
+      isdone BOOLEAN DEFAULT 0,
+      isclose BOOLEAN DEFAULT 0,
       create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );`);
@@ -186,7 +206,21 @@ class SQLDB{
       return {api:'DBERROR'};
     }
   }
+//===============================================
+// REPORT
+//===============================================
+  create_report(_title,_content){
+    const stmt = this.db.prepare('INSERT INTO report (title, content) VALUES (?, ?)');
+    stmt.run(_title, _content);
+    return {api:"CREATED"};
+  }
 
+  get_reports(){
+    let stmt = this.db.prepare(`SELECT * FROM report;`);
+    const result = stmt.all();
+    //console.log(result);
+    return result;
+  }
 //===============================================
 // FORUM
 //===============================================
