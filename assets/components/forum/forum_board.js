@@ -11,7 +11,7 @@ import { Modal } from "vanjs-ui";
 import {useFetch} from "/libs/useFetch.js";
 import { aliasState, forumIDState } from "/components/context.js";
 
-const {button, input, label, div, span, script, pre, p, ul, li, a, table, tbody, tr,td} = van.tags;
+const {button, input, label, div, span, script, table, tbody, tr,td} = van.tags;
 
 function displayButtonCreateBoard(){
 

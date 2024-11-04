@@ -8,6 +8,8 @@
 
 import van from "vanjs-core";
 import { Router, Link, getRouterParams, navigate, getRouterQuery } from "vanjs-routing";
+import { El_CreateReportForm } from "../report/report.js";
+import { HomeNavMenu } from "../navmenu.js";
 
 const {button, div, pre, p, br} = van.tags
 
@@ -17,10 +19,8 @@ function Page_Report() {
   // });
 
   return div(
-    button({onclick:()=>navigate("/") }, "Back"),
-    p("Report"), 
-    p("Work in progress builds."), 
-    
+    HomeNavMenu(),
+    El_CreateReportForm(),
   );
 }
 

@@ -8,6 +8,7 @@
 
 import van from "vanjs-core";
 import { Router, Link, getRouterParams, navigate, getRouterQuery } from "vanjs-routing";
+import { HomeNavMenu } from "../navmenu.js";
 
 const {button, div, pre, p} = van.tags
 
@@ -16,7 +17,12 @@ function AccountPage() {
   //   console.log(getRouterQuery()); // { section: "profile" }
   // });
 
-  return div(p("Account"), Link({ href: "/" }, "Back to Home"));
+  return div(
+    HomeNavMenu(),
+    div(
+      button('Info'),
+    )
+  );
 }
 
 export{

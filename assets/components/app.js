@@ -25,20 +25,13 @@ import { MessagePage } from "./pages/page_message.js";
 
 import { AccountPage } from "./pages/page_account.js";
 import { SettingPage } from "./pages/page_settings.js";
-
-//import { getForumBoardEL } from "./forum/forum_board.js";
-import { Page_Forum, Page_ForumID } from "./pages/page_forum.js";
-import { PageBoard } from "./pages/page_forum_board.js";
-import { Page_Topic } from "./pages/page_forum_topic.js";
 import { Page_Report } from "./pages/page_report.js";
 
 //import { GameObjectPage } from "./pages/page_gameobject.js";
 import { Page_Game_Editor } from "./pages/page_game_editor.js";
-import { Page_GameData } from "./pages/page_gamedata.js";
-import { Page_GameData_Entities } from "./pages/page_game_entities.js";
-import { Page_GameData_Scripts } from "./pages/page_game_scripts.js";
-import { Page_GameData_Scenes } from "./pages/page_game_scenes.js";
-import { Page_GameData_Projects } from "./pages/page_game_projects.js";
+import { Page_GameData, Page_GameData_Entities, Page_GameData_Projects, Page_GameData_Scenes, Page_GameData_Scripts } from "./game/pages_game.js";
+import { Page_Topic, Page_Board, Page_Forum, Page_ForumID } from "./forum/pages_forum.js";
+
 
 
 const {button, div, pre, p} = van.tags
@@ -93,7 +86,7 @@ const App = () => {
 
       { path: "/forum", component: Page_Forum },
       { path: "/forum/:id", component: Page_ForumID },
-      { path: "/board/:id", component: PageBoard },
+      { path: "/board/:id", component: Page_Board },
       { path: "/topic/:id", component: Page_Topic },
 
       { path: "/report", component: Page_Report },
