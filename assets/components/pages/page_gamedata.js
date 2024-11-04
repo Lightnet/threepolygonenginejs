@@ -8,20 +8,23 @@
 
 import van from "vanjs-core";
 import { Router, Link, getRouterParams, navigate, getRouterQuery } from "vanjs-routing";
-import { GameObject_SubMenu } from "../gameobject/gameobject_submenu.js";
-
+import {AccessNavMenu} from "/components/navmenu.js";
+import { GameDataNavMenus } from "../game/game.js";
 const {button, div, pre, label} = van.tags
 
-function GameObjectPage() {
+function Page_GameData() {
   van.derive(() => {
     console.log(getRouterQuery()); // { section: "profile" }
   });
 
   return div(
-    GameObject_SubMenu(),
+    AccessNavMenu(),
+    //label("Game"), Link({ href: "/" }, "Home")
+    GameDataNavMenus(),
+    label('Game Data Home'),
   );
 }
 
 export{
-  GameObjectPage
+  Page_GameData,
 }

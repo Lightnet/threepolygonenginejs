@@ -88,5 +88,6 @@ const AccessNavMenu=()=>{
 }
 
 export{
-  HomeNavMenu
+  HomeNavMenu,
+  AccessNavMenu
 }

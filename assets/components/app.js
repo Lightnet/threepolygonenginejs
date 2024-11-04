@@ -26,15 +26,19 @@ import { MessagePage } from "./pages/page_message.js";
 import { AccountPage } from "./pages/page_account.js";
 import { SettingPage } from "./pages/page_settings.js";
 
-import { Page_Game_Editor } from "./pages/page_game_editor.js";
-import { GamePage } from "./pages/page_game.js";
-import { GameObjectPage } from "./pages/page_gameobject.js";
-
 //import { getForumBoardEL } from "./forum/forum_board.js";
 import { Page_Forum, Page_ForumID } from "./pages/page_forum.js";
 import { PageBoard } from "./pages/page_forum_board.js";
 import { Page_Topic } from "./pages/page_forum_topic.js";
 import { Page_Report } from "./pages/page_report.js";
+
+//import { GameObjectPage } from "./pages/page_gameobject.js";
+import { Page_Game_Editor } from "./pages/page_game_editor.js";
+import { Page_GameData } from "./pages/page_gamedata.js";
+import { Page_GameData_Entities } from "./pages/page_game_entities.js";
+import { Page_GameData_Scripts } from "./pages/page_game_scripts.js";
+import { Page_GameData_Scenes } from "./pages/page_game_scenes.js";
+import { Page_GameData_Projects } from "./pages/page_game_projects.js";
 
 
 const {button, div, pre, p} = van.tags
@@ -73,10 +77,14 @@ const App = () => {
       { path: "/forgot", component: ForgotPage },
       { path: "/settings", component: SettingPage },
 
-      { path: "/game", component: GamePage },
-      { path: "/gameobject", component: GameObjectPage },
-      { path: "/gameobject/entity/:id", component: GameObjectPage },
-      { path: "/gameobject/settings/:id", component: GameObjectPage },
+      { path: "/gamedata", component: Page_GameData },
+      { path: "/gamedata/projects", component: Page_GameData_Projects },
+      { path: "/gamedata/scenes", component: Page_GameData_Scenes },
+      { path: "/gamedata/entities", component: Page_GameData_Entities },
+      { path: "/gamedata/scripts", component: Page_GameData_Scripts },
+
+      //{ path: "/gameobject/entity/:id", component: GameObjectPage },
+      //{ path: "/gameobject/settings/:id", component: GameObjectPage },
       { path: "/editor", component: Page_Game_Editor },
 
       { path: "/message", component: MessagePage },

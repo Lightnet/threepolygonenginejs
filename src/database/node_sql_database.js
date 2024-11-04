@@ -21,6 +21,14 @@ class SQLDB{
     this.create_table_comment();
 
     this.create_table_report();
+
+    this.create_table_project();
+    this.create_table_project_config();
+    this.create_table_scene();
+    this.create_table_entity();
+    this.create_table_script();
+
+
     return this;
   }
 
@@ -105,19 +113,22 @@ class SQLDB{
   async create_table_comment(){
     await this.db.exec(`CREATE TABLE IF NOT EXISTS comment (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      parentid varchar(255), 
-      aliasId varchar(255),
+      parentid varchar(64), 
+      aliasId varchar(64),
       title varchar(255) NOT NULL,
       content varchar(255) NOT NULL,
       create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );`);
   }
-
-  async entity_create_table(){
+//===============================================
+// GAME
+//===============================================
+  async create_table_entity(){
     await this.db.exec(`CREATE TABLE IF NOT EXISTS entity (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      aliasId varchar(255),
+      id varchar(64) PRIMARY KEY,
+      parentid varchar(64),
+      aliasId varchar(64),
       name varchar(255) NOT NULL,
       content text NOT NULL,
       create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -125,12 +136,50 @@ class SQLDB{
     );`);
   }
 
-  async scene_create_table(){
+  async create_table_scene(){
     await this.db.exec(`CREATE TABLE IF NOT EXISTS scene (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id varchar(64) PRIMARY KEY,
+      parentid varchar(64),
+      aliasId varchar(64),
+      name varchar(255) NOT NULL,
+      content text,
+      create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );`);
+  }
+
+  async create_table_project(){
+    await this.db.exec(`CREATE TABLE IF NOT EXISTS project (
+      id varchar(64) PRIMARY KEY,
       aliasId varchar(255),
       name varchar(255) NOT NULL,
       content text,
+      ispublic BOOLEAN DEFAULT 0,
+      create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );`);
+  }
+
+  async create_table_project_config(){
+    await this.db.exec(`CREATE TABLE IF NOT EXISTS project_config (
+      id varchar(64) PRIMARY KEY,
+      parentid varchar(64),
+      aliasId varchar(255),
+      _key varchar(255) NOT NULL,
+      _value text,
+      create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );`);
+  }
+
+  async create_table_script(){
+    await this.db.exec(`CREATE TABLE IF NOT EXISTS script (
+      id varchar(64) PRIMARY KEY,
+      parentid varchar(64),
+      aliasId varchar(64),
+      name varchar(255) NOT NULL,
+      content text,
+      ispublic BOOLEAN DEFAULT 0,
       create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );`);
