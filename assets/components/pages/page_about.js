@@ -8,6 +8,7 @@
 
 import van from "vanjs-core";
 import { Router, Link, getRouterParams, navigate, getRouterQuery } from "vanjs-routing";
+import { HomeNavMenu } from "../navmenu.js";
 
 const {button, div, pre, p, br} = van.tags
 
@@ -17,7 +18,7 @@ function Page_About() {
   });
 
   return div(
-    button({onclick:()=>navigate("/") }, "Back"),
+    HomeNavMenu(),
     p("About"), 
     p("Work in progress builds."), 
     

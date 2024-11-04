@@ -30,6 +30,7 @@ import blog from './blog.js';
 import forum from './forum.js';
 import pages from './pages.js';
 import admin from './admin.js';
+import message from './message.js';
 
 import { GameManagement, socketGameSetup } from '../game/gamemanagement.js';
 import { GameNetwork } from '../game/network.js';
@@ -83,8 +84,9 @@ app.use('*',useDB({
   //await next()
 //})
 
-app.route('/game', game);
+app.route('/', game);
 app.route('/', auth);
+app.route('/', message);
 app.route('/', blog);
 app.route('/', forum);
 app.route('/', admin);

@@ -6,6 +6,7 @@ SQLite does not have a separate Boolean storage class. Instead, Boolean values a
 */
 
 import Database from 'better-sqlite3';
+import { nanoid } from '../helpers.js';
 
 //sqlite
 class SQLDB{
@@ -27,6 +28,8 @@ class SQLDB{
     this.create_table_scene();
     this.create_table_entity();
     this.create_table_script();
+
+    this.create_table_message();
 
 
     return this;
@@ -119,6 +122,18 @@ class SQLDB{
       content varchar(255) NOT NULL,
       create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );`);
+  }
+
+  async create_table_message(){
+    await this.db.exec(`CREATE TABLE IF NOT EXISTS comment (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      parentid varchar(64), 
+      aliasId varchar(64),
+      toAlias varchar(64),
+      subject varchar(255) NOT NULL,
+      content varchar(255) NOT NULL,
+      create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );`);
   }
 //===============================================
@@ -255,6 +270,31 @@ class SQLDB{
       return {api:'DBERROR'};
     }
   }
+//===============================================
+// REPORT
+//===============================================
+create_message(_aliasid, _toalias, _title,_content){
+  const stmt = this.db.prepare('INSERT INTO message (title, content) VALUES (?, ?)');
+  stmt.run(_title, _content);
+  return {api:"CREATED"};
+}
+
+get_messages(){
+  let stmt = this.db.prepare(`SELECT * FROM message;`);
+  const result = stmt.all();
+  //console.log(result);
+  return result;
+}
+
+delete_message(_id){
+  try{
+    const stmt = this.db.prepare('DELETE FROM message WHERE id=?')
+    stmt.run(_id);
+    return {api:'DELETE'};
+  }catch(e){
+    return {api:'DBERROR'};
+  }
+}
 //===============================================
 // REPORT
 //===============================================
@@ -399,9 +439,10 @@ class SQLDB{
 // entity
 //===================================
   //
-  entity_create(_title,_content){
-    const stmt = this.db.prepare('INSERT INTO entity (title, content) VALUES (?, ?)');
-    stmt.run(_title, _content);
+  create_entity(_name,_content){
+    let uuid = nanoid();
+    const stmt = this.db.prepare('INSERT INTO entity (id, name, content) VALUES (?, ?, ?)');
+    stmt.run(uuid, _name, _content);
     return {api:"CREATED"};
   }
 

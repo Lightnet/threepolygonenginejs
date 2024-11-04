@@ -15,14 +15,14 @@ function Forum_NavMenu(){
 
   return div(
     button({onclick:()=>navigate("/")},"Back"),
-    ' ',
-    label("Forum"),
-    ' ',
-    button({onclick:()=>navigate("/forum")},"Home"),
-    button({onclick:()=>navigate("/forum/account")},"Account"),
+    //' ',
+    //label("Forum"),
+    //' ',
+    //button({onclick:()=>navigate("/forum")},"Home"),
+    //button({onclick:()=>navigate("/forum/account")},"Account"),
     button({onclick:()=>navigate("/forum/message")},"Message"),
     button({onclick:()=>navigate("/forum/settings")},"settings"),
-    button({onclick:()=>navigate("/forum/admin")},"admin"),
+    //button({onclick:()=>navigate("/forum/admin")},"admin"),
     ToggleTheme(),
   );
 }

@@ -7,11 +7,13 @@
 */
 
 import van from "vanjs-core";
+
+import useFetch from "/libs/useFetch.js";
 import { Router, Link, getRouterParams, navigate, getRouterQuery } from "vanjs-routing";
 import { AccessNavMenu } from "../navmenu.js";
-import { GameDataNavMenus } from "./game.js";
+import { El_CreateEntityForm, GameDataNavMenus } from "./game.js";
 
-const {button, div, label} = van.tags;
+const {button, div, label, textarea} = van.tags;
 
 function Page_GameData() {
   // van.derive(() => {
@@ -55,10 +57,36 @@ function Page_GameData_Projects() {
 
 function Page_GameData_Entities() {
 
+  const ElEntities = div();
+
+  async function get_Entities(){
+    try {
+      let data = await useFetch('/api/entity');
+      console.log(data)
+      for (const item of data ){
+        console.log(item)
+        van.add(ElEntities, div(
+          label("[ ID: "  + item.id + " ] "),
+          label("[ Name: "  + item.name + " ] "),
+          label('[ Content ]'),
+          textarea(item.content),
+        ))
+      }
+    } catch (error) {
+      
+    }
+  }
+
+  get_Entities();
+
   return div(
     AccessNavMenu(),
     GameDataNavMenus(),
     label('Game Entities'),
+    El_CreateEntityForm(),
+    div(
+      ElEntities,
+    )
   );
 }
 

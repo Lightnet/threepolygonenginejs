@@ -6,17 +6,28 @@
   
 */
 
-import van from "van";
+import van from "vanjs-core";
+import { HomeNavMenu } from "../navmenu.js";
 
 const {button, input, label, div, table, tbody, tr, td} = van.tags;
 
-const SettingPage = () => {
+const Page_Setting = () => {
 
   return div(
-    label('Settings')
+    HomeNavMenu(),
+    label('Settings'),
+    div(
+      label('Theme Color?'),
+    ),
+    div(
+      label('Cookie?'),
+    ),
+    div(
+      label('Admin/Mod?'),
+    ),
   )
 }
 
 export {
-  SettingPage
+  Page_Setting
 }

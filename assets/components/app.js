@@ -8,7 +8,7 @@
 
 import van from "vanjs-core";
 import { Router, Link, getRouterParams, navigate } from "vanjs-routing";
-import useFetch from "../libs/useFetch.js";
+import useFetch from "/libs/useFetch.js";
 
 import {
   aliasState,
@@ -21,17 +21,15 @@ import { HelpPage } from "./pages/page_help.js";
 import { BlogPage } from "./pages/page_blog.js";
 
 import { ForgotPage, SignInPage, SignOutPage, SignUpPage } from "./pages/page_auth.js";
-import { MessagePage } from "./pages/page_message.js";
 
 import { AccountPage } from "./pages/page_account.js";
-import { SettingPage } from "./pages/page_settings.js";
+import { Page_Message } from "./messages/page_message.js";
+import { Page_Setting } from "./pages/page_settings.js";
 import { Page_Report } from "./pages/page_report.js";
 
-//import { GameObjectPage } from "./pages/page_gameobject.js";
 import { Page_Game_Editor } from "./pages/page_game_editor.js";
 import { Page_GameData, Page_GameData_Entities, Page_GameData_Projects, Page_GameData_Scenes, Page_GameData_Scripts } from "./game/pages_game.js";
 import { Page_Topic, Page_Board, Page_Forum, Page_ForumID } from "./forum/pages_forum.js";
-
 
 
 const {button, div, pre, p} = van.tags
@@ -68,7 +66,7 @@ const App = () => {
       { path: "/signup", component: SignUpPage },
       { path: "/signout", component: SignOutPage },
       { path: "/forgot", component: ForgotPage },
-      { path: "/settings", component: SettingPage },
+      { path: "/settings", component: Page_Setting },
 
       { path: "/gamedata", component: Page_GameData },
       { path: "/gamedata/projects", component: Page_GameData_Projects },
@@ -80,7 +78,7 @@ const App = () => {
       //{ path: "/gameobject/settings/:id", component: GameObjectPage },
       { path: "/editor", component: Page_Game_Editor },
 
-      { path: "/message", component: MessagePage },
+      { path: "/message", component: Page_Message },
 
       { path: "/blog", component: BlogPage },
 

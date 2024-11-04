@@ -12,7 +12,7 @@ const route = new Hono();
 //GET ENTITIES
 route.get('/api/entity',(c)=>{
   const db = c.get('db');
-  const results = db.get_blogs();
+  const results = db.get_entities();
   //console.log(results);
   return c.json(results);
 })
@@ -20,9 +20,9 @@ route.get('/api/entity',(c)=>{
 route.post('/api/entity', async(c)=>{
   const data = await c.req.json();
   const db = c.get('db');
-  //console.log(data);
+  console.log(data);
 
-  const results = db.blog_create(data.title,data.content);
+  const results = db.create_entity(data.name,data.content);
   console.log("results");
   console.log(results);
   return c.json(results);
