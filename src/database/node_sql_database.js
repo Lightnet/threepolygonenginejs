@@ -433,26 +433,77 @@ delete_message(_id){
     stmt.run(id,_title, _content);
     return {api:"CREATED"};
   }
-
+//===================================
+// PROJECT
+//===================================
+// CREATE PROJECT
+create_project(_name,_content){
+  let uuid = nanoid();
+  const stmt = this.db.prepare('INSERT INTO project (id, name, content) VALUES (?, ?, ?)');
+  stmt.run(uuid, _name, _content);
+  return {api:"CREATED"};
+}
+// GET PROJECTS
+get_projects(){
+  let stmt = this.db.prepare(`SELECT * FROM project;`);
+  const result = stmt.all();
+  //console.log(result);
+  return result;
+}
 
 //===================================
-// entity
+// SCENE
 //===================================
-  //
+// CREATE SCENE
+create_scene(_name,_content){
+  let uuid = nanoid();
+  const stmt = this.db.prepare('INSERT INTO scene (id, name, content) VALUES (?, ?, ?)');
+  stmt.run(uuid, _name, _content);
+  return {api:"CREATED"};
+}
+// GET SCENES
+get_scenes(){
+  let stmt = this.db.prepare(`SELECT * FROM scene;`);
+  const result = stmt.all();
+  //console.log(result);
+  return result;
+}
+//===================================
+// SCRIPT
+//===================================
+// CREATE SCRIPT
+create_script(_name,_content){
+  let uuid = nanoid();
+  const stmt = this.db.prepare('INSERT INTO script (id, name, content) VALUES (?, ?, ?)');
+  stmt.run(uuid, _name, _content);
+  return {api:"CREATED"};
+}
+// GET SCRIPTS
+get_scripts(){
+  let stmt = this.db.prepare(`SELECT * FROM script;`);
+  const result = stmt.all();
+  //console.log(result);
+  return result;
+}
+
+//===================================
+// ENTITY
+//===================================
+  // CREATE ENTITY
   create_entity(_name,_content){
     let uuid = nanoid();
     const stmt = this.db.prepare('INSERT INTO entity (id, name, content) VALUES (?, ?, ?)');
     stmt.run(uuid, _name, _content);
     return {api:"CREATED"};
   }
-
+  // GET ENTITIES
   get_entities(){
     let stmt = this.db.prepare(`SELECT * FROM entity;`);
     const result = stmt.all();
     //console.log(result);
     return result;
   }
-
+  // DELETE ENTITY
   entity_delete(_id){
     try{
       const stmt = this.db.prepare('DELETE FROM entity WHERE id=?')
@@ -462,7 +513,7 @@ delete_message(_id){
       return {api:'DBERROR'};
     }
   }
-
+  // UPDATE ENTITY
   entity_update(_id,_title,_content){
     try{
       const stmt = this.db.prepare('UPDATE entity SET title=?, content=? WHERE id=?;')
@@ -474,7 +525,9 @@ delete_message(_id){
     }
   }
 }
-
+//===============================================
+// EXPORT
+//===============================================
 export default SQLDB;
 // https://github.com/honojs/middleware/tree/main/packages/hello
 // https://github.com/honojs/middleware

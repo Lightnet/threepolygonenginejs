@@ -11,7 +11,7 @@ import van from "vanjs-core";
 import useFetch from "/libs/useFetch.js";
 import { Router, Link, getRouterParams, navigate, getRouterQuery } from "vanjs-routing";
 import { AccessNavMenu } from "../navmenu.js";
-import { El_CreateEntityForm, GameDataNavMenus } from "./game.js";
+import { El_CreateEntityForm, El_CreateProjectForm, El_CreateSceneForm, El_CreateScriptForm, GameDataNavMenus } from "./game.js";
 
 const {button, div, label, textarea} = van.tags;
 
@@ -34,6 +34,7 @@ function Page_GameData_Scripts() {
     AccessNavMenu(),
     GameDataNavMenus(),
     label('Game Scripts'),
+    El_CreateScriptForm(),
   );
 }
 
@@ -43,6 +44,7 @@ function Page_GameData_Scenes() {
     AccessNavMenu(),
     GameDataNavMenus(),
     label('Game Scenes'),
+    El_CreateSceneForm(),
   );
 }
 
@@ -52,6 +54,7 @@ function Page_GameData_Projects() {
     AccessNavMenu(),
     GameDataNavMenus(),
     label('Game Projects'),
+    El_CreateProjectForm(),
   );
 }
 

@@ -9,6 +9,55 @@
 import { Hono } from 'hono';
 
 const route = new Hono();
+
+//===============================================
+// PROJECT
+//===============================================
+
+// GET PROJECT
+route.get('/api/project',(c)=>{
+  const db = c.get('db');
+  const results = db.get_projects();
+  //console.log(results);
+  return c.json(results);
+})
+// CREATE PROJECT
+route.post('/api/project', async(c)=>{
+  const data = await c.req.json();
+  const db = c.get('db');
+  console.log(data);
+
+  const results = db.create_project(data.name,data.content);
+  console.log("results");
+  console.log(results);
+  return c.json(results);
+})
+
+//===============================================
+// SCENE
+//===============================================
+// GET SCENE
+route.get('/api/scene',(c)=>{
+  const db = c.get('db');
+  const results = db.get_scenes();
+  //console.log(results);
+  return c.json(results);
+})
+// CREATE ENTITIES
+route.post('/api/scene', async(c)=>{
+  const data = await c.req.json();
+  const db = c.get('db');
+  console.log(data);
+
+  const results = db.create_scene(data.name,data.content);
+  console.log("results");
+  console.log(results);
+  return c.json(results);
+})
+
+//===============================================
+// ENTITY
+//===============================================
 //GET ENTITIES
 route.get('/api/entity',(c)=>{
   const db = c.get('db');
@@ -52,6 +101,28 @@ route.delete('/api/entity/:id',(c)=>{
   //console.log(db);
 
   return c.json(result);
+})
+
+//===============================================
+// SCRIPT
+//===============================================
+//GET ENTITIES
+route.get('/api/script',(c)=>{
+  const db = c.get('db');
+  const results = db.get_scripts();
+  //console.log(results);
+  return c.json(results);
+})
+// CREATE ENTITIES
+route.post('/api/script', async(c)=>{
+  const data = await c.req.json();
+  const db = c.get('db');
+  console.log(data);
+
+  const results = db.create_script(data.name,data.content);
+  console.log("results");
+  console.log(results);
+  return c.json(results);
 })
 
 export default route;
