@@ -33,11 +33,12 @@ function scriptHtml(_script){
 }
 
 function scriptHtml02(_script){
+  //background:gray;
   const pageHtml = van.html(
     head(
       style(`
       body{
-        background:gray;
+        
         margin: 0px 0px 0px 0px;
         overflow: hidden;
       }
@@ -66,11 +67,12 @@ function scriptHtml02(_script){
 }
 
 function scriptHtml03(_script){
+  // background:gray;
   const pageHtml = van.html(
     head(
       style(`
       body{
-        background:gray;
+        
         margin: 0px 0px 0px 0px;
         overflow: hidden;
       }
@@ -109,6 +111,9 @@ var urlandjs = [
   {url:'/editor',file:'/editor.js'},
   {url:'/login',file:'/login.js'},
   {url:'/admin',file:'/admin.js'},
+
+  {url:'/threejs_test',file:'/threejs_test.js'},
+  {url:'/texteditortest',file:'/texteditortest.js'},
 
   //{url:'/three',file:'/three_framework00.js'},
   

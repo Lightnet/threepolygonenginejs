@@ -106,14 +106,14 @@ route.delete('/api/entity/:id',(c)=>{
 //===============================================
 // SCRIPT
 //===============================================
-//GET ENTITIES
+//GET SCRIPT
 route.get('/api/script',(c)=>{
   const db = c.get('db');
   const results = db.get_scripts();
   //console.log(results);
   return c.json(results);
 })
-// CREATE ENTITIES
+// CREATE SCRIPT
 route.post('/api/script', async(c)=>{
   const data = await c.req.json();
   const db = c.get('db');

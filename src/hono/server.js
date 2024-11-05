@@ -100,11 +100,13 @@ app.get('/', (c) => {
   const db = c.get('db');
   //console.log('db', db);
   //return c.text('Hono!')
+
+  // background:gray;
   const pageHtml = van.html(
     head(
       style(`
       body{
-        background:gray;
+        
         margin: 0px 0px 0px 0px;
         overflow: hidden;
       }
@@ -189,12 +191,14 @@ if(typeServer=='node'){
   console.log('Process Type:',typeServer)
   console.log(`hono server  http://localhost:${PORT}`)
   let urlList = [
-    `http://localhost:${PORT}/chat`,
+    //`http://localhost:${PORT}/chat`,
     `http://localhost:${PORT}/craft`,
-    `http://localhost:${PORT}/three`,
-    `http://localhost:${PORT}/editor`,
-    `http://localhost:${PORT}/login`,
+    //`http://localhost:${PORT}/three`,
+    //`http://localhost:${PORT}/editor`,
+    //`http://localhost:${PORT}/login`,
     `http://localhost:${PORT}/admin`,
+    `http://localhost:${PORT}/threejs_test`,
+    `http://localhost:${PORT}/texteditortest`,
     //`http://localhost:${PORT}/threecss2d`,
     //`http://localhost:${PORT}/threecss3d`,
     // `http://localhost:${PORT}/three_css3srenderer_resize`,

@@ -30,6 +30,7 @@ import { Page_Report } from "./pages/page_report.js";
 import { Page_Game_Editor } from "./pages/page_game_editor.js";
 import { Page_GameData, Page_GameData_Entities, Page_GameData_Projects, Page_GameData_Scenes, Page_GameData_Scripts } from "./game/pages_game.js";
 import { Page_Topic, Page_Board, Page_Forum, Page_ForumID } from "./forum/pages_forum.js";
+import { Page_Mapper_Editor } from "./mapper/page_mapper_editor.js";
 
 
 const {button, div, pre, p} = van.tags
@@ -91,6 +92,8 @@ const App = () => {
 
       { path: "/help", component: HelpPage },
       { path: "/help/:section", component: HelpPage },
+
+      { path: "/mapper", component: Page_Mapper_Editor },
     ]
   });
 }

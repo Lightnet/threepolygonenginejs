@@ -73,6 +73,7 @@ const AccessNavMenu=()=>{
     ' ',
     //button({onclick:()=>navigate("/game")},'Game'),
     button({onclick:()=>navigate("/gamedata")},'Game Data'),
+    button({onclick:()=>navigate("/mapper")},'Mapper'),
     ' ',
     //button({onclick:()=>navigate("/gameobject")},'GameObject'),
     //' ',
