@@ -31,6 +31,8 @@ class SQLDB{
 
     this.create_table_message();
 
+    this.create_table_novel_book();
+    this.create_table_novel_page();
 
     return this;
   }
@@ -190,6 +192,32 @@ class SQLDB{
   async create_table_script(){
     await this.db.exec(`CREATE TABLE IF NOT EXISTS script (
       id varchar(64) PRIMARY KEY,
+      parentid varchar(64),
+      aliasId varchar(64),
+      name varchar(255) NOT NULL,
+      content text,
+      ispublic BOOLEAN DEFAULT 0,
+      create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );`);
+  }
+
+  async create_table_novel_book(){
+    await this.db.exec(`CREATE TABLE IF NOT EXISTS novel_book (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      aliasId varchar(64),
+      name varchar(255) NOT NULL,
+      content text,
+      ispublic BOOLEAN DEFAULT 0,
+      create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );`);
+  }
+
+  async create_table_novel_page(){
+    await this.db.exec(`CREATE TABLE IF NOT EXISTS novel_page (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      page INTEGER,
       parentid varchar(64),
       aliasId varchar(64),
       name varchar(255) NOT NULL,

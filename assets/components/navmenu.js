@@ -68,6 +68,7 @@ const AccessNavMenu=()=>{
     button({onclick:()=>navigate("/account")},'Account'),
     ' ',
     button({onclick:()=>navigate("/message")},'Message'),
+    button({onclick:()=>navigate("/novel")},'Novel'),
     ' ',
     button({onclick:()=>navigate("/forum")},'Forum'),
     ' ',
