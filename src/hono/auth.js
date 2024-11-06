@@ -55,8 +55,8 @@ app.post('/api/auth/signin', async (c) => {
       }
       const db = c.get('db');
       const result = db.user_signin(data.alias, data.passphrase);
-      //console.log("user DB");
-      //console.log(result);
+      console.log("user DB");
+      console.log(result);
       if(result){
         if(result?.api=='PASS'){
           let token = {alias: data.alias};
@@ -65,10 +65,17 @@ app.post('/api/auth/signin', async (c) => {
             httpOnly:true,
             path:"/"
           });
+          return c.json(result);
+        }else if(result?.api=='NONEXIST'){
+          return c.json({api:'NONEXIST'}); 
+        }else{
+          return c.json({api:'DENIED'});  
         }
+      }else{
+        return c.json({api:'ACCESSNULL'});
       }
-      
-      return c.json(result);
+    }else{
+      return c.json({api:'ACCESSNULL'});
     }
   }
 

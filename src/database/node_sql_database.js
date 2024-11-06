@@ -6,7 +6,7 @@ SQLite does not have a separate Boolean storage class. Instead, Boolean values a
 */
 
 import Database from 'better-sqlite3';
-import { nanoid } from '../helpers.js';
+import { compareHashPassword, hashPassword, nanoid } from '../helpers.js';
 import { v4 as uuidv4 } from 'uuid';
 
 //sqlite
@@ -54,7 +54,7 @@ class SQLDB{
       id varchar(64) PRIMARY KEY UNIQUE,
       alias varchar(32) NOT NULL UNIQUE,
       username varchar(32) NOT NULL UNIQUE,
-      passphrase varchar(255) NOT NULL,
+      passphrase varchar(255),
       salt varchar(255) NOT NULL,
       hash varchar(255) NOT NULL,
       email varchar(255) NOT NULL,
@@ -252,9 +252,9 @@ class SQLDB{
   // CREATE USER
   user_create(_alias,_username,_passphrase,_email){
     let userID = uuidv4();
-
-    let salt = uuidv4();
-    let hash = uuidv4();
+    //let salt = uuidv4();
+    //let hash = uuidv4();
+    const {salt, hash} = hashPassword(_passphrase);
 
     const stmt = this.db.prepare('INSERT INTO users (id, alias, username, passphrase, email, salt, hash) VALUES (?, ?, ?, ?, ?, ?, ?)');
     stmt.run(userID, _alias, _username, _passphrase, _email, salt, hash);
@@ -265,7 +265,12 @@ class SQLDB{
     let stmt = this.db.prepare(`SELECT * FROM users WHERE alias = ?`);
     const userExist = stmt.get(_alias);
     if(userExist){
-      if(_passphrase == userExist.passphrase){
+      //
+      let isPass = compareHashPassword(_passphrase, userExist.hash,userExist.salt);
+      console.log("isPass: ", isPass);
+
+      //if(_passphrase == userExist.passphrase){
+      if(isPass){
         return {api:"PASS"};
       }else{
         return {api:"DENIED"};

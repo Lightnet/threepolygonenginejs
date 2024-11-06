@@ -8,7 +8,7 @@
 
 import van from "van";
 import { useFetch } from "./useFetch.js";
-const {button, input, label, div, table, tbody, tr, td} = van.tags;
+const {button, input, label, div, table, tbody, tr, td, center} = van.tags;
 import { Router, Link, getRouterParams, navigate } from "vanjs-routing";
 import {
   aliasState,
@@ -49,29 +49,37 @@ const SignInEL = () => {
   }
 
   return div({id:'login'},
-  label('Login'),
-  table(
-    tbody(
-      tr(
-        td(label('User:')),
-        td(input({value:user, oninput:e=>user.val=e.target.value}))
-      ),
-      tr(
-        td(label('Passphrase:')),
-        td(input({value:pass, oninput:e=>pass.val=e.target.value}))
-      ),
-      tr(
-        td({colspan:"2"},
-          button({onclick:c_login,style:"width:100%"},'Login')
-        )
-      ),
-      tr(
-        td({colspan:"2"},
-          button({onclick:c_cancel,style:"width:100%"},'Cancel')
+  center(
+    table(
+      tbody(
+        tr(
+          td({colspan:"2",class:"cheader"},
+            center(
+              label('ACCESS'),
+            )
+          ),
+        ),
+        tr(
+          td(label('User:')),
+          td(input({value:user, oninput:e=>user.val=e.target.value}))
+        ),
+        tr(
+          td(label('Passphrase:')),
+          td(input({value:pass, oninput:e=>pass.val=e.target.value}))
+        ),
+        tr(
+          td({colspan:"2"},
+            button({onclick:c_login,style:"width:100%"},'Login')
+          )
+        ),
+        tr(
+          td({colspan:"2"},
+            button({onclick:c_cancel,style:"width:100%"},'Cancel')
+          )
         )
       )
     )
-  )
+    )
   )
 }
 
