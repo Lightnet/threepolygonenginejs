@@ -20,6 +20,12 @@ function ToggleTheme(){
 
   const themeState = van.state('light');
 
+  //check if local storage theme exist
+  const data_theme = localStorage.getItem("data-theme");
+  if(data_theme){
+    themeState.val = data_theme
+  }
+
   function toggleTheme(){
     console.log("themeState.val",themeState.val)
     if(themeState.val == 'light'){
@@ -27,6 +33,8 @@ function ToggleTheme(){
     }else{
       themeState.val = 'light';
     }
+    //set theme
+    localStorage.setItem("data-theme", themeState.val);
     document.body.setAttribute("data-theme", themeState.val);
   }
 
@@ -41,6 +49,16 @@ function ToggleTheme(){
   })
 
   return button({onclick:toggleTheme},() => `Theme: ${isLight.val}`)
+}
+
+function CheckTheme(){
+  //document.body.setAttribute("data-theme", themeState.val);
+  console.log("data-theme", document.body.getAttribute("data-theme"));
+  const data_theme = localStorage.getItem("data-theme");
+  if(data_theme){
+    document.body.setAttribute("data-theme", data_theme);
+    console.log("data-theme", document.body.getAttribute("data-theme"));
+  }
 }
 
 /*
@@ -102,4 +120,5 @@ const UIStyle = style(`
 export {
   ToggleTheme,
   UIStyle,
+  CheckTheme,
 }

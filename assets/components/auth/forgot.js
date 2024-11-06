@@ -10,7 +10,7 @@ import van from "van";
 import { useFetch } from "./useFetch.js";
 import { Router, Link, getRouterParams, navigate } from "vanjs-routing";
 
-const {button, input, label, div, table, tbody, tr, td} = van.tags;
+const {button, input, label, div, table, tbody, tr, td, center} = van.tags;
 
 const ForgotEL = () => {
   const user = van.state('guest');
@@ -35,29 +35,35 @@ const ForgotEL = () => {
   }
 
   return div({id:'forgot'},
-  label('Forgot'),
-  table(
-    tbody(
-      tr(
-        td(label('User:')),
-        td(input({value:user, oninput:e=>user.val=e.target.value}))
-      ),
-      tr(
-        td(label('E-Mail:')),
-        td(input({value:email, oninput:e=>email.val=e.target.value}))
-      ),
-      tr({colspan:"2"},
-        td({colspan:"2"},
-          button({onclick:btnForgot,style:"width:100%"},'Recovery')
-        )
-      ),
-      tr({colspan:"2"},
-        td({colspan:"2"},
-          button({onclick:c_cancel,style:"width:100%"},'Cancel')
+  center(
+    table(
+      tbody(
+        tr(
+          td({colspan:"2",class:"cheader"},
+            center(label('Forgot'))
+          ),
+        ),
+        tr(
+          td(label('User:')),
+          td(input({value:user, oninput:e=>user.val=e.target.value}))
+        ),
+        tr(
+          td(label('E-Mail:')),
+          td(input({value:email, oninput:e=>email.val=e.target.value}))
+        ),
+        tr({colspan:"2"},
+          td({colspan:"2"},
+            button({onclick:btnForgot,style:"width:100%"},'Recovery')
+          )
+        ),
+        tr({colspan:"2"},
+          td({colspan:"2"},
+            button({onclick:c_cancel,style:"width:100%"},'Cancel')
+          )
         )
       )
     )
-  )
+    )
   )
 }
 

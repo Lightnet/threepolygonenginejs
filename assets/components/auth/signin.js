@@ -74,6 +74,11 @@ const SignInEL = () => {
         ),
         tr(
           td({colspan:"2"},
+            button({onclick:()=>navigate("/forgot"),style:"width:100%"},'Forgot')
+          )
+        ),
+        tr(
+          td({colspan:"2"},
             button({onclick:c_cancel,style:"width:100%"},'Cancel')
           )
         )

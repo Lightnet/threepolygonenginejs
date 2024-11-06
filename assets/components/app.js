@@ -32,6 +32,7 @@ import { Page_GameData, Page_GameData_Entities, Page_GameData_Projects, Page_Gam
 import { Page_Topic, Page_Board, Page_Forum, Page_ForumID } from "./forum/pages_forum.js";
 import { Page_Mapper_Editor } from "./mapper/page_mapper_editor.js";
 import { Page_Novel } from "./novel/novel.js";
+import { CheckTheme } from "./theme/theme.js";
 
 
 const {button, div, pre, p} = van.tags
@@ -39,6 +40,8 @@ const {button, div, pre, p} = van.tags
 //const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 const App = () => {
+
+  CheckTheme();
 
   async function login_check(){
     let data = await useFetch('/api/auth/user');
