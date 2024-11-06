@@ -247,6 +247,67 @@ function createEntityForm({closed}){
   )
 }
 
+// GET ENTITIES
+function El_EntityList(){
+
+  const ElEntities = div();
+  const Elmodal = div();
+  const Entities = van.state([]);
+  const currentID = van.state("");
+  const EntityName = van.state("");
+
+  function editID(_id){
+    console.log("EDIT:", _id);
+  }
+
+  function deleteID(_id){
+    currentID.val = _id;
+    console.log("DELETE:", _id);
+    for(const item of Entities.val){
+      if(item.id == _id){
+        EntityName.val = item.name;
+      }
+    }
+  }
+
+  function loadID(_id){
+    console.log("Load:", _id);
+  }
+
+  async function getEntities(){
+    try {
+      ElEntities.innerHTML = '';
+      let data = await useFetch('/api/entity');
+      console.log(data);
+      if(data){
+        Entities.val = data;
+        for(const item of data){
+          console.log(item);
+          van.add(ElEntities,div({style:"width:100%;"},
+            label('[ ID: '+item.id+' ]'),
+            label('[ Name: '+item.name+' ]'),
+            label('[ Created: '+item.create_at+' ]'),
+            span({style:""},
+              button({onclick:()=>editID(item.id)},'Edit'),
+              button({onclick:()=>loadID(item.id)},'Load'),
+              button({onclick:()=>deleteID(item.id)},'Delete'),
+            ),
+          ))
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  getEntities();
+
+  return div(
+    ElEntities,
+    Elmodal,
+  )
+}
+
 //BUTTON SCRIPT MODAL
 function El_CreateScriptForm(){
   const isCreated = van.state(false);
@@ -377,7 +438,7 @@ function El_CreateSceneForm(){
   return button({onclick:()=>btnCreateForm()},"Create Scene");
 }
 
-// CREATE SCRIPT FORM
+// CREATE SCENE FORM
 function createSceneForm({closed}){
   const _name = van.state('test');
   const content = van.state('');
@@ -419,6 +480,68 @@ function createSceneForm({closed}){
     )
   )
 }
+// GET SCENE LIST
+function El_SceneList(){
+
+  const ElScenes = div();
+  const Elmodal = div();
+  const scenes = van.state([]);
+  const currentID = van.state("");
+  const sceneName = van.state("");
+
+  function editID(_id){
+    console.log("EDIT:", _id);
+  }
+
+  function deleteID(_id){
+    currentID.val = _id;
+    console.log("DELETE:", _id);
+    for(const item of Entities.val){
+      if(item.id == _id){
+        sceneName.val = item.name;
+      }
+    }
+  }
+
+  function loadID(_id){
+    console.log("Load:", _id);
+  }
+
+  async function getScenes(){
+    try {
+      ElScenes.innerHTML = '';
+      let data = await useFetch('/api/scene');
+      console.log(data);
+      if(data){
+        scenes.val = data;
+        for(const item of data){
+          console.log(item);
+          van.add(ElScenes,div({style:"width:100%;"},
+            label('[ ID: '+item.id+' ]'),
+            label('[ Name: '+item.name+' ]'),
+            label('[ Created: '+item.create_at+' ]'),
+            span({style:""},
+              button({onclick:()=>editID(item.id)},'Edit'),
+              button({onclick:()=>loadID(item.id)},'Load'),
+              button({onclick:()=>deleteID(item.id)},'Delete'),
+            ),
+          ))
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  getScenes();
+
+  return div(
+    ElScenes,
+    Elmodal,
+  )
+}
+
+
 
 
 export {
@@ -430,4 +553,7 @@ export {
 
   El_ProjectList,
   El_ScriptList,
+  El_EntityList,
+  El_SceneList,
+
 }

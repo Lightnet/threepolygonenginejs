@@ -497,8 +497,9 @@ get_projects(){
   //console.log(result);
   return result;
 }
-
-project_delete(_id){
+// DELETE PROJECT
+// need to query all entities as well
+delete_project(_id){
   try{
     const stmt = this.db.prepare('DELETE FROM project WHERE id=?')
     stmt.run(_id);
@@ -525,6 +526,16 @@ get_scenes(){
   //console.log(result);
   return result;
 }
+
+delete_scene(_id){
+  try{
+    const stmt = this.db.prepare('DELETE FROM scene WHERE id=?')
+    stmt.run(_id);
+    return {api:'DELETE'};
+  }catch(e){
+    return {api:'DBERROR'};
+  }
+}
 //===================================
 // SCRIPT
 //===================================
@@ -541,6 +552,16 @@ get_scripts(){
   const result = stmt.all();
   //console.log(result);
   return result;
+}
+// DELETE SCRIPT
+delete_script(_id){
+  try{
+    const stmt = this.db.prepare('DELETE FROM script WHERE id=?')
+    stmt.run(_id);
+    return {api:'DELETE'};
+  }catch(e){
+    return {api:'DBERROR'};
+  }
 }
 
 //===================================
@@ -571,7 +592,7 @@ get_scripts(){
     }
   }
   // UPDATE ENTITY
-  entity_update(_id,_title,_content){
+  update_entity(_id,_title,_content){
     try{
       const stmt = this.db.prepare('UPDATE entity SET title=?, content=? WHERE id=?;')
       stmt.run(_title, _content, _id);

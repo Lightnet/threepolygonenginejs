@@ -25,11 +25,11 @@ route.get('/api/project',(c)=>{
 route.post('/api/project', async(c)=>{
   const data = await c.req.json();
   const db = c.get('db');
-  console.log(data);
+  //console.log(data);
 
   const results = db.create_project(data.name,data.content);
-  console.log("results");
-  console.log(results);
+  //console.log("results");
+  //console.log(results);
   return c.json(results);
 })
 
@@ -39,8 +39,8 @@ route.delete('/api/project/:id', async(c)=>{
   const id = c.req.param('id');
   const db = c.get('db');
 
-  const result = db.project_delete(id);
-  console.log("result: ",result)
+  const result = db.delete_project(id);
+  //console.log("result: ",result)
   //console.log(db);
 
   return c.json(result);
@@ -56,16 +56,29 @@ route.get('/api/scene',(c)=>{
   //console.log(results);
   return c.json(results);
 })
-// CREATE ENTITIES
+// CREATE SCENE
 route.post('/api/scene', async(c)=>{
   const data = await c.req.json();
   const db = c.get('db');
-  console.log(data);
+  //console.log(data);
 
   const results = db.create_scene(data.name,data.content);
-  console.log("results");
-  console.log(results);
+  //console.log("results");
+  //console.log(results);
   return c.json(results);
+})
+
+// DELETE SCENE
+route.delete('/api/scene/:id', async(c)=>{
+
+  const id = c.req.param('id');
+  const db = c.get('db');
+
+  const result = db.delete_scene(id);
+  console.log("result: ",result)
+  //console.log(db);
+
+  return c.json(result);
 })
 
 //===============================================
@@ -78,15 +91,15 @@ route.get('/api/entity',(c)=>{
   //console.log(results);
   return c.json(results);
 })
-// CREATE ENTITIES
+// CREATE ENTITY
 route.post('/api/entity', async(c)=>{
   const data = await c.req.json();
   const db = c.get('db');
-  console.log(data);
+  //console.log(data);
 
   const results = db.create_entity(data.name,data.content);
-  console.log("results");
-  console.log(results);
+  //console.log("results");
+  //console.log(results);
   return c.json(results);
 })
 // UPDATE ENTITY
@@ -97,7 +110,7 @@ route.put('/api/entity/:id',async (c)=>{
     console.log("data update... id: ", id);
     console.log(data);
     const db = c.get('db');
-    const result = db.blog_update(id, data.title,data.content);
+    const result = db.update_entity(id, data.title,data.content);
     return c.json(result);
   }
   
@@ -107,10 +120,10 @@ route.put('/api/entity/:id',async (c)=>{
 // DELETE ENTITY
 route.delete('/api/entity/:id',(c)=>{
   const id = c.req.param('id');
-  console.log('ID: ', id);
+  //console.log('ID: ', id);
   const db = c.get('db');
   const result = db.blog_delete(id);
-  console.log("result: ",result)
+  //console.log("result: ",result)
   //console.log(db);
 
   return c.json(result);
@@ -130,12 +143,23 @@ route.get('/api/script',(c)=>{
 route.post('/api/script', async(c)=>{
   const data = await c.req.json();
   const db = c.get('db');
-  console.log(data);
+  //console.log(data);
 
   const results = db.create_script(data.name,data.content);
-  console.log("results");
-  console.log(results);
+  //console.log("results");
+  //console.log(results);
   return c.json(results);
+})
+
+// DELETE SCRIPT
+route.delete('/api/script/:id', async(c)=>{
+
+  const id = c.req.param('id');
+  const db = c.get('db');
+  const result = db.delete_script(id);
+  //console.log("result: ",result)
+  //console.log(db);
+  return c.json(result);
 })
 
 export default route;
