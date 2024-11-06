@@ -7,6 +7,7 @@ SQLite does not have a separate Boolean storage class. Instead, Boolean values a
 
 import Database from 'better-sqlite3';
 import { nanoid } from '../helpers.js';
+import { v4 as uuidv4 } from 'uuid';
 
 //sqlite
 class SQLDB{
@@ -15,6 +16,8 @@ class SQLDB{
 
   constructor(){
     this.initDB();
+    this.create_table_user()
+
     this.create_table_blog();
     this.create_table_forum();
     this.create_table_board();
@@ -48,9 +51,14 @@ class SQLDB{
 
   async create_table_user(){
     await this.db.exec(`CREATE TABLE IF NOT EXISTS users (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      alias varchar(255) NOT NULL,
+      id varchar(64) PRIMARY KEY UNIQUE,
+      alias varchar(32) NOT NULL UNIQUE,
+      username varchar(32) NOT NULL UNIQUE,
       passphrase varchar(255) NOT NULL,
+      salt varchar(255) NOT NULL,
+      hash varchar(255) NOT NULL,
+      email varchar(255) NOT NULL,
+      role varchar(16) DEFAULT member,
       create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       update_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );`);
@@ -235,19 +243,24 @@ class SQLDB{
   async user_delete_table(){
     await this.db.exec(`DROP TABLE users;`);
   }
-  //
+  // CHECK IF USER EXIST
   user_exist(_alias){
     let stmt = this.db.prepare(`SELECT * FROM users WHERE alias = ?`)
     const userExist = stmt.get(_alias);
     return userExist;
   }
-  //
-  user_create(_alias,_passphrase){
-    const stmt = this.db.prepare('INSERT INTO users (alias, passphrase) VALUES (?, ?)');
-    stmt.run(_alias, _passphrase);
+  // CREATE USER
+  user_create(_alias,_username,_passphrase,_email){
+    let userID = uuidv4();
+
+    let salt = uuidv4();
+    let hash = uuidv4();
+
+    const stmt = this.db.prepare('INSERT INTO users (id, alias, username, passphrase, email, salt, hash) VALUES (?, ?, ?, ?, ?, ?, ?)');
+    stmt.run(userID, _alias, _username, _passphrase, _email, salt, hash);
     return {api:"CREATED"};
   }
-  //need to return token
+  //USER LOGIN AND RETURN PASS/FAIL  need to return token
   user_signin(_alias,_passphrase){
     let stmt = this.db.prepare(`SELECT * FROM users WHERE alias = ?`);
     const userExist = stmt.get(_alias);
@@ -260,6 +273,12 @@ class SQLDB{
     }else{
       return {api:"NONEXIST"};
     }
+  }
+
+  get_user_info(_alias){
+    let stmt = this.db.prepare(`SELECT id, alias, role, create_at FROM users WHERE alias = ?`)
+    const userExist = stmt.get(_alias);
+    return userExist;
   }
 
 //===============================================

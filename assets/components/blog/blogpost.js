@@ -81,6 +81,7 @@ const BlogEL = () => {
     }
     return text;
   });
+
   const currentContentEdit = van.derive(()=>{
     let text = ''
     for(let _blog of blogs.val){
@@ -133,7 +134,7 @@ const BlogEL = () => {
             )
           }else{
             return div(
-              div({style:"background:darkgray;"},
+              div({style:"",class:"cheader"},
                 label(_blog.title),
                 span({style:'float:right;'},
                   button({onclick:()=>delete_blog_id(_blog.id)},`Delete ID: ${_blog.id}`),
@@ -141,7 +142,7 @@ const BlogEL = () => {
                 ),
               ),
               //br(),
-              div({style:"background:lightgray;"},_blog.content),
+              div({style:"min-height:40px;",class:"ccontent"},_blog.content),
             )
           }
         }),
@@ -150,6 +151,7 @@ const BlogEL = () => {
   })
 
   function btnCreateBlog(){
+    isCreatePost.val = false;
     van.add(document.body, Modal({closed:isCreatePost},
       BlogPostEL({closed:isCreatePost})
     ));
@@ -157,11 +159,11 @@ const BlogEL = () => {
 
   return div({id:'blog'},
     div(
-      label('Blog'),
+      label('[ Blog ]'),
+      button({onclick:()=>btnCreateBlog()},`Create Blog`),
       div({id:'editorjs',style:"background:lightgray;"}),
-      button({onclick:()=>btnCreateBlog()},`Create Post`),
+      
     ),
-    label('test blog'),
     blogsEL,
   )
 }
@@ -203,7 +205,7 @@ function BlogPostEL({closed}){
     br(),
     label('Content:'),
     br(),
-    textarea({value:content, oninput:e=>content.val=e.target.value}),
+    textarea({style:"width:100%;height:200px;",value:content, oninput:e=>content.val=e.target.value}),
     br(),
     button({onclick:()=>bntCreatePost()},'Create'),
     button({onclick:()=>clickClose()},'Cancel'),

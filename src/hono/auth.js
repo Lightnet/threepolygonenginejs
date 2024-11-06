@@ -21,10 +21,10 @@ app.use("*", checkAccess);
 app.post('/api/auth/signup', async (c) => {
   //const data = c.req.query()
   const data = await c.req.json()
-  //console.log(data);
+  console.log(data);
   //return c.text('Hono!')
   if(data){
-    if((data.alias !=null)&&(data.passphrase !=null)){
+    if((data.alias !=null)&&(data.username !=null)&&(data.passphrase !=null)&&(data.email !=null)){
       if((!data.alias)||(!data.passphrase)){
         return c.json({api:"EMPTY"});  
       }
@@ -35,7 +35,8 @@ app.post('/api/auth/signup', async (c) => {
       if(user){
         return c.json({api:'EXIST'});
       }else{
-        const result = db.user_create(data.alias,data.passphrase);
+        console.log("CREATE USER SQL...")
+        const result = db.user_create(data.alias,data.username,data.passphrase, data.email);
         return c.json(result);
       }
     }
@@ -110,6 +111,27 @@ app.get('/api/auth/user', async (c) => {
 
   //const data = c.req.query()
   //return c.text('Hono!')
+  return c.json({api:"ERROR"});
+});
+
+app.get('/api/user', async (c) => {
+  const tokenCookie = getCookie(c, 'token');
+  if(tokenCookie){
+    console.log("tokenCookie: ", tokenCookie);
+    console.log("tokenCookie Type: ", typeof tokenCookie);
+    let userToken = JSON.parse(tokenCookie);
+    console.log("userToken Type: ", typeof userToken);
+    console.log("userToken.alias: ",  userToken.alias);
+    
+    const db = c.get('db');
+
+    let userData = db.get_user_info(userToken.alias);
+    console.log(userData);
+    return c.json({api:"PASS",alias:userData.alias, role:userData.role,join: userData.create_at });
+
+    //return c.json({api:"PASS"});
+  }
+
   return c.json({api:"ERROR"});
 });
 

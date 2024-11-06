@@ -15,7 +15,7 @@ import { useFetch } from "/libs/useFetch.js";
 const SignUpEL = () => {
 
   const displayuser = van.state('guest');
-  const username = van.state('guest');
+  const username = van.state('guest1');
   const pass = van.state('guest');
   const pass2 = van.state('guest');
   const email = van.state('guest');
@@ -29,8 +29,10 @@ const SignUpEL = () => {
     let data = await useFetch('/api/auth/signup',{
       method:'POST',
       body:JSON.stringify({
-        alias:username.val,
+        alias:displayuser.val,
+        username:username.val,
         passphrase:pass.val,
+        email:email.val,
       })
     });
     console.log(data);
