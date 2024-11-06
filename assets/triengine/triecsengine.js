@@ -13,7 +13,7 @@
 
 // https://www.geeksforgeeks.org/enums-in-javascript/#:~:text=Enums%20in%20JavaScript%20are%20used,readability%2C%20maintainability%20and%20prevent%20errors.
 
-import { THREE, CSS3DRenderer, CSS3DObject, ECS, van } from "./_dps.js";
+import { THREE, CSS3DRenderer, CSS3DObject, ECS, van } from "/dps.js";
 import { PhysicsFrameWork } from './physicsframework.js';
 
 const { canvas, div, button, input } = van.tags;

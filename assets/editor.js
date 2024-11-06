@@ -6,7 +6,7 @@
   
 */
 
-import { THREE, ECS, van } from "./triengine/_dps.js";
+import { THREE, ECS, van } from "/dps.js";
 import { TriECSEngine } from "./triengine/triecsengine.js";
 
 const {button, canvas, input, label, div} = van.tags;

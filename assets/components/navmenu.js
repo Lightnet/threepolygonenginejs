@@ -39,8 +39,6 @@ const BaseNavMenu=()=>{
     //button({onclick:()=>navigate("/about")},'About'),
     //' ',
     button({onclick:()=>navigate("/blog")},'Blog'),
-    ' ',
-    //button({onclick:()=>navigate("/editor")},'Editor'),
     //' ',
     //button({onclick:()=>navigate("/help")},'Help'),
     //' ',
@@ -50,8 +48,6 @@ const BaseNavMenu=()=>{
     ' ',
     button({onclick:()=>navigate("/signup")},'Sign Up'),
     ' ',
-    //button({onclick:()=>navigate("/forgot")},'Forgot'),
-    //' ',
     ToggleTheme()
   );
 }
@@ -78,7 +74,7 @@ const AccessNavMenu=()=>{
     ' ',
     //button({onclick:()=>navigate("/gameobject")},'GameObject'),
     //' ',
-    button({onclick:()=>navigate("/editor")},'Editor'),
+    button({onclick:()=>navigate("/game_editor")},'Editor'),
     ' ',
     //button({onclick:()=>navigate("/help")},'Help'),
     button({onclick:()=>navigate("/report")},'Report'),

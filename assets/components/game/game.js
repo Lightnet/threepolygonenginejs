@@ -106,6 +106,7 @@ function El_ProjectList(){
         projectName.val = item.name;
       }
     }
+    isDeleteModal.val = false;
     van.add(document.body, Modal({closed:isDeleteModal},
       DeletePostEL({closed:isDeleteModal})
     ));
@@ -496,7 +497,7 @@ function El_SceneList(){
   function deleteID(_id){
     currentID.val = _id;
     console.log("DELETE:", _id);
-    for(const item of Entities.val){
+    for(const item of scenes.val){
       if(item.id == _id){
         sceneName.val = item.name;
       }
