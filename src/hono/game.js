@@ -33,6 +33,19 @@ route.post('/api/project', async(c)=>{
   return c.json(results);
 })
 
+// DELETE PROJECT
+route.delete('/api/project/:id', async(c)=>{
+
+  const id = c.req.param('id');
+  const db = c.get('db');
+
+  const result = db.project_delete(id);
+  console.log("result: ",result)
+  //console.log(db);
+
+  return c.json(result);
+})
+
 //===============================================
 // SCENE
 //===============================================

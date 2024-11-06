@@ -498,6 +498,16 @@ get_projects(){
   return result;
 }
 
+project_delete(_id){
+  try{
+    const stmt = this.db.prepare('DELETE FROM project WHERE id=?')
+    stmt.run(_id);
+    return {api:'DELETE'};
+  }catch(e){
+    return {api:'DBERROR'};
+  }
+}
+
 //===================================
 // SCENE
 //===================================

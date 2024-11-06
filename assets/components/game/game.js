@@ -10,7 +10,7 @@ import { van } from "/dps.js";
 import { Modal } from "vanjs-ui";
 import useFetch from "/libs/useFetch.js";
 import { Router, Link, getRouterParams, navigate, getRouterQuery } from "vanjs-routing";
-const {button, div, label, table, tbody, tr, td, input,textarea} = van.tags;
+const {button, div, label, table, tbody, tr, td, input,textarea, span, br} = van.tags;
 
 function GameDataNavMenus(){
   return div(
@@ -83,6 +83,108 @@ function createProjectForm({closed}){
   )
 }
 
+// PROJECT LIST
+function El_ProjectList(){
+
+  const Elprojects = div();
+  const Elmodal = div();
+  const projects = van.state([]);
+  const currentID = van.state("");
+  const projectName = van.state("");
+
+  const isDeleteModal = van.state(false);
+
+  function editID(_id){
+    console.log("EDIT:", _id);
+  }
+
+  function deleteID(_id){
+    currentID.val = _id;
+    console.log("DELETE:", _id);
+    for(const item of projects.val){
+      if(item.id == _id){
+        projectName.val = item.name;
+      }
+    }
+    van.add(document.body, Modal({closed:isDeleteModal},
+      DeletePostEL({closed:isDeleteModal})
+    ));
+  }
+
+  async function queryDeleteID(){
+    try {
+      let data = await useFetch('/api/project/'+currentID.val,{
+        method:'DELETE'
+      });
+      console.log("DELETE from url:", data);
+      getProjects();
+
+    } catch (error) {
+      
+    }
+  }
+
+  function DeletePostEL({closed}){
+
+    function c_ConfirmDelete(){
+      console.log("delete close");
+      queryDeleteID();
+      closed.val = true;
+    }
+    function c_ConfirmClose(){
+      console.log("close");
+      closed.val = true;
+    }
+    return div({},
+      label('Confirm Delete Project:'),
+      br(),
+      label('Project ID:'+ currentID.val),
+      br(),
+      label('Project Name:'+ projectName.val),
+      br(),
+      button({onclick:()=>c_ConfirmDelete()},'Delete'),
+      button({onclick:()=>c_ConfirmClose()},'Cancel'),
+    );
+  }
+
+  function loadID(_id){
+    console.log("Load:", _id);
+  }
+
+  async function getProjects(){
+    try {
+      Elprojects.innerHTML = '';
+      let data = await useFetch('/api/project');
+      console.log(data);
+      if(data){
+        projects.val = data;
+        for(const item of data){
+          console.log(item);
+          van.add(Elprojects,div({style:"width:100%;"},
+            label('[ ID: '+item.id+' ]'),
+            label('[ Name: '+item.name+' ]'),
+            label('[ Created: '+item.create_at+' ]'),
+            span({style:""},
+              button({onclick:()=>editID(item.id)},'Edit'),
+              button({onclick:()=>loadID(item.id)},'Load'),
+              button({onclick:()=>deleteID(item.id)},'Delete'),
+            ),
+          ))
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  getProjects();
+
+  return div(
+    Elprojects,
+    Elmodal,
+  )
+}
+
 //BUTTON ENTITY MODAL
 function El_CreateEntityForm(){
   const isCreated = van.state(false);
@@ -145,7 +247,6 @@ function createEntityForm({closed}){
   )
 }
 
-
 //BUTTON SCRIPT MODAL
 function El_CreateScriptForm(){
   const isCreated = van.state(false);
@@ -198,6 +299,69 @@ function createScriptForm({closed}){
         )
       )
     )
+  )
+}
+
+function El_ScriptList(){
+
+  const ElScripts = div();
+  const Elmodal = div();
+  const scripts = van.state([]);
+  const currentID = van.state("");
+  const scriptName = van.state("");
+
+  function editID(_id){
+    console.log("EDIT:", _id);
+  }
+
+  function deleteID(_id){
+    currentID.val = _id;
+    console.log("DELETE:", _id);
+    for(const item of scripts.val){
+      if(item.id == _id){
+        scriptName.val = item.name;
+      }
+    }
+    // van.add(document.body, Modal({closed:isDeleteModal},
+    //   DeletePostEL({closed:isDeleteModal})
+    // ));
+  }
+
+  function loadID(_id){
+    console.log("Load:", _id);
+  }
+
+  async function getScripts(){
+    try {
+      ElScripts.innerHTML = '';
+      let data = await useFetch('/api/script');
+      console.log(data);
+      if(data){
+        scripts.val = data;
+        for(const item of data){
+          console.log(item);
+          van.add(ElScripts,div({style:"width:100%;"},
+            label('[ ID: '+item.id+' ]'),
+            label('[ Name: '+item.name+' ]'),
+            label('[ Created: '+item.create_at+' ]'),
+            span({style:""},
+              button({onclick:()=>editID(item.id)},'Edit'),
+              button({onclick:()=>loadID(item.id)},'Load'),
+              button({onclick:()=>deleteID(item.id)},'Delete'),
+            ),
+          ))
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  getScripts();
+
+  return div(
+    ElScripts,
+    Elmodal,
   )
 }
 
@@ -263,4 +427,7 @@ export {
   El_CreateProjectForm,
   El_CreateScriptForm,
   El_CreateSceneForm,
+
+  El_ProjectList,
+  El_ScriptList,
 }
