@@ -100,11 +100,11 @@ app.get('/api/auth/user', async (c) => {
   const tokenCookie = getCookie(c, 'token');
   if(tokenCookie){
     //deleteCookie(c, 'token');
-    console.log('tokenCookie:', tokenCookie);
-    console.log('tokenCookie type:', typeof tokenCookie);
+    //console.log('tokenCookie:', tokenCookie);
+    //console.log('tokenCookie type:', typeof tokenCookie);
     let jsonCookie = JSON.parse(tokenCookie);
-    console.log('tokenCookie:', jsonCookie);
-    console.log('tokenCookie alias:', jsonCookie.alias);
+    //console.log('tokenCookie:', jsonCookie);
+    //console.log('tokenCookie alias:', jsonCookie.alias);
     return c.json({api:"PASS",alias: jsonCookie.alias});
     //return c.json({api:"PASS"});
   }

@@ -28,7 +28,7 @@ import game from './game.js';
 import auth from './auth.js';
 import blog from './blog.js';
 import forum from './forum.js';
-import pages from './pages.js';
+import pages, { scriptHtml02 } from './pages.js';
 import admin from './admin.js';
 import message from './message.js';
 
@@ -66,7 +66,7 @@ const app = new Hono({
 });
 
 //middleware
-//note this will request every action if set to '*' to aollow all url
+//note this will request every action if set to '*' to allow all url
 app.use('*',useDB({
   db:db,
 }));
@@ -97,42 +97,13 @@ app.route('/', admin);
 //<script type="module" src="/preact_client.js"></script>
 //<script type="module" src="/van_three.js"></script>
 app.get('/', (c) => {
-  const db = c.get('db');
+  //const db = c.get('db');
   //console.log('db', db);
   //return c.text('Hono!')
 
   // background:gray;
-  const pageHtml = van.html(
-    head(
-      style(`
-      body{
-        
-        margin: 0px 0px 0px 0px;
-        overflow: hidden;
-      }
-      `),
-      script({type:"importmap"},`{
-        "imports": {
-          "three": "https://unpkg.com/three@0.170.0/build/three.module.js",
-          "three/addons/": "https://unpkg.com/three@0.170.0/examples/jsm/",
-          "remove-array-items": "https://unpkg.com/remove-array-items@3.0.0/src/remove-array-items.js",
-          "ecs":"https://cdn.skypack.dev/ecs",
-          "vanjs-core":"https://cdn.jsdelivr.net/npm/vanjs-core@1.5.2/src/van.min.js",
-          "van":"https://cdn.jsdelivr.net/gh/vanjs-org/van/public/van-1.5.2.min.js",
-          "vanjs-ui":"https://cdn.jsdelivr.net/npm/vanjs-ui@0.10.1/dist/van-ui.min.js",
-          "vanjs-ext":"https://cdn.jsdelivr.net/npm/vanjs-ext@0.6.1/src/van-x.js",
-          "vanjs-routing":"https://cdn.jsdelivr.net/npm/vanjs-routing@1.1.3/dist/index.min.js"
-        }
-      }
-      `)
-    ),
-    body(
-      //p("Your user-agent is: ", req.headers["user-agent"] ?? "Unknown"),
-      //p("👋Hello"),
-      //script({type:"module",src:"/vanjs_client.js"})
-      script({type:"module",src:"/index.js"})
-    ),
-  );
+  const pageHtml = scriptHtml02("/index.js");
+    
   return c.html(pageHtml);
 });
 
@@ -140,6 +111,16 @@ app.get('/', (c) => {
 app.use('/*', serveStatic({ root: './assets' }));
 
 app.route('/', pages);
+
+//wild card url for router vanjs added last
+app.use('/*',  (c) => {
+  //const db = c.get('db');
+  //console.log('db', db);
+  //return c.text('Hono!')
+
+  const pageHtml = scriptHtml02("/index.js");
+  return c.html(pageHtml);
+});
 
 //https://stackoverflow.com/questions/4224606/how-to-check-whether-a-script-is-running-under-node-js
 let typeServer = 'none';

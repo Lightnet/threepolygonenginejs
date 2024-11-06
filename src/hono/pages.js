@@ -13,24 +13,23 @@ import van from "mini-van-plate/van-plate"
 const {head, body, style, script} = van.tags
 const route = new Hono();
 
-function scriptHtml(_script){
-  const pageHtml = van.html(
-    head(
-      style(`
-      body{
-        background:gray;
-        margin: 0px 0px 0px 0px;
-        overflow: hidden;
-      }
-      `)
-    ),
-    body(
-      script({type:"module",src:_script})
-    ),
-  );
-
-  return pageHtml;
-}
+// function scriptHtml(_script){
+//   const pageHtml = van.html(
+//     head(
+//       style(`
+//       body{
+//         background:gray;
+//         margin: 0px 0px 0px 0px;
+//         overflow: hidden;
+//       }
+//       `)
+//     ),
+//     body(
+//       script({type:"module",src:_script})
+//     ),
+//   );
+//   return pageHtml;
+// }
 
 function scriptHtml02(_script){
   //background:gray;
@@ -38,7 +37,6 @@ function scriptHtml02(_script){
     head(
       style(`
       body{
-        
         margin: 0px 0px 0px 0px;
         overflow: hidden;
       }
@@ -150,7 +148,7 @@ route.get("/:name", (c, next) => {
     }
   }
   //const db = c.get('db');
-  console.log("http://localhost:3000/"+name);
+  //console.log("http://localhost:3000/"+name);
   if(isFound){
     const pageHtml = scriptHtml02(file);
     return c.html(pageHtml);
@@ -161,3 +159,6 @@ route.get("/:name", (c, next) => {
 
 
 export default route;
+export {
+  scriptHtml02
+}
