@@ -180,6 +180,7 @@ if(typeServer=='node'){
     `http://localhost:${PORT}/admin`,
     `http://localhost:${PORT}/threejs_test`,
     `http://localhost:${PORT}/texteditortest`,
+    `http://localhost:${PORT}/threejs_mapping`,
     //`http://localhost:${PORT}/threecss2d`,
     //`http://localhost:${PORT}/threecss3d`,
     // `http://localhost:${PORT}/three_css3srenderer_resize`,
