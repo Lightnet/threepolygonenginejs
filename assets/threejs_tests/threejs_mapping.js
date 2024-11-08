@@ -47,6 +47,10 @@ const textureLoader = new THREE.TextureLoader();
 var MaxTileCount = 25;
 var tileMaps = [];
 var tileMeshMaps = [];
+
+var tileMapGrids = [];
+
+
 for (let it = 0; it < MaxTileCount;it++){
   let id = ""+it;
   if(id.length == 1){
@@ -69,7 +73,7 @@ for (let im = 0; im < MaxTileCount;im++){
   tileMeshMaps[im] = mesh
   //scene.add( mesh );
 }
-
+// SELECT TILEMAP INDEX
 function tileMapId(_id){
   tileMapIndex = _id;
   if(placeholder){
@@ -81,17 +85,44 @@ function tileMapId(_id){
   placeholder = tileMeshMaps[_id].clone()
   scene.add( placeholder );
 }
-
+// BUILD TILEMAP POSITION
 function buildTileMapId(_id){
-  let tileMesh = tileMeshMaps[_id].clone()
-  tileMesh.position.copy(placeholder.position)
+  //if none return
+  if(!placeholder){return;}
+  for(let i = 0; i < tileMapGrids.length;i++){
+    if((tileMapGrids[i].position.x == placeholder.position.x ) &&(tileMapGrids[i].position.y == placeholder.position.y)){
+      let phobj = tileMapGrids[i]
+      phobj.geometry.dispose();
+      phobj.material.dispose();
+      tileMapGrids.splice(i, 1);
+      scene.remove( phobj );
+      break;
+    }
+  }
+
+  let tileMesh = tileMeshMaps[_id].clone();
+  tileMesh.position.copy(placeholder.position);
+  tileMapGrids.push(tileMesh);
   scene.add( tileMesh );
+  console.log("tileMapGrids: ",tileMapGrids.length);
+}
+
+function deleteTileMapPosition(){
+  for(let i = 0; i < tileMapGrids.length;i++){
+    if((tileMapGrids[i].position.x == placeholder.position.x ) &&(tileMapGrids[i].position.y == placeholder.position.y)){
+      let phobj = tileMapGrids[i]
+      phobj.geometry.dispose();
+      phobj.material.dispose();
+      tileMapGrids.splice(i, 1);
+      scene.remove( phobj );
+    }
+  }
 }
 
 //tileMapId(0);
 
 //tileMeshMaps[1].rotation.x = - Math.PI / 3;
-scene.add( tileMeshMaps[1] );
+//scene.add( tileMeshMaps[1] );
 //console.log(tileMeshMaps[1].rotation.x);
 
 var raycaster = new THREE.Raycaster();
@@ -121,8 +152,8 @@ function onPointerMove(event){
 	//console.log("hit?", intersects );
   if(intersects){
     //point_cube.position.set(intersects)
-    let grid_x = Math.floor(intersects.x);
-    let grid_y = Math.floor(intersects.y);
+    let grid_x = Math.floor(intersects.x+0.5);
+    let grid_y = Math.floor(intersects.y+0.5);
     point_cube.position.x = grid_x
     point_cube.position.y = grid_y
     if(placeholder){
@@ -148,7 +179,11 @@ function onDocumentKeyDown(event) {
   // if (keyCode == 87) {      
   // }
   if(event.key == 'b'){
-    buildTileMapId(tileMapIndex)
+    buildTileMapId(tileMapIndex);
+  }
+
+  if(event.key == 'v'){
+    deleteTileMapPosition();
   }
 
 };

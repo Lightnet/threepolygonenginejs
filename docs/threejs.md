@@ -1,5 +1,7 @@
 
-
+# ideas:
+ * https://github.com/dgreenheck/minecraft-threejs-clone
+ * 
 
 
 
