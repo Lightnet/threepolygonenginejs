@@ -113,6 +113,7 @@ var urlandjs = [
   {url:'/threejs_test',file:'/threejs_test.js'},
   {url:'/texteditortest',file:'/texteditortest.js'},
   {url:'/threejs_mapping',file:'/threejs_tests/threejs_mapping.js'},
+  {url:'/threejs_mc',file:'/threejs_tests/threejs_mc.js'},
 
   //{url:'/three',file:'/three_framework00.js'},
   
