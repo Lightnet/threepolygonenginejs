@@ -1,4 +1,3 @@
-// simple test cube gravity drop to ground
 
 // EXAMPLES
 // https://rapier.rs/demos3d/index.html
@@ -39,7 +38,7 @@ class RapierDebugRenderer {
 }
 
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-camera.position.set( 0, 0, -5 );
+camera.position.set( -5, 10, -5 );
 const scene = new THREE.Scene();
 var cube;
 var world;
@@ -58,7 +57,7 @@ window.addEventListener('resize', function(event) {
 // CAMERA CONTROL
 const controls = new OrbitControls( camera, renderer.domElement );
 controls.update()
-
+// https://sbcode.net/threejs/physics-rapier/
 function setup_cube(){
   const geometry = new THREE.BoxGeometry( 1, 1, 1 );
   //const material0 = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
@@ -66,6 +65,10 @@ function setup_cube(){
   cube = new THREE.Mesh( geometry, material0 );
   scene.add( cube );
   //cube.position.y = 2;
+
+  
+
+
 }
 
 function setup_ground(){
@@ -137,6 +140,18 @@ function _run_simulation(RAPIER){
   // Create a cuboid collider attached to the dynamic rigidBody.
   let colliderDesc = RAPIER.ColliderDesc.cuboid(0.5, 0.5, 0.5);
   let collider = world.createCollider(colliderDesc, rigidBody);
+
+  // https://sbcode.net/threejs/physics-rapier/
+  //test
+  const trimeshBody = world.createRigidBody(RAPIER.RigidBodyDesc.dynamic().setTranslation(0, 5, 0))
+  const vertices = new Float32Array(cube.geometry.attributes.position.array);
+  let indices = new Uint32Array((cube.geometry.index).array)
+  const trimeshShape = RAPIER.ColliderDesc.trimesh(vertices, indices);
+  world.createCollider(trimeshShape, trimeshBody);
+  //console.log(RAPIER.ColliderDesc.trimesh);
+
+
+
 
   rapierDebugRenderer = new RapierDebugRenderer(scene, world)
 }
