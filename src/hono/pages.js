@@ -117,6 +117,8 @@ var urlandjs = [
   {url:'/threejs_mc02',file:'/threejs_tests/threejs_mc02.js'},
   {url:'/threejs_rapier01',file:'/threejs_tests/threejs_rapier01.js'},
   {url:'/threejs_rapier02',file:'/threejs_tests/threejs_rapier02.js'},
+  {url:'/threejs_rapier03',file:'/threejs_tests/threejs_rapier03.js'},
+  {url:'/threejs_rapier_spaceship01',file:'/threejs_tests/threejs_rapier_spaceship01.js'},
 
   //{url:'/three',file:'/three_framework00.js'},
   
@@ -145,10 +147,10 @@ route.get("/:name", (c, next) => {
   let file = '';
   for (var idx in urlandjs){
     if(urlandjs[idx].url.match(name)){
-      console.log("match...")
+      //console.log("match...")
       file = urlandjs[idx].file;
       isFound=true;
-      console.log(file);
+      //console.log(file);
       break;
     }
   }

@@ -1,9 +1,9 @@
-// TRIMESH TEST
+// VEHICLE TEST
 
 // EXAMPLES
 // https://rapier.rs/demos3d/index.html
 // https://sbcode.net/threejs/physics-rapier-debugRenderer/
-//
+
 
 import RAPIER from 'https://cdn.skypack.dev/@dimforge/rapier3d-compat';
 import van from "https://cdn.jsdelivr.net/npm/vanjs-core@1.5.2/src/van.min.js";
@@ -66,7 +66,6 @@ function setup_cube(){
   cube = new THREE.Mesh( geometry, material0 );
   scene.add( cube );
   //cube.position.y = 2;
-
 }
 
 function setup_ground(){
@@ -123,15 +122,22 @@ function _run_simulation(RAPIER){
   let groundColliderDesc = RAPIER.ColliderDesc.cuboid(10.0, 0.1, 10.0);
   world.createCollider(groundColliderDesc);
 
+  // for cube
   // Create a dynamic rigid-body.
   let rigidBodyDesc = RAPIER.RigidBodyDesc.dynamic()
-  .setTranslation(0.0, 1.0, 0.0);
+    .setTranslation(0.0, 5.0, 0.0);
   rigidBody = world.createRigidBody(rigidBodyDesc);
-
   // Create a cuboid collider attached to the dynamic rigidBody.
   let colliderDesc = RAPIER.ColliderDesc.cuboid(0.5, 0.5, 0.5);
   let collider = world.createCollider(colliderDesc, rigidBody);
 
+  //setup_triMesh();
+  setup_vehicle();
+
+  rapierDebugRenderer = new RapierDebugRenderer(scene, world)
+}
+
+function setup_triMesh(){
   // https://sbcode.net/threejs/physics-rapier/
   // TEST TRI MESH
   const trimeshBody = world.createRigidBody(RAPIER.RigidBodyDesc.dynamic().setTranslation(0, 5, 0))
@@ -140,8 +146,10 @@ function _run_simulation(RAPIER){
   const trimeshShape = RAPIER.ColliderDesc.trimesh(vertices, indices);
   world.createCollider(trimeshShape, trimeshBody);
   //console.log(RAPIER.ColliderDesc.trimesh);
+}
 
-  rapierDebugRenderer = new RapierDebugRenderer(scene, world)
+function setup_vehicle(){
+  console.log("vehicle...")
 }
 
 function rigid_body_logs(){
@@ -174,11 +182,10 @@ van.add(document.body, FloatingWindow(
 ))
 
 run_simulation();
-
 setup_ground();
 setup_cube();
 setup_lights();
-renderer.setAnimationLoop( animate );
 document.body.appendChild( renderer.domElement );
+renderer.setAnimationLoop( animate );
 
 console.log("three rapier test");

@@ -91,8 +91,6 @@ function setup_lights(){
   scene.add( light1 );
 }
 
-renderer.setAnimationLoop( animate );
-
 function animate() {
   // Step the simulation forward.  
   if(world){
@@ -107,11 +105,6 @@ function animate() {
 	controls.update();
 	renderer.render( scene, camera );
 }
-
-setup_ground();
-setup_cube();
-setup_lights();
-document.body.appendChild( renderer.domElement );
 
 async function run_simulation() {
   await RAPIER.init();
@@ -158,8 +151,6 @@ function update_rigid_body(){
   }
 }
 
-run_simulation();
-
 function c_reset(){
   rigidBody.setTranslation({ x: 0.0, y: 2.0, z: 0.0 }, true);
 }
@@ -171,5 +162,12 @@ van.add(document.body, FloatingWindow(
     button({onclick:c_reset},'reset')
   )
 ))
+
+run_simulation();
+setup_ground();
+setup_cube();
+setup_lights();
+renderer.setAnimationLoop( animate );
+document.body.appendChild( renderer.domElement );
 
 console.log("three rapier test");
