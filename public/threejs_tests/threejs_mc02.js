@@ -26,9 +26,9 @@ import { SimplexNoise } from 'https://unpkg.com/three@0.170.0/examples/jsm/math/
 const stats = new Stats();
 van.add(document.body, stats.dom);
 
-
 const geometry = new THREE.BoxGeometry( 1, 1, 1 );
-const material = new THREE.MeshLambertMaterial( { color: 0x00ff00 } );
+//const material = new THREE.MeshLambertMaterial( { color: 0x00ff00 } );
+const material = new THREE.MeshLambertMaterial();
 
 class RNG {
   m_w = 123456789;
@@ -48,6 +48,23 @@ class RNG {
       let result = ((this.m_z << 16) + (this.m_w & 65535)) >>> 0;
       result /= 4294967296;
       return result;
+  }
+}
+
+const blocks = {
+  empty:{
+    id:0,
+    name:'empty',
+  },
+  grass:{
+    id:1,
+    name:'grass',
+    color:0x559020,
+  },
+  dirt:{
+    id:2,
+    name:'dirt',
+    color:0x807020,
   }
 }
 
@@ -89,7 +106,7 @@ class World extends THREE.Group{
         const row = [];
         for (let z = 0; z < this.size.width; z++){
           row.push({
-            id:0,
+            id: blocks.empty.id,
             instanceId:null
           })
         }
@@ -114,8 +131,15 @@ class World extends THREE.Group{
           let height = Math.floor(this.size.height * scaleNoise);
           height = Math.max(0, Math.min(height, this.size.height - 1));
 
-          for (let y = 0; y < height;y++){
-            this.setBlockId(x,y,z,1);
+          // terrain height below
+          for (let y = 0; y < this.size.height;y++){
+            if(y < height){
+              this.setBlockId(x,y,z,blocks.dirt.id);
+            }else if(y== height){
+              this.setBlockId(x,y,z,blocks.grass.id);
+            }else{
+              this.setBlockId(x,y,z,blocks.empty.id);
+            }
           }
         }
     }
@@ -134,11 +158,14 @@ class World extends THREE.Group{
       for (let y = 0; y < this.size.height; y++){
         for (let z = 0; z < this.size.width; z++){
           const blockId = this.getBlock(x,y,z).id;
+          const blockType = Object.values(blocks).find(x => x.id === blockId);
           const instanceId = mesh.count;
+          
 
-          if(blockId !== 0){
+          if(blockId !== blocks.empty.id && !this.isBlockObscured(x,y,z)){
             matrix.setPosition(x+0.5,y+0.5,z+0.5);
             mesh.setMatrixAt(instanceId, matrix);
+            mesh.setColorAt(instanceId, new THREE.Color(blockType.color));
             this.setBlockInstanceId(x, y, z, instanceId);
             mesh.count++;
           }
@@ -178,6 +205,34 @@ class World extends THREE.Group{
     }else{
       return false;
     }
+  }
+
+  isBlockObscured(x,y,z){
+    const up = this.getBlock(x, y + 1, z)?.id ?? blocks.empty.id;
+    const down = this.getBlock(x, y - 1, z)?.id ?? blocks.empty.id;
+    const left = this.getBlock(x + 1, y, z)?.id ?? blocks.empty.id;
+    const right = this.getBlock(x - 1, y, z)?.id ?? blocks.empty.id;
+    const forward = this.getBlock(x, y, z + 1)?.id ?? blocks.empty.id;
+    const back = this.getBlock(x, y, z - 1)?.id ?? blocks.empty.id;
+  
+    // If any of the block's sides is exposed, it is not obscured
+    if (up === blocks.empty.id ||
+        down === blocks.empty.id || 
+        left === blocks.empty.id || 
+        right === blocks.empty.id || 
+        forward === blocks.empty.id || 
+        back === blocks.empty.id) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  disposeChildren() {
+    this.traverse(obj => {
+      if (obj.dispose) obj.dispose();
+    })
+    this.clear();
   }
 
 }

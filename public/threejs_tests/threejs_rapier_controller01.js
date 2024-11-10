@@ -1,4 +1,4 @@
-// simple test cube gravity drop to ground
+// simple test character controller
 
 // EXAMPLES
 // https://rapier.rs/demos3d/index.html
@@ -54,7 +54,6 @@ var characterController;
 var characterCollider;
 
 const renderer = new THREE.WebGLRenderer();
-//renderer.setClearColor( 0xffffff, 0 );
 renderer.setClearColor( 0x80a0e0);//blue sky
 renderer.setSize( window.innerWidth, window.innerHeight );
 window.addEventListener('resize', function(event) {
@@ -67,15 +66,6 @@ const controls = new OrbitControls( camera, renderer.domElement );
 controls.update()
 
 function setup_cube(){
-  const geometry = new THREE.BoxGeometry( 1, 1, 1 );
-  //const material0 = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-  const material0 = new THREE.MeshLambertMaterial( { color: 0x00ffff } );
-  cube = new THREE.Mesh( geometry, material0 );
-  scene.add( cube );
-  //cube.position.y = 2;
-}
-
-function setup_cube01(){
   const geometry = new THREE.BoxGeometry( 1, 1, 1 );
   //const material0 = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
   const material0 = new THREE.MeshLambertMaterial( { color: 0x00ffff } );
@@ -123,6 +113,7 @@ function animate() {
 	renderer.render( scene, camera );
 }
 
+//SETUP PHYSICS
 async function run_simulation() {
   await RAPIER.init();
   // Run the simulation.
@@ -173,26 +164,25 @@ function create_plyaer_rigid(){
   // Create the controller.
   characterController = world.createCharacterController(offset);
 
-  let movementDirection = {x: 0.0, y: 0, z: 0.0};
-  characterController.computeColliderMovement(
-    characterCollider,    // The collider we would like to move.
-    movementDirection, // The movement we would like to apply if there wasn’t any obstacle.
-  );
+  // FOR UPDATE AREA testing
+  // let movementDirection = {x: 0.0, y: 0, z: 0.0};
+  // characterController.computeColliderMovement(
+  //   characterCollider,    // The collider we would like to move.
+  //   movementDirection, // The movement we would like to apply if there wasn’t any obstacle.
+  // );
 
+}
+
+document.addEventListener("input", onInputKey);
+
+function onInputKey(event){
+  console.log(event);
 }
 
 document.addEventListener("keydown", onDocumentKeyDown, false);
 
 function onDocumentKeyDown(event) {
-  //console.log(event)
-  //var keyCode = event.which;
-  // if (keyCode == 87) {      
-  // }
-  //if(event.key == 'b'){
-    //buildTileMapId(tileMapIndex);
-  //}
   update_press_down_move(event.key);
-
 };
 
 function update_press_down_move(key){
@@ -203,32 +193,18 @@ function update_press_down_move(key){
   if(key == 'a'){
     console.log('Left');
     movementDirection.x = 0.1;
-    characterController.computeColliderMovement(
-      characterCollider,    // The collider we would like to move.
-      movementDirection, // The movement we would like to apply if there wasn’t any obstacle.
-    );
-  }
-  if(key == 'd'){
+  }else if(key == 'd'){
     movementDirection.x = -0.1;
-    characterController.computeColliderMovement(
-      characterCollider,    // The collider we would like to move.
-      movementDirection, // The movement we would like to apply if there wasn’t any obstacle.
-    );
   }
   if(key == 'w'){
     movementDirection.z = -0.1;
-    characterController.computeColliderMovement(
-      characterCollider,    // The collider we would like to move.
-      movementDirection, // The movement we would like to apply if there wasn’t any obstacle.
-    );
-  }
-  if(key == 's'){
+  }else if(key == 's'){
     movementDirection.z = 0.1;
-    characterController.computeColliderMovement(
-      characterCollider,    // The collider we would like to move.
-      movementDirection, // The movement we would like to apply if there wasn’t any obstacle.
-    );
   }
+  characterController.computeColliderMovement(
+    characterCollider,    // The collider we would like to move.
+    movementDirection, // The movement we would like to apply if there wasn’t any obstacle.
+  );
 }
 
 document.addEventListener("keyup", onDocumentKeyUp, false);
@@ -238,30 +214,13 @@ function onDocumentKeyUp(event) {
   if(!characterCollider){return;}
   let movementDirection = {x: 0.0, y: 0.0, z: 0.0};
   //console.log(event.key);
-  if(event.key == 'a'){
+  if(
+    (event.key == 'w')||
+    (event.key == 'a')||
+    (event.key == 's')||
+    (event.key == 'd')
+  ){
     console.log('Left');
-    movementDirection.x = 0.0;
-    characterController.computeColliderMovement(
-      characterCollider,    // The collider we would like to move.
-      movementDirection, // The movement we would like to apply if there wasn’t any obstacle.
-    );
-  }
-  if(event.key == 'd'){
-    movementDirection.x = 0.0;
-    characterController.computeColliderMovement(
-      characterCollider,    // The collider we would like to move.
-      movementDirection, // The movement we would like to apply if there wasn’t any obstacle.
-    );
-  }
-  if(event.key == 'w'){
-    movementDirection.z = 0.0;
-    characterController.computeColliderMovement(
-      characterCollider,    // The collider we would like to move.
-      movementDirection, // The movement we would like to apply if there wasn’t any obstacle.
-    );
-  }
-  if(event.key == 's'){
-    movementDirection.z = 0.0;
     characterController.computeColliderMovement(
       characterCollider,    // The collider we would like to move.
       movementDirection, // The movement we would like to apply if there wasn’t any obstacle.
@@ -273,11 +232,6 @@ function update_character_move(){
   if(!characterController){return;}
   if(!character){return;}
   if(!characterCollider){return;}
-  //let movementDirection = {x: 0.0, y: 9.0, z: 0.0};
-  // characterController.computeColliderMovement(
-  //   characterCollider,    // The collider we would like to move.
-  //   movementDirection, // The movement we would like to apply if there wasn’t any obstacle.
-  // );
 
   let movement = characterController.computedMovement();
   //console.log(movement);
@@ -287,7 +241,6 @@ function update_character_move(){
   newPos.z += movement.z;
   //console.log(newPos.y)
   //character.setNextKinematicTranslation(newPos);
-  //character.setNextKinematicTranslation({x:newPos.x,y:newPos.y,z:newPos.z},true);
   character.setTranslation({x:newPos.x,y:newPos.y,z:newPos.z}, true);
 }
 

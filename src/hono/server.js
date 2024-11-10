@@ -108,7 +108,7 @@ app.get('/', (c) => {
 });
 
 //set up static folder for public access
-app.use('/*', serveStatic({ root: './assets' }));
+app.use('/*', serveStatic({ root: './public' }));
 
 app.route('/', pages);
 
@@ -183,10 +183,18 @@ if(typeServer=='node'){
     `http://localhost:${PORT}/threejs_mapping`,
     `http://localhost:${PORT}/threejs_mc01`,
     `http://localhost:${PORT}/threejs_mc02`,
+    `http://localhost:${PORT}/threejs_mc03`,
+    `http://localhost:${PORT}/threejs_mc04`,
+    `http://localhost:${PORT}/threejs_mc05`,
+    `http://localhost:${PORT}/threejs_mc06`,
+    `http://localhost:${PORT}/threejs_mc07`,
+    `http://localhost:${PORT}/threejs_mc08`,
     `http://localhost:${PORT}/threejs_rapier01`,
     `http://localhost:${PORT}/threejs_rapier02`,
     `http://localhost:${PORT}/threejs_rapier03`,
     `http://localhost:${PORT}/threejs_rapier_spaceship01`,
+    `http://localhost:${PORT}/threejs_rapier_controller01`,
+    `http://localhost:${PORT}/threejs_camera_forward01`,
     //`http://localhost:${PORT}/threecss2d`,
     //`http://localhost:${PORT}/threecss3d`,
     // `http://localhost:${PORT}/three_css3srenderer_resize`,

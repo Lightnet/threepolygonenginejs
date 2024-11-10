@@ -115,10 +115,18 @@ var urlandjs = [
   {url:'/threejs_mapping',file:'/threejs_tests/threejs_mapping.js'},
   {url:'/threejs_mc01',file:'/threejs_tests/threejs_mc01.js'},
   {url:'/threejs_mc02',file:'/threejs_tests/threejs_mc02.js'},
+  {url:'/threejs_mc03',file:'/threejs_tests/threejs_mc03.js'},
+  {url:'/threejs_mc04',file:'/threejs_tests/threejs_mc04.js'},
+  {url:'/threejs_mc05',file:'/threejs_tests/threejs_mc05.js'},
+  {url:'/threejs_mc06',file:'/threejs_tests/threejs_mc06.js'},
+  {url:'/threejs_mc07',file:'/threejs_tests/threejs_mc07.js'},
+  {url:'/threejs_mc08',file:'/threejs_tests/threejs_mc08.js'},
   {url:'/threejs_rapier01',file:'/threejs_tests/threejs_rapier01.js'},
   {url:'/threejs_rapier02',file:'/threejs_tests/threejs_rapier02.js'},
   {url:'/threejs_rapier03',file:'/threejs_tests/threejs_rapier03.js'},
   {url:'/threejs_rapier_spaceship01',file:'/threejs_tests/threejs_rapier_spaceship01.js'},
+  {url:'/threejs_rapier_controller01',file:'/threejs_tests/threejs_rapier_controller01.js'},
+  {url:'/threejs_camera_forward01',file:'/threejs_tests/threejs_camera_forward01.js'},
 
   //{url:'/three',file:'/three_framework00.js'},
   
