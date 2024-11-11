@@ -28,7 +28,7 @@ van.add(document.body, stats.dom);
 
 const geometry = new THREE.BoxGeometry( 1, 1, 1 );
 //const material = new THREE.MeshLambertMaterial( { color: 0x00ff00 } );
-const material = new THREE.MeshLambertMaterial();
+//const material = new THREE.MeshLambertMaterial();
 
 class RNG {
   m_w = 123456789;
@@ -51,6 +51,25 @@ class RNG {
   }
 }
 
+const textureLoader = new THREE.TextureLoader();
+
+function loadTexture(path){
+  const texture = textureLoader.load(path)
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.magFilter = THREE.NearestFilter;
+  texture.minFilter = THREE.NearestFilter;
+  return texture;
+}
+
+const textures = {
+  dirt:loadTexture('textures/blocks/dirt.png'),
+  grass:loadTexture('textures/blocks/grass.png'),
+  grassSide:loadTexture('textures/blocks/grass_side.png'),
+  stone:loadTexture('textures/blocks/stone.png'),
+  coalOre:loadTexture('textures/blocks/coal.png'),
+  ironOre:loadTexture('textures/blocks/icon.png'),
+}
+
 const blocks = {
   empty:{
     id:0,
@@ -60,18 +79,52 @@ const blocks = {
     id:1,
     name:'grass',
     color:0x559020,
+    material:[
+      new THREE.MeshLambertMaterial({map:textures.grassSide}), // right
+      new THREE.MeshLambertMaterial({map:textures.grassSide}), // left
+      new THREE.MeshLambertMaterial({map:textures.grass}), // top
+      new THREE.MeshLambertMaterial({map:textures.dirt}), // bottom
+      new THREE.MeshLambertMaterial({map:textures.grassSide}), // front
+      new THREE.MeshLambertMaterial({map:textures.grassSide}) // back
+    ]
   },
   dirt:{
     id:2,
     name:'dirt',
     color:0x807020,
+    material: new THREE.MeshLambertMaterial({map:textures.dirt}),
   },
   stone:{
     id:3,
     name:'stone',
     color:0x808080,
+    scale:{x:30, y:30, z:30},
+    scarcity: 0.5,
+    material: new THREE.MeshLambertMaterial({map:textures.stone}),
+  },
+  coalOre:{
+    id:4,
+    name:'coalOre',
+    color:0x202020,
+    scale:{x:20, y:20, z:20},
+    scarcity: 0.8,
+    material: new THREE.MeshLambertMaterial({map:textures.coalOre}),
+  },
+  ironOre:{
+    id:5,
+    name:'ironOre',
+    color:0x806060,
+    scale:{x:60, y:60, z:60},
+    scarcity: 0.9,
+    material: new THREE.MeshLambertMaterial({map:textures.ironOre}),
   }
 }
+
+const resources = [
+  blocks.stone,
+  blocks.coalOre,
+  blocks.ironOre,
+];
 
 class World extends THREE.Group{
   /*
@@ -98,8 +151,11 @@ class World extends THREE.Group{
   }
   // https://www.youtube.com/watch?v=PxSb2thycmE&list=PLtzt35QOXmkKALLv9RzT8oGwN5qwmRjTo&index=3
   generate(){
+    const rng = new RNG(this.params.seed);
+
     this.initializeTerrain();
-    this.generateTerrain();
+    this.generateResources(rng);
+    this.generateTerrain(rng);
     this.generateMeshes();
   }
 
@@ -121,8 +177,28 @@ class World extends THREE.Group{
     }
   }
 
-  generateTerrain(){
-    const rng = new RNG(this.params.seed);
+  generateResources(rng){
+    const simplex = new SimplexNoise(rng);
+    resources.forEach(resource=>{
+      for(let x = 0; x< this.size.width;x++){
+        for(let y = 0; y< this.size.height;y++){
+          for(let z = 0; z< this.size.width;z++){
+            const value = simplex.noise3d(
+              x / resource.scale.x,
+              y / resource.scale.y,
+              z / resource.scale.z 
+            );
+            if (value > resource.scarcity){
+              this.setBlockId(x,y,z, resource.id);
+            }
+          }
+        }
+      }
+    });
+  }
+
+  generateTerrain(rng){
+    
     const simplex = new SimplexNoise(rng);
 
     for(let x = 0; x< this.size.width;x++){
@@ -138,11 +214,11 @@ class World extends THREE.Group{
 
           // terrain height below
           for (let y = 0; y < this.size.height;y++){
-            if(y < height){
+            if(y < height && this.getBlock(x,y,z).id == blocks.empty.id){
               this.setBlockId(x,y,z,blocks.dirt.id);
             }else if(y== height){
               this.setBlockId(x,y,z,blocks.grass.id);
-            }else{
+            }else if (y > height){
               this.setBlockId(x,y,z,blocks.empty.id);
             }
           }
@@ -152,25 +228,39 @@ class World extends THREE.Group{
 
   generateMeshes(){
     this.clear();
-
     const MaxCount = this.size.width * this.size.width * this.size.height;
-    const mesh = new THREE.InstancedMesh(geometry, material , MaxCount);
-    mesh.count = 0;
+    const meshes = {};
 
+    Object.values(blocks)
+      .filter(blockType => blockType.id !== blocks.empty.id)
+      .forEach(blockType =>{
+        //console.log(blockType.material);
+        const mesh = new THREE.InstancedMesh(geometry, blockType.material , MaxCount);
+        mesh.name = blockType.name;
+        mesh.count = 0;
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+
+        meshes[blockType.id] = mesh;
+      })
+    console.log(blocks);
     const matrix = new THREE.Matrix4();
+    
 
     for (let x = 0; x < this.size.width; x++){
       for (let y = 0; y < this.size.height; y++){
         for (let z = 0; z < this.size.width; z++){
           const blockId = this.getBlock(x,y,z).id;
-          const blockType = Object.values(blocks).find(x => x.id === blockId);
-          const instanceId = mesh.count;
           
+          if (blockId === blocks.empty.id) continue;
 
-          if(blockId !== blocks.empty.id && !this.isBlockObscured(x,y,z)){
+          const mesh = meshes[blockId];
+          const instanceId = mesh.count;
+         
+          if(!this.isBlockObscured(x,y,z)){
             matrix.setPosition(x+0.5,y+0.5,z+0.5);
             mesh.setMatrixAt(instanceId, matrix);
-            mesh.setColorAt(instanceId, new THREE.Color(blockType.color));
+            //mesh.setColorAt(instanceId, new THREE.Color(blockType.color));
             this.setBlockInstanceId(x, y, z, instanceId);
             mesh.count++;
           }
@@ -178,7 +268,8 @@ class World extends THREE.Group{
       }
     }
 
-    this.add(mesh);
+    //this.add(mesh);
+    this.add(...Object.values(meshes));
   }
 
   getBlock(x,y,z){
@@ -255,6 +346,18 @@ function createUI(world){
   terrainFolder.add(world.params.terrain,'magnitude', 0, 1).name('Magnitude');
   terrainFolder.add(world.params.terrain,'offset', 0, 1).name('Offset');
 
+  const resourcesFolder = gui.addFolder('Resources');
+  resources.forEach(resource=>{
+    const resourceFolder = resourcesFolder.addFolder(resource.name);
+    resourceFolder.add(resource, 'scarcity', 0, 1).name('Scarcity')
+
+    const scaleFolder = resourceFolder.addFolder('Scale');
+    scaleFolder.add(resource.scale, 'x',10,100).name('X Scale')
+    scaleFolder.add(resource.scale, 'y',10,100).name('Y Scale')
+    scaleFolder.add(resource.scale, 'z',10,100).name('Z Scale')
+  });
+  
+
   gui.onChange(()=>{
     world.generate();
   });
@@ -271,9 +374,13 @@ camera.position.set( -32, 16, -32 );
 //camera.position.set( 0, 0, -5 );
 //camera.lookAt(0,0,0);
 const renderer = new THREE.WebGLRenderer();
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setSize( window.innerWidth, window.innerHeight );
 //renderer.setClearColor( 0xffffff, 0 );
 renderer.setClearColor( 0x80a0e0);
-renderer.setSize( window.innerWidth, window.innerHeight );
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
 
 // CAMERA CONTROL
 const controls = new OrbitControls( camera, renderer.domElement );
@@ -286,18 +393,30 @@ window.addEventListener('resize', function(event) {
   renderer.setSize( window.innerWidth, window.innerHeight );
 });
 
+let sun;
 function setup_lights(){
-  const light1 = new THREE.DirectionalLight();
-  light1.position.set(1, 1, 1);
-  scene.add( light1 );
+  sun = new THREE.DirectionalLight();
+  sun.intensity = 1.5;
+  sun.position.set(50, 50, 50);
+  sun.castShadow = true;
 
-  const light2 = new THREE.DirectionalLight();
-  light2.position.set(-1, 1, -0.5);
-  scene.add( light2 );
+  // Set the size of the sun's shadow box
+  sun.shadow.camera.left = -40;
+  sun.shadow.camera.right = 40;
+  sun.shadow.camera.top = 40;
+  sun.shadow.camera.bottom = -40;
+  sun.shadow.camera.near = 0.1;
+  sun.shadow.camera.far = 200;
+  sun.shadow.bias = -0.0001;
+  sun.shadow.mapSize = new THREE.Vector2(2048, 2048);
+  scene.add(sun);
+  //scene.add(sun.target);
+  const shadowHelper = new THREE.CameraHelper(sun.shadow.camera);
+  scene.add(shadowHelper);
 
   const ambient = new THREE.AmbientLight();
-  ambient.intensity = 0.1;
-  scene.add( light1 );
+  ambient.intensity = 0.2;
+  scene.add(ambient);
 }
 
 function animate() {
