@@ -5,12 +5,6 @@
   GitHub: https://github.com/Lightnet/threepolygonenginejs
   
 */
-
-/*
-  Information: Simple camera control test movment input no rotate camera.
-*/
-
-
 // https://discourse.threejs.org/t/sprite-facing-camera-always/42788/6
 // https://discourse.threejs.org/t/how-can-i-rotate-a-sprite-to-face-particular-x-y-coordinates/44629
 // 
@@ -20,17 +14,17 @@ import { THREE, OrbitControls, ECS, van } from "/dps.js";
 
 const {div, button, label, img} = van.tags;
 
-//const direction = new THREE.Vector3();
-//const velocity = new THREE.Vector3();
-const input = new THREE.Vector3();
+const direction = new THREE.Vector3();
 let speed = 1.0;
 
+
 const scene = new THREE.Scene();
-const orbit_camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-orbit_camera.position.z = 5;
-//orbit_camera.position.set( 0, 0, 5 );
+const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+camera.position.z = 5;
+//camera.position.set( 0, 0, 5 );
 var controls;
 var cube;
+
 
 const renderer = new THREE.WebGLRenderer();
 //renderer.setClearColor( 0xffffff, 0 );
@@ -54,6 +48,12 @@ function setup_dir(){
 
   const arrowHelper = new THREE.ArrowHelper( dir, origin, length, hex );
   scene.add( arrowHelper );
+}
+
+function setup_PlaneHelper(){
+  const plane = new THREE.Plane( new THREE.Vector3( 0, 1, 0 ), 0 );
+  const helper = new THREE.PlaneHelper( plane, 1, 0xffff00 );
+  scene.add( helper );
 }
 
 function setup_GridHelper(){
@@ -81,78 +81,62 @@ window.addEventListener('resize', function(event) {
 });
 
 document.addEventListener("keydown", onKeyDown, false);
+
 function onKeyDown(event) {
   //console.log(event)
-  if(event.code == 'KeyW'){
-    input.z = -speed;
+  var keyCode = event.which;
+  if(event.key == 'w'){
+    move_forward();
   }
-  if(event.code == 'KeyA'){
-    input.x = -speed;
+  if(event.key == 's'){
+    move_backward();
   }
-  if(event.code == 'KeyS'){
-    input.z = speed;
+
+  if(event.key == 'a'){
+    camera.translateX(-0.5); 
   }
-  if(event.code == 'KeyD'){
-    input.x = speed;
-  }
-};
-document.addEventListener("keyup", onKeyUp, false);
-function onKeyUp(event) {
-  //console.log(event)
-  if(event.code == 'KeyW'){
-    input.z = 0;
-  }
-  if(event.code == 'KeyA'){
-    input.x = 0;
-  }
-  if(event.code == 'KeyS'){
-    input.z = 0;
-  }
-  if(event.code == 'KeyD'){
-    input.x = 0;
+
+  if(event.key == 'd'){
+    camera.translateX(0.5);
   }
 };
 
-function update_camera_move(dt){
-  //console.log(direction);
-  //console.log("input:", input);
-  if(input.z !=0 ){
-    //console.log("move z?");
-    orbit_camera.translateZ(input.z * dt);
-  }
-  if(input.x !=0 ){ 
-    //console.log("move x?");
-    orbit_camera.translateX(input.x * dt);
-  }
+function move_forward(){
+  //camera.getWorldDirection(direction);
+  console.log(direction);
+  //camera.position.addScaledVector(direction, speed);
+  camera.translateZ(-0.5);
+}
+
+function move_backward(){
+  camera.getWorldDirection(direction);
+  console.log(direction);
+  camera.position.addScaledVector(direction, speed * -1);
 }
 
 //https://discourse.threejs.org/t/move-the-camera-forward-in-the-direction-its-facing/8364/5
 
-//controls = new OrbitControls( orbit_camera, renderer.domElement );
+controls = new OrbitControls( camera, renderer.domElement );
 //must be called after any manual changes to the camera's transform
-//controls.update();
-// https://stackoverflow.com/questions/45343673/three-js-animate-in-real-time
-var clock = new THREE.Clock();
+controls.update();
+
 function animate() {
-  const deltaTime = clock.getDelta();
-  //console.log("delta: ", delta);
   if(cube){
     //cube.rotation.x += 0.01;
 	  //cube.rotation.y += 0.01;
   }
-
-  update_camera_move(deltaTime)
 	
   // required if controls.enableDamping or controls.autoRotate are set to true
   if(controls){
     //controls.update();
   }
 	
-	renderer.render( scene, orbit_camera );
+	renderer.render( scene, camera );
 }
 
 //setup_cube();
 setup_dir();
+//setup_PlaneHelper();
 setup_GridHelper();
 setup_WorldDir();
 renderer.setAnimationLoop( animate );

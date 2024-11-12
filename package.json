@@ -6,7 +6,8 @@
   "main": "src/hono/server.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon src/server.js",
+    "dev": "node src/hono/server.js",
+    "serve": "nodemon src/server.js",
     "devh": "nodemon src/hono/server.js --ignore ./public",
     "deve": "bun run src/elysia/server.js"
   },

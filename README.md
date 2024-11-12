@@ -6,33 +6,39 @@
 
 # Status:
  * work in progress
- * hono js server
  * three.js module design
  * ECS
- * socket.io
-
-# Status:
  * Unstable.
 
+# Information:
+
+  This is protoype to build the minecraft style. There will be example stand alone script for testing the builds.
+  
+  As to keep the model simple as possible to reduce lag in render for stable smooth application.
+
+  There will be some different type of games for testing.
+  
+  Using the hono server framework, socket.io and sqlite.
+
+  For local play with friend to play.
+
+# Server:
+  * hono js server 
+
 # Programings Languages:
- * javascript module
- * nodejs
- * bun
+ * javascript module (main)
+ * nodejs (main)
+ * bun (N/A)
 
 # Packages:
  * hono
  * socket.io
  * better-sqlite3
- * drizzle-orm
  * mini-van-plate
+ * vanjs
 
-# Information:
-
-  This is protoype to build the minecraft style as well on other games as well to keep the world simple to run the game. By using the vanjs for browser and javascript module. To develop threejs with mini games.
-  
-  Using the hono server framework, socket.io and sqlite.
-
-  For local play with friend to play.
+# Notes:
+ Below this section are just notes. It still work in progress.
 
 # Game Server (notes):
  Is is possible to run multiple game instance? Yes and No. Nodejs can't run threads.
