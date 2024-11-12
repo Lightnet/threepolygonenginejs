@@ -12,6 +12,7 @@ import { THREE, ECS, van } from "/dps.js";
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+camera.position.z = 5;
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
@@ -28,8 +29,6 @@ const point_material = new THREE.MeshBasicMaterial( { color: 0xff0000 } );
 const point_cube = new THREE.Mesh( point_geometry, point_material );
 scene.add( point_cube );
 point_cube.position.x = 1;
-
-camera.position.z = 5;
 
 var raycaster = new THREE.Raycaster();
 var mouse = new THREE.Vector2();
@@ -52,7 +51,6 @@ function onPointerMove(event){
     point_cube.position.y = intersects.y
   }
   
-
   // screen touch?
 	// if(event.pointerType == 'pen' &&  event.pressure > 0) { // I am using pen on ms surface
 	// 	var intersects = new THREE.Vector3();
