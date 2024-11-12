@@ -10,6 +10,7 @@ import van from "https://cdn.jsdelivr.net/npm/vanjs-core@1.5.2/src/van.min.js";
 import { FloatingWindow } from "https://cdn.jsdelivr.net/npm/vanjs-ui@0.10.1/dist/van-ui.min.js";
 import * as THREE from 'https://unpkg.com/three@0.170.0/build/three.module.js';
 import { OrbitControls } from 'https://unpkg.com/three@0.170.0/examples/jsm/controls/OrbitControls.js'
+import { GUI } from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/lil-gui.module.min.js';
 
 const {div, button} = van.tags;
 
@@ -39,7 +40,7 @@ class RapierDebugRenderer {
 }
 
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-camera.position.set( 0, 0, -5 );
+camera.position.set( 0, 5, -5 );
 const scene = new THREE.Scene();
 var cube;
 var world;
@@ -151,17 +152,18 @@ function update_rigid_body(){
   }
 }
 
-function c_reset(){
-  rigidBody.setTranslation({ x: 0.0, y: 2.0, z: 0.0 }, true);
+const myWorld = {
+  reset:function(){
+    rigidBody.setTranslation({ x: 0.0, y: 2.0, z: 0.0 }, true);
+  }
 }
 
-const closed = van.state(false)
-van.add(document.body, FloatingWindow(
-  {title: "Debug", closed, width:210, height:260, closeCross: null,x:0,y:0},
-  div(
-    button({onclick:c_reset},'reset')
-  )
-))
+function createGUI(){
+  const gui = new GUI();
+  gui.add(myWorld,'reset')
+}
+
+createGUI();
 
 run_simulation();
 setup_ground();
