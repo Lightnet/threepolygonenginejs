@@ -133,6 +133,7 @@ var urlandjs = [
   {url:'/threejs_camera_forward03',file:'/threejs_tests/threejs_camera_forward03.js'},
   {url:'/threejs_tween01',file:'/threejs_tests/threejs_tween01.js'},
   {url:'/threejs_rapier_detect_collision01',file:'/threejs_tests/threejs_rapier_detect_collision01.js'},
+  {url:'/threejs_rapier_detect_collision02',file:'/threejs_tests/threejs_rapier_detect_collision02.js'},
   {url:'/mobilespace',file:'/mobilespace/main.js'},
 
   //{url:'/three',file:'/three_framework00.js'},

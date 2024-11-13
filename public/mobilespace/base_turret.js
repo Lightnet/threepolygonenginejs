@@ -9,21 +9,35 @@
 import { THREE } from "./dps.js";
 
 class BaseTurret{
-
+  gpoint = new THREE.Vector3();
+  gpointRot = new THREE.Quaternion();;
 
   constructor(scene){
     this.group = new THREE.Group();
     scene.add(this.group);
     this.base = this.create_cube({width:0.5,height:0.5,depth:1,color:'blue'})
-    this.point = this.create_cube({width:0.5,height:0.5,depth:0.5,color:'gray'})
-    this.base.add(this.point);
-    this.point.position.set(0,0,1)
-    
     this.group.add(this.base);
+    
+    this.group.position.set(0,0,5)
 
     this.axesHelper = new THREE.AxesHelper( 5 );
     this.base.add(this.axesHelper);
+
+    this.point = this.create_cube({width:0.5,height:0.5,depth:0.5,color:'gray'})
+    this.base.add(this.point);
+    this.point.position.set(0,0,1)
+
+    this.pointer = this.create_cube({width:0.6,height:0.6,depth:0.6,color:'red'})
+    scene.add(this.pointer);
     //this.group.add(this.axesHelper);
+  }
+
+  update(){
+    this.point.getWorldPosition(this.gpoint);
+    this.point.getWorldQuaternion(this.gpointRot);
+    //console.log("base position: ",this.gpoint);
+    this.pointer.position.copy(this.gpoint)
+    this.pointer.quaternion.copy(this.gpointRot)
   }
 
   create_cube(args){
@@ -47,6 +61,7 @@ class BaseTurret{
   setTargetVector3(target){
     //console.log("target pos: ",target)
     this.base.lookAt(target);
+    this.update();
   }
 
 }

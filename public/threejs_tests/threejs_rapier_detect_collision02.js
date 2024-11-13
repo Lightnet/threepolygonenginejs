@@ -20,6 +20,7 @@ import { GUI } from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/lil-gui.m
 import Stats from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/stats.module.js';
 
 const {div, button} = van.tags;
+
 const stats = new Stats();
 van.add(document.body, stats.dom);
 
@@ -55,7 +56,7 @@ const scene = new THREE.Scene();
 var world;
 let eventQueue;
 var rigidBodies = [];
-var _collider1;
+var colliderBodies = [];
 
 var rigidBodyCube;
 var rapierDebugRenderer;
@@ -113,10 +114,11 @@ function create_cube(args){
 // LOOP RENDER
 //===============================================
 function animate() {
+
   if(stats){
     stats.update();
   }
-  // Step the simulation forward.  
+  // Step the simulation forward.
   if(world){
     if(eventQueue){
       //console.log("eventQueue");
@@ -127,6 +129,7 @@ function animate() {
         console.log(world);
         //world.removeCollider(_collider1, true);
         //process_colliders(handle1,handle2)
+        process_Cube_Colliders(handle1,handle2)
       });
       eventQueue.drainContactForceEvents(event => {
         let handle1 = event.collider1(); // Handle of the first collider involved in the event.
@@ -143,6 +146,7 @@ function animate() {
     }
     
     Update_Rigid_Bodies();
+    Update_Rigid_Bodies_Collisions();
   }
   //draw physics
   if(rapierDebugRenderer){
@@ -166,6 +170,23 @@ function process_colliders(handler1, handler2){
     }
   }
   console.log(rigidBodies);
+}
+
+function process_Cube_Colliders(handler1, handler2){
+  for (const entity of colliderBodies){
+    console.log("entity.collider: ...",entity.collider);
+    if(entity.collider.handle == handler2){
+      //entity.isDelete = true;
+      console.log("FOUND", handler2);
+      world.removeRigidBody(entity.rigid);
+      world.removeCollider(entity.collider, true);
+      scene.remove(entity.mesh);
+      
+      colliderBodies= colliderBodies.filter(ent => ent.collider.handle != handler2);
+      break;
+    }
+  }
+  console.log(colliderBodies);
 }
 
 async function run_simulation() {
@@ -202,7 +223,7 @@ function create_Rigid_Ground(){
   let groundColliderDesc = RAPIER.ColliderDesc.cuboid(10.0, 0.1, 10.0)
     .setTranslation(0.0, -1.0, 0.0);
   let collider = world.createCollider(groundColliderDesc);
-  console.log("ground collider: ", collider)
+  //console.log("ground collider: ", collider)
   let _meshCube = create_cube({width:20,height:0.2,depth:20,color:0x00ff00});
   _meshCube.position.set(0,-1,0);
 }
@@ -217,10 +238,9 @@ function create_Rigid_Cube(){
   let colliderDesc = RAPIER.ColliderDesc.cuboid(0.5, 0.5, 0.5);
   //colliderDesc.setActiveEvents(RAPIER.ActiveEvents.CONTACT_FORCE_EVENTS);
   colliderDesc.setActiveEvents(RAPIER.ActiveEvents.COLLISION_EVENTS );
-  console.log("cube colliderDesc: ",colliderDesc);
+  //console.log("cube colliderDesc: ",colliderDesc);
   let collider = world.createCollider(colliderDesc, rigidBodyCube);
-  _collider1 = collider;
-  console.log("cube collider: ", collider)
+  //console.log("cube collider: ", collider)
 
   let _meshCube = create_cube({color:0x00ffff});
   rigidBodies.push({rigid:rigidBodyCube,mesh:_meshCube,collider:collider});
@@ -246,6 +266,16 @@ function Update_Rigid_Bodies(){
     enitity.mesh.quaternion.copy(enitity.rigid.rotation());
   }
 }
+
+function Update_Rigid_Bodies_Collisions(){
+  for(const enitity of colliderBodies){
+    if(!enitity.collider){
+      return;
+    }
+    enitity.mesh.position.copy(enitity.rigid.translation());
+    enitity.mesh.quaternion.copy(enitity.rigid.rotation());
+  }
+}
 //===============================================
 // GUI
 //===============================================
@@ -254,6 +284,7 @@ const myWorld = {
   rot:{x:0,y:0,z:0,w:1},
   linear:{x:0,y:0,z:0},
   angular:{x:0,y:0,z:0},
+  cubePos:{x:0,y:5,z:0},
   reset:function(){
     rigidBodyCube.setTranslation({ x: this.pos.x, y: this.pos.y, z: this.pos.z }, true);
     rigidBodyCube.setRotation({ x: this.rot.x, y: this.rot.y, z: this.rot.z,w:this.rot.w }, true);
@@ -261,12 +292,33 @@ const myWorld = {
     rigidBodyCube.setLinvel({ x: this.linear.x, y: this.linear.y, z: this.linear.z }, true);
     rigidBodyCube.setAngvel({ x: this.angular.x, y: this.angular.y, z: this.angular.z }, true);
 
+  },
+  create_cube_physics:function(){
+    let rigidBodyDesc = RAPIER.RigidBodyDesc.dynamic()
+      .setTranslation(this.cubePos.x, this.cubePos.y, this.cubePos.z);
+    let rigidCube = world.createRigidBody(rigidBodyDesc);
+
+    // Create a cuboid collider attached to the dynamic rigidBody.
+    let colliderDesc = RAPIER.ColliderDesc.cuboid(0.5, 0.5, 0.5);
+    //colliderDesc.setActiveEvents(RAPIER.ActiveEvents.CONTACT_FORCE_EVENTS);
+    colliderDesc.setActiveEvents(RAPIER.ActiveEvents.COLLISION_EVENTS );
+    //console.log("cube colliderDesc: ",colliderDesc);
+    let collider = world.createCollider(colliderDesc, rigidCube);
+    //console.log("cube collider: ", collider)
+
+    let _meshCube = create_cube({color:0x00ffff});
+    colliderBodies.push({rigid:rigidCube,mesh:_meshCube,collider:collider,isDelete:false});
   }
 }
 
 function createGUI(){
   const gui = new GUI();
+  gui.onChange( event => {
+    console.log(event)
+  })
   const cubeFolder = gui.addFolder('Cube');
+  console.log(cubeFolder);
+  //cubeFolder.show(false)
   
   const cubePosFolder = cubeFolder.addFolder('Position');
   cubePosFolder.add(myWorld.pos,'x',-10, 10).name('X: ');
@@ -289,6 +341,13 @@ function createGUI(){
   cubeAngVelFolder.add(myWorld.angular,'z',-50, 50).name('Z: ');
 
   cubeFolder.add(myWorld,'reset');
+  const dropCubeFolder = gui.addFolder('Drop Cube');
+  const dropCubePosFolder = dropCubeFolder.addFolder('Position');
+  dropCubePosFolder.add(myWorld.cubePos,'x',-10, 10).name('X: ');
+  dropCubePosFolder.add(myWorld.cubePos,'y',-10, 10).name('Y: ');
+  dropCubePosFolder.add(myWorld.cubePos,'z',-10, 10).name('Z: ');
+
+  dropCubeFolder.add(myWorld,'create_cube_physics').name('Spawn');
 
   const debugFolder = gui.addFolder('Debug');
   debugFolder.add(rapierDebugRenderer,'enabled').name('Physics Render Wirefame');
