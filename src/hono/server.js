@@ -199,6 +199,8 @@ if(typeServer=='node'){
     `http://localhost:${PORT}/threejs_camera_forward01`,
     `http://localhost:${PORT}/threejs_camera_forward02`,
     `http://localhost:${PORT}/threejs_tween01`,
+    `http://localhost:${PORT}/threejs_rapier_detect_collision01`,
+    `http://localhost:${PORT}/mobilespace`,
     //`http://localhost:${PORT}/threecss2d`,
     //`http://localhost:${PORT}/threecss3d`,
     // `http://localhost:${PORT}/three_css3srenderer_resize`,

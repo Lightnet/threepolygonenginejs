@@ -3,7 +3,13 @@
 // EXAMPLES
 // https://rapier.rs/demos3d/index.html
 // https://sbcode.net/threejs/physics-rapier-debugRenderer/
-//
+// https://rapier.rs/docs/user_guides/javascript/advanced_collision_detection_js
+
+/*
+let colliderDesc = RAPIER.ColliderDesc.cuboid(0.5, 0.5, 0.5);
+//colliderDesc.setActiveEvents(RAPIER.ActiveEvents.CONTACT_FORCE_EVENTS);
+colliderDesc.setActiveEvents(RAPIER.ActiveEvents.COLLISION_EVENTS );
+*/
 
 import RAPIER from 'https://cdn.skypack.dev/@dimforge/rapier3d-compat';
 import van from "https://cdn.jsdelivr.net/npm/vanjs-core@1.5.2/src/van.min.js";
@@ -44,7 +50,9 @@ camera.position.set( 0, 5, -5 );
 const scene = new THREE.Scene();
 
 var world;
+let eventQueue;
 var rigidBodies = [];
+var _collider1;
 
 var rigidBodyCube;
 var rapierDebugRenderer;
@@ -104,7 +112,30 @@ function create_cube(args){
 function animate() {
   // Step the simulation forward.  
   if(world){
-    world.step();
+    if(eventQueue){
+      //console.log("eventQueue");
+      world.step(eventQueue);
+      eventQueue.drainCollisionEvents((handle1, handle2, started) => {
+        /* Handle the collision event. */
+        console.log("drainCollisionEvents h1:",handle1, " h2: ",  handle2, " started:", started);
+        console.log(world);
+        //world.removeCollider(_collider1, true);
+        //process_colliders(handle1,handle2)
+      });
+      eventQueue.drainContactForceEvents(event => {
+        let handle1 = event.collider1(); // Handle of the first collider involved in the event.
+        let handle2 = event.collider2(); // Handle of the second collider involved in the event.
+        /* Handle the contact force event. */
+        //console.log("drainContactForceEvents: ",handle1);
+        //console.log("drainContactForceEvents: ", handle2);
+        console.log("drainContactForceEvents: ", handle1, "[ : ]",handle2);
+        //console.log("test? drainContactForceEvents");
+        //process_colliders(handle1,handle2)
+      });
+    }else{
+      world.step();
+    }
+    
     Update_Rigid_Bodies();
   }
   //draw physics
@@ -114,6 +145,21 @@ function animate() {
   // required if controls.enableDamping or controls.autoRotate are set to true
 	controls.update();
 	renderer.render( scene, camera );
+}
+
+function process_colliders(handler1, handler2){
+  for (const entity of rigidBodies){
+    console.log("entity.collider: ...",entity.collider);
+    if(entity.collider.handle == handler2){
+      console.log("FOUND", handler2);
+      world.removeRigidBody(entity.rigid);
+      world.removeCollider(entity.collider, true);
+      scene.remove(entity.mesh);
+      rigidBodies= rigidBodies.filter(ent => ent.collider.handle != handler2);
+      break;
+    }
+  }
+  console.log(rigidBodies);
 }
 
 async function run_simulation() {
@@ -127,7 +173,18 @@ function _run_simulation(RAPIER){
   // Use the RAPIER module here.
   let gravity = { x: 0.0, y: -9.81, z: 0.0 };
   world = new RAPIER.World(gravity);
+  eventQueue = new RAPIER.EventQueue(true);
   rapierDebugRenderer = new RapierDebugRenderer(scene, world);
+
+  // world.contactPairsWith(collider, (otherCollider) => {
+  //   // This closure is called on each collider object potentially
+  //   // in contact with `collider`.
+  //   console.log("test? contactPairsWith");
+  // });
+  // world.contactPair(collider1, collider2, (manifold, flipped) => {
+  //   // Contact information can be read from `manifold`. 
+  //   console.log("test? contactPair");
+  // });
 
   create_Rigid_Ground();
   create_Rigid_Cube();
@@ -138,7 +195,8 @@ function create_Rigid_Ground(){
   // Create the ground
   let groundColliderDesc = RAPIER.ColliderDesc.cuboid(10.0, 0.1, 10.0)
     .setTranslation(0.0, -1.0, 0.0);
-  world.createCollider(groundColliderDesc);
+  let collider = world.createCollider(groundColliderDesc);
+  console.log("ground collider: ", collider)
   let _meshCube = create_cube({width:20,height:0.2,depth:20,color:0x00ff00});
   _meshCube.position.set(0,-1,0);
 }
@@ -151,9 +209,15 @@ function create_Rigid_Cube(){
 
   // Create a cuboid collider attached to the dynamic rigidBody.
   let colliderDesc = RAPIER.ColliderDesc.cuboid(0.5, 0.5, 0.5);
+  //colliderDesc.setActiveEvents(RAPIER.ActiveEvents.CONTACT_FORCE_EVENTS);
+  colliderDesc.setActiveEvents(RAPIER.ActiveEvents.COLLISION_EVENTS );
+  console.log("cube colliderDesc: ",colliderDesc);
   let collider = world.createCollider(colliderDesc, rigidBodyCube);
+  _collider1 = collider;
+  console.log("cube collider: ", collider)
+
   let _meshCube = create_cube({color:0x00ffff});
-  rigidBodies.push({rigid:rigidBodyCube,mesh:_meshCube});
+  rigidBodies.push({rigid:rigidBodyCube,mesh:_meshCube,collider:collider});
 }
 
 function rigid_body_logs(){
@@ -169,6 +233,9 @@ function rigid_body_logs(){
 //===============================================
 function Update_Rigid_Bodies(){
   for(const enitity of rigidBodies){
+    if(!enitity.collider){
+      return;
+    }
     enitity.mesh.position.copy(enitity.rigid.translation());
     enitity.mesh.quaternion.copy(enitity.rigid.rotation());
   }
