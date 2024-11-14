@@ -5,8 +5,8 @@
   GitHub: https://github.com/Lightnet/threepolygonenginejs
   
 */
+
 // ray cast plane for 2d 
-console.log("Test");
 
 import { THREE, ECS, van } from "/dps.js";
 

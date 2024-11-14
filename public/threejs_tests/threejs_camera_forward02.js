@@ -10,22 +10,16 @@
 // 
 
 import { THREE, OrbitControls, ECS, van } from "/dps.js";
-//import { FloatingWindow } from "vanjs-ui";
 
 const {div, button, label, img} = van.tags;
-
 const direction = new THREE.Vector3();
 let speed = 1.0;
-
-
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 camera.position.z = 5;
 //camera.position.set( 0, 0, 5 );
 var controls;
 var cube;
-
-
 const renderer = new THREE.WebGLRenderer();
 //renderer.setClearColor( 0xffffff, 0 );
 renderer.setSize( window.innerWidth, window.innerHeight );

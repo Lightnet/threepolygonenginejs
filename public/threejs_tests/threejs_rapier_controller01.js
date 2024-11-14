@@ -1,3 +1,11 @@
+/*
+  Project Name: threepolygonenginejs
+  License: MIT
+  Created By: Lightnet
+  GitHub: https://github.com/Lightnet/threepolygonenginejs
+  
+*/
+
 // simple test character controller
 
 // EXAMPLES
@@ -319,4 +327,4 @@ setup_GridHelper();
 renderer.setAnimationLoop( animate );
 document.body.appendChild( renderer.domElement );
 createUI();
-console.log("three rapier spaceship01 test");
+console.log("three rapier controller test");

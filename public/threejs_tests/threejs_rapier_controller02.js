@@ -1,3 +1,11 @@
+/*
+  Project Name: threepolygonenginejs
+  License: MIT
+  Created By: Lightnet
+  GitHub: https://github.com/Lightnet/threepolygonenginejs
+  
+*/
+
 // simple test cube gravity drop to ground
 
 // EXAMPLES
@@ -355,4 +363,4 @@ setup_GridHelper();
 renderer.setAnimationLoop( animate );
 document.body.appendChild( renderer.domElement );
 
-console.log("three rapier test");
+console.log("three rapier controller 02 test");

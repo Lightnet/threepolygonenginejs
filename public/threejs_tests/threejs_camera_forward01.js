@@ -10,7 +10,6 @@
   Information: Simple camera control test movment input no rotate camera.
 */
 
-
 // https://discourse.threejs.org/t/sprite-facing-camera-always/42788/6
 // https://discourse.threejs.org/t/how-can-i-rotate-a-sprite-to-face-particular-x-y-coordinates/44629
 // 

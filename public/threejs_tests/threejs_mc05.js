@@ -192,7 +192,6 @@ class Player {
       new THREE.MeshBasicMaterial({wireframe:true})
     );
     scene.add(this.boundsHelper);
-
   }
 
   applyInputs(dt){

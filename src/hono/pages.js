@@ -111,6 +111,7 @@ var urlandjs = [
   {url:'/admin',file:'/admin.js'},
 
   {url:'/threejs_test',file:'/threejs_test.js'},
+  {url:'/flipclock',file:'/tests/flip_clock.js'},
   {url:'/texteditortest',file:'/texteditortest.js'},
   {url:'/threejs_mapping',file:'/threejs_tests/threejs_mapping.js'},
   {url:'/threejs_mc01',file:'/threejs_tests/threejs_mc01.js'},
@@ -125,6 +126,7 @@ var urlandjs = [
   {url:'/threejs_rapier02',file:'/threejs_tests/threejs_rapier02.js'},
   {url:'/threejs_rapier03',file:'/threejs_tests/threejs_rapier03.js'},
   {url:'/threejs_rapier_spaceship01',file:'/threejs_tests/threejs_rapier_spaceship01.js'},
+  {url:'/threejs_rapier_spaceship01',file:'/threejs_tests/threejs_rapier_spaceship02.js'},
   {url:'/threejs_rapier_controller01',file:'/threejs_tests/threejs_rapier_controller01.js'},
   {url:'/threejs_rapier_controller02',file:'/threejs_tests/threejs_rapier_controller02.js'},
   {url:'/threejs_rapier_controller03',file:'/threejs_tests/threejs_rapier_controller03.js'},
