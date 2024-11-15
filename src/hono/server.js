@@ -204,6 +204,8 @@ if(typeServer=='node'){
     `http://localhost:${PORT}/threejs_rapier_detect_collision02`,
     `http://localhost:${PORT}/mobilespace`,
     `http://localhost:${PORT}/flipclock`,
+    `http://localhost:${PORT}/threejs_spaceship_control01`,
+    `http://localhost:${PORT}/card_game01`,
     //`http://localhost:${PORT}/threecss2d`,
     //`http://localhost:${PORT}/threecss3d`,
     // `http://localhost:${PORT}/three_css3srenderer_resize`,

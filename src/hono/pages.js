@@ -137,6 +137,8 @@ var urlandjs = [
   {url:'/threejs_rapier_detect_collision01',file:'/threejs_tests/threejs_rapier_detect_collision01.js'},
   {url:'/threejs_rapier_detect_collision02',file:'/threejs_tests/threejs_rapier_detect_collision02.js'},
   {url:'/mobilespace',file:'/mobilespace/main.js'},
+  {url:'/threejs_spaceship_control01',file:'/threejs_tests/threejs_spaceship_control01.js'},
+  {url:'/card_game01',file:'/threejs_tests/card_game01.js'},
 
   //{url:'/three',file:'/three_framework00.js'},
   
