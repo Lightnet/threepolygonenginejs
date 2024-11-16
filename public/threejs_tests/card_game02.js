@@ -33,7 +33,7 @@ const clock = new THREE.Clock();
 const scene = new THREE.Scene();
 const orbitCamera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 //orbit_camera.position.z = 5;
-orbitCamera.position.set( 0, 3, 9 );
+orbitCamera.position.set( 0, 5, 9 );
 
 const renderer = new THREE.WebGLRenderer();
 //renderer.setClearColor( 0xffffff, 0 );
@@ -56,20 +56,52 @@ function setup_cube(){
 }
 
 function setup_card(){
+  //test
+  let cardmesh = create_card_mesh();
+  cardmesh.position.set(0,1,5);
+  scene.add( cardmesh );
+  cards.push(cardmesh);
+
+  //cards
+  for (let i = 0; i < 11 ;i++){
+    cardmesh = create_card_mesh();
+    cardmesh.position.set((-6 + (1*i) + (0.2*i) ),0,2)
+    cardmesh.rotation.x = Math.PI / 180 * 90;
+    scene.add( cardmesh );
+  }
+
+  for (let i = 0; i < 11 ;i++){
+    cardmesh = create_card_mesh();
+    cardmesh.position.set((-6 + (1*i) + (0.2*i) ),0,4)
+    cardmesh.rotation.x = Math.PI / 180 * 90;
+    scene.add( cardmesh );
+  }
+
+
+  // cardmesh = create_card_mesh();
+  // cardmesh.position.set(-5.5,0,0)
+  // cardmesh.rotation.x = Math.PI / 180 * 90;
+  // scene.add( cardmesh );
+
+  // cardmesh = create_card_mesh();
+  // cardmesh.position.set(-4,0,0)
+  // cardmesh.rotation.x = Math.PI / 180 * 90;
+  // scene.add( cardmesh );
+
+}
+
+function create_card_mesh(){
+  //front side
   const material0 = new THREE.MeshBasicMaterial( { 
     color:'lightblue',
-    //wireframe:true
-    //side: THREE.DoubleSide
   });
+  //back side
   const material1 = new THREE.MeshBasicMaterial( { 
     color:'Crimson',
-    //wireframe:true
-    //side: THREE.DoubleSide
   });
-  //const _geometry = new THREE.PlaneGeometry( 1, 1.6 );
   const _geometry = new THREE.BoxGeometry( 1, 1.6, 0 );
   
-  let _plane = new THREE.Mesh( 
+  let mesh = new THREE.Mesh( 
     _geometry,
     //material1
     [ null,  null, null, null,
@@ -77,10 +109,11 @@ function setup_card(){
       material1
     ]
     );
-  _plane.position.set(0,1,5);
-  scene.add( _plane );
-  cards.push(_plane);
+  return mesh
+
 }
+
+
 
 function setup_GridHelper(){
   const size = 10;
