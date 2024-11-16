@@ -139,6 +139,7 @@ var urlandjs = [
   {url:'/mobilespace',file:'/mobilespace/main.js'},
   {url:'/threejs_spaceship_control01',file:'/threejs_tests/threejs_spaceship_control01.js'},
   {url:'/card_game01',file:'/threejs_tests/card_game01.js'},
+  {url:'/card_game02',file:'/threejs_tests/card_game02.js'},
 
   //{url:'/three',file:'/three_framework00.js'},
   

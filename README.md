@@ -37,6 +37,20 @@
  * mini-van-plate
  * vanjs
 
+# Set Up:
+ Install nodejs.
+
+```
+  npm install
+```
+  Install the packages.
+
+# Server:
+```
+npm run devh
+```
+  Run the server.
+
 # Notes:
  Below this section are just notes. It still work in progress.
 
@@ -72,11 +86,6 @@
  It will use ECS.js package for easy handle loop update. As well worker threads. To handle game instances.
 
  It will use default SQLITE and helper package.
-
-# Server:
-```
-npm run devh
-```
 
 # Layout:
   Work in progress build.

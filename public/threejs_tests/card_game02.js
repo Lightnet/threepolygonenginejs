@@ -6,7 +6,7 @@
   
 */
 
-// testing card tween 
+// testing card position and draw
 
 // https://discourse.threejs.org/t/different-materials-on-plane-side-a-and-side-b/58310/3
 // https://github.com/mrjasonweaver/threejs-color
@@ -33,7 +33,7 @@ const clock = new THREE.Clock();
 const scene = new THREE.Scene();
 const orbitCamera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 //orbit_camera.position.z = 5;
-orbitCamera.position.set( 0, 2, 5 );
+orbitCamera.position.set( 0, 3, 9 );
 
 const renderer = new THREE.WebGLRenderer();
 //renderer.setClearColor( 0xffffff, 0 );
@@ -77,7 +77,7 @@ function setup_card(){
       material1
     ]
     );
-  _plane.position.set(0,1,2.5);
+  _plane.position.set(0,1,5);
   scene.add( _plane );
   cards.push(_plane);
 }
@@ -126,6 +126,35 @@ function setup_El(){
 //===============================================
 // GUI
 //===============================================
+function CardPosRot(args){
+  let x = args?.x || 0;
+  let y = args?.y || 0;
+  let z = args?.z || 0;
+
+  let rx = args?.rx || 0;
+  let ry = args?.ry || 0;
+  let rz = args?.rz || 0;
+
+  const card = cards[0];
+  const rotTween = new TWEEN.Tween(card.rotation)
+    .to({
+      x: rx,
+      y: ry,
+      z: rz
+    },1000)
+    .easing(TWEEN.Easing.Back.Out);
+  console.log(rotTween);
+  rotTween.start();
+  const posTween = new TWEEN.Tween(card.position).to({
+    x: x,
+    y: y,
+    z: z
+  }).easing(TWEEN.Easing.Back.Out);
+  posTween.start();
+  groupTween.add(rotTween);
+  groupTween.add(posTween);
+}
+
 const myWorld ={
   pos:{x:0,y:0,z:0},
   isOrbitCamera:false,
@@ -225,11 +254,20 @@ const myWorld ={
     const posTween = new TWEEN.Tween(card.position).to({
       x: 0,
       y: 0,
-      z: 0
+      z: 2
     }).easing(TWEEN.Easing.Back.Out);
     posTween.start();
     groupTween.add(rotTween);
     groupTween.add( posTween);
+  },
+
+  place_face_up_card01:function(){
+    let rot = -Math.PI / 180 * 90;
+    CardPosRot({
+      x:-5,
+      z:2,
+      rx:rot
+    })
   },
   draw_card:function(){
     console.log(TWEEN);
@@ -246,11 +284,20 @@ const myWorld ={
     const posTween = new TWEEN.Tween(card.position).to({
       x: 0,
       y: 1,
-      z: 2.5
+      z: 4
     }).easing(TWEEN.Easing.Back.Out);
     posTween.start();
     groupTween.add(rotTween);
     groupTween.add( posTween);
+  },
+  reset_draw_card:function(){
+    console.log(TWEEN);
+
+    CardPosRot({
+      x:5,
+      z:4,
+      rx:Math.PI / 180 * 90
+    })
   }
 }
 
@@ -269,7 +316,6 @@ function setup_GUI(){
   camRotFolder.add(orbitCamera.rotation,'z',-3,3).name('Z: ')
   cameraFolder.add(myWorld,'resetCamera').name(' RESET ')
   cameraFolder.add(orbitControls,'enabled');
-
   gui.add(myWorld, 'isOrbitCamera').name('Display Camera').onChange( value => {
     //console.log(value);
     cameraFolder.show(value)
@@ -288,6 +334,10 @@ function setup_GUI(){
   cardFolder.add(myWorld,'flip_card').name('Flip H');
   cardFolder.add(myWorld,'reset_rotate_card').name('Reset Rotation');
   cardFolder.add(myWorld,'reset_position_card').name('Reset Position');
+
+  cardFolder.add(myWorld,'reset_draw_card').name('Reset Draw');
+
+  cardFolder.add(myWorld,'place_face_up_card01').name('place up 01');
 
   cardFolder.add(myWorld,'place_face_down_card').name('Place Face Down');
   cardFolder.add(myWorld,'place_face_up_card').name('Place Face Up V');
