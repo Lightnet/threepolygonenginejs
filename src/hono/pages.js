@@ -140,6 +140,8 @@ var urlandjs = [
   {url:'/threejs_spaceship_control01',file:'/threejs_tests/threejs_spaceship_control01.js'},
   {url:'/card_game01',file:'/threejs_tests/card_game01.js'},
   {url:'/card_game02',file:'/threejs_tests/card_game02.js'},
+  {url:'/threejs_extrude01',file:'/threejs_tests/threejs_extrude01.js'},
+  {url:'/threejs_line_follow01',file:'/threejs_tests/threejs_line_follow01.js'},
 
   //{url:'/three',file:'/three_framework00.js'},
   

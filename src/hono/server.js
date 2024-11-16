@@ -207,6 +207,8 @@ if(typeServer=='node'){
     `http://localhost:${PORT}/threejs_spaceship_control01`,
     `http://localhost:${PORT}/card_game01`,
     `http://localhost:${PORT}/card_game02`,
+    `http://localhost:${PORT}/threejs_extrude01`,
+    `http://localhost:${PORT}/threejs_line_follow01`,
     //`http://localhost:${PORT}/threecss2d`,
     //`http://localhost:${PORT}/threecss3d`,
     // `http://localhost:${PORT}/three_css3srenderer_resize`,
