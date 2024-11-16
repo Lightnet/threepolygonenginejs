@@ -29,6 +29,7 @@ var orbitControls;
 var gridHelper;
 var cube;
 var cards = [];
+var playerCards = [];
 const clock = new THREE.Clock();
 const scene = new THREE.Scene();
 const orbitCamera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
@@ -77,6 +78,16 @@ function setup_card(){
     scene.add( cardmesh );
   }
 
+  for (let i = 0; i < 7 ;i++){
+    cardmesh = create_card_mesh();
+    //cardmesh.position.set((-6 + (1*i) + (0.2*i) ),0,4)
+
+    cardmesh.position.set(7,0,0)
+    cardmesh.rotation.x = Math.PI / 180 * 90;
+    scene.add( cardmesh );
+    playerCards.push(cardmesh)
+  }
+
 
   // cardmesh = create_card_mesh();
   // cardmesh.position.set(-5.5,0,0)
@@ -113,13 +124,12 @@ function create_card_mesh(){
 
 }
 
-
-
 function setup_GridHelper(){
-  const size = 10;
+  const size = 16;
   const divisions = 10;
 
   gridHelper = new THREE.GridHelper( size, divisions );
+  gridHelper.position.set(0,-0.05,0)
   scene.add( gridHelper );
 }
 
@@ -331,6 +341,73 @@ const myWorld ={
       z:4,
       rx:Math.PI / 180 * 90
     })
+  },
+  player_draw_cards:function(){
+    let center_x = playerCards.length / 2;
+    for(let i = 0; i < 7;i++ ){
+      const card = playerCards[i];
+      const rotTween = new TWEEN.Tween(card.rotation)
+        .to({
+          x: 0,
+          y: 0,
+          z: 0
+        },1000)
+        .easing(TWEEN.Easing.Back.Out);
+      console.log(rotTween);
+      rotTween.start();
+      const posTween = new TWEEN.Tween(card.position).to({
+        x: (0.6-center_x) + (i) + (i*0.2),
+        y: 3,
+        z: 5
+      }).easing(TWEEN.Easing.Back.Out);
+      posTween.start();
+      groupTween.add(rotTween);
+      groupTween.add( posTween);
+    }
+  },
+  player_draw_cards_reset:function(){
+    for(let i = 0; i < 7;i++ ){
+      const card = playerCards[i];
+      const rotTween = new TWEEN.Tween(card.rotation)
+        .to({
+          x: Math.PI / 180 * 90,
+          y: 0,
+          z: 0
+        },1000)
+        .easing(TWEEN.Easing.Back.Out);
+      console.log(rotTween);
+      rotTween.start();
+      const posTween = new TWEEN.Tween(card.position).to({
+        x: 7,
+        y: 0,
+        z: 0
+      }).easing(TWEEN.Easing.Back.Out);
+      posTween.start();
+      groupTween.add(rotTween);
+      groupTween.add( posTween);
+    }
+  },
+  player_draw_cards_face_side_left:function(){
+    for(let i = 0; i < 7;i++ ){
+      const card = playerCards[i];
+      const rotTween = new TWEEN.Tween(card.rotation)
+        .to({
+          x: 0,
+          y: 0,
+          z: 0
+        },1000)
+        .easing(TWEEN.Easing.Back.Out);
+      console.log(rotTween);
+      rotTween.start();
+      const posTween = new TWEEN.Tween(card.position).to({
+        x: -4.5,
+        y: 3,
+        z: 5
+      }).easing(TWEEN.Easing.Back.Out);
+      posTween.start();
+      groupTween.add(rotTween);
+      groupTween.add( posTween);
+    }
   }
 }
 
@@ -375,6 +452,9 @@ function setup_GUI(){
   cardFolder.add(myWorld,'place_face_down_card').name('Place Face Down');
   cardFolder.add(myWorld,'place_face_up_card').name('Place Face Up V');
   cardFolder.add(myWorld,'draw_card').name('Draw V');
+  cardFolder.add(myWorld,'player_draw_cards').name('Player Draw V');
+  cardFolder.add(myWorld,'player_draw_cards_reset').name('Player Draw Reset');
+  cardFolder.add(myWorld,'player_draw_cards_face_side_left').name('Player Draw Side Left');
 
 }
 
