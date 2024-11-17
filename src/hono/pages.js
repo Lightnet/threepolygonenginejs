@@ -113,6 +113,7 @@ var urlandjs = [
   {url:'/threejs_test',file:'/threejs_test.js'},
   {url:'/flipclock',file:'/tests/flip_clock.js'},
   {url:'/texteditortest',file:'/texteditortest.js'},
+  {url:'/e01',file:'/threejs_tests/e01.js'},
   {url:'/threejs_mapping',file:'/threejs_tests/threejs_mapping.js'},
   {url:'/threejs_mc01',file:'/threejs_tests/threejs_mc01.js'},
   {url:'/threejs_mc02',file:'/threejs_tests/threejs_mc02.js'},
@@ -142,6 +143,8 @@ var urlandjs = [
   {url:'/card_game02',file:'/threejs_tests/card_game02.js'},
   {url:'/threejs_extrude01',file:'/threejs_tests/threejs_extrude01.js'},
   {url:'/threejs_line_follow01',file:'/threejs_tests/threejs_line_follow01.js'},
+  {url:'/threejs_sprite01',file:'/threejs_tests/threejs_sprite01.js'},
+  {url:'/threejs_sprite02',file:'/threejs_tests/threejs_sprite02.js'},
 
   //{url:'/three',file:'/three_framework00.js'},
   
