@@ -39,7 +39,19 @@ const collisionMaterial = new THREE.MeshBasicMaterial({
 });
 const collisionGeometry = new THREE.BoxGeometry(1.001, 1.001, 1.001);
 
+const contactMaterial = new THREE.MeshBasicMaterial({
+  wireframe:true,
+  color: 0x00ff00,
+});
+const contactGeometry = new THREE.SphereGeometry(0.05, 6, 6);
+
 class Physics {
+  gravity = 32;
+  // Physic simulation rate
+  simulationRate = 250;
+  stepSize = 1 / this.simulationRate;
+  // Accumulator to keep track of leftover dt
+  accumulator = 0;
 
   constructor(scene){
     this.helpers = new THREE.Group();
@@ -47,18 +59,26 @@ class Physics {
   }
 
   update(dt, player, world){
-    this.detectCollisions(player,world);
+    this.accumulator += dt;
+    while(this.accumulator >= this.stepSize){
+
+      this.helpers.clear();
+      player.velocity.y -= this.gravity * this.stepSize;
+      player.applyInputs(this.stepSize);
+      player.updateBoundsHelper();
+      this.detectCollisions(player,world);
+      this.accumulator -= this.stepSize;
+    }
   }
 
   detectCollisions(player,world){
-
-    this.helpers.clear();
+    player.onGround = false;
 
     const candidates = this.broadPhase(player, world);
     const collisions = this.narrowPhase(candidates, player);
 
     if(candidates.length > 0){
-      this.resolveCollision(collisions);
+      this.resolveCollisions(collisions);
     }
   }
 
@@ -93,7 +113,7 @@ class Physics {
       }
     }
 
-    console.log(`Broadphase Candidates: ${candidates.length}`);
+    //console.log(`Broadphase Candidates: ${candidates.length}`);
 
     return candidates;
   }
@@ -115,24 +135,73 @@ class Physics {
       const dz = closestPoint.z - player.position.z;
 
       if (this.pointInPlayerBoundingCylinder(closestPoint, player)) {
+        // Compute the overlap between the point and the player's bounding
+        // cylinder along the y-axis and in the xz-plane
+        const overlapY = (player.height / 2) - Math.abs(dy);
+        const overlapXZ = player.radius - Math.sqrt(dx * dx + dz * dz);
 
+        // Compute the normal of the collision (pointing away from the contact point)
+        // and the overlap between the point and the player's bounding cylinder
+        let normal, overlap;
+        if (overlapY < overlapXZ) {
+          normal = new THREE.Vector3(0, -Math.sign(dy), 0);
+          overlap = overlapY;
+          player.onGround = true;
+        } else {
+          normal = new THREE.Vector3(-dx, 0, -dz).normalize();
+          overlap = overlapXZ;
+        }
 
+        collisions.push({
+          block,
+          contactPoint: closestPoint,
+          normal,
+          overlap
+        });
 
-
-        
+        this.addContactPointerHelper(closestPoint);
       }
-
     }
+    console.log('Narrowphase collisions: ',collisions.length);
+    return collisions;
   }
 
-  resolveCollision(collisions){
+  resolveCollisions(collisions){
+    collisions.sort((a,b)=>{
+      return a.overlap < b.overlap;
+    });
 
+    for (const collision of collisions){
+      // We need to re-check if the contact point is inside the player bounding
+      // cylinder for each collision since the player position is updated after
+      // each collision is resolved
+      if (!this.pointInPlayerBoundingCylinder(collision.contactPoint, player)) continue;
+
+      let deltaPosition = collision.normal.clone();
+      deltaPosition.multiplyScalar(collision.overlap);
+      player.position.add(deltaPosition);
+
+      // Get the magnitude of the player's velocity along the collision normal
+      let magnitude = player.worldVelocity.dot(collision.normal);
+      // Remove that part of the velocity from the player's velocity
+      let velocityAdjustment = collision.normal.clone().multiplyScalar(magnitude);
+
+      // Apply the velocity to the player
+      player.applyWorldDeltaVelocity(velocityAdjustment.negate());
+    }
   }
 
   addCollisionHelper(block){
     const blockMesh = new THREE.Mesh(collisionGeometry,collisionMaterial);
     blockMesh.position.copy(block);
     this.helpers.add(blockMesh);
+  }
+
+  addContactPointerHelper(p){
+    const contactMesh = new THREE.Mesh(contactGeometry, contactMaterial);
+    contactMesh.position.copy(p);
+    this.helpers.add(contactMesh);
+
   }
 
   pointInPlayerBoundingCylinder(p, player) {
@@ -171,10 +240,12 @@ class RNG {
 class Player {
   radius = 0.5;
   height = 1.75;
-
+  jumpSpeed = 10;
+  onGround = false;
   maxSpeed = 10;
   input = new THREE.Vector3();
   velocity = new THREE.Vector3();
+  #worldVelocity = new THREE.Vector3();
   camera = new THREE.PerspectiveCamera( 70, window.innerWidth/window.innerHeight, 0.1, 200 );
   controls = new PointerLockControls( this.camera,document.body );
   cameraHelper = new THREE.CameraHelper(this.camera);
@@ -194,6 +265,17 @@ class Player {
     scene.add(this.boundsHelper);
   }
 
+  get worldVelocity() {
+    this.#worldVelocity.copy(this.velocity);
+    this.#worldVelocity.applyEuler(new THREE.Euler(0, this.camera.rotation.y, 0));
+    return this.#worldVelocity;
+  }
+
+  applyWorldDeltaVelocity(dv) {
+    dv.applyEuler(new THREE.Euler(0, -this.camera.rotation.y, 0));
+    this.velocity.add(dv);
+  }
+
   applyInputs(dt){
 
     if(this.controls.isLocked){
@@ -202,6 +284,7 @@ class Player {
       this.velocity.z = this.input.z;
       this.controls.moveRight(this.velocity.x * dt);
       this.controls.moveForward(this.velocity.z * dt);
+      this.position.y += this.velocity.y * dt;
 
       document.getElementById('player-position').innerHTML = this.toString();
     }
@@ -231,6 +314,11 @@ class Player {
       case 'KeyR':
         this.position.set(32,16,32);
         this.velocity.set(0, 0, 0);
+        break;
+      case 'Space':
+        if(this.onGround){
+          this.velocity.y += this.jumpSpeed;
+        }
         break;
     }
   }
@@ -657,8 +745,7 @@ function animate() {
   if(stats){
     stats.update();
   }
-  player.applyInputs(dt);
-  player.updateBoundsHelper();
+  
   physics.update(dt, player, world);
 	//cube.rotation.x += 0.01;
 	//cube.rotation.y += 0.01;
