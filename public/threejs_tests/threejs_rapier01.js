@@ -195,7 +195,6 @@ const myWorld = {
 
     rigidBodyCube.setLinvel({ x: this.linear.x, y: this.linear.y, z: this.linear.z }, true);
     rigidBodyCube.setAngvel({ x: this.angular.x, y: this.angular.y, z: this.angular.z }, true);
-
   }
 }
 

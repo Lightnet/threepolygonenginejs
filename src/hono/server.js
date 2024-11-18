@@ -214,6 +214,7 @@ if(typeServer=='node'){
     `http://localhost:${PORT}/threejs_sprite02`,
     `http://localhost:${PORT}/threejs_ecs01`,
     `http://localhost:${PORT}/threejs_ecs02`,
+    `http://localhost:${PORT}/threejs_ecs_rapier01`,
     //`http://localhost:${PORT}/threecss2d`,
     //`http://localhost:${PORT}/threecss3d`,
     // `http://localhost:${PORT}/three_css3srenderer_resize`,
