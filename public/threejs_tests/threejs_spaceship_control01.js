@@ -12,8 +12,104 @@ import * as THREE from 'https://unpkg.com/three@0.170.0/build/three.module.js';
 import { OrbitControls } from 'https://unpkg.com/three@0.170.0/examples/jsm/controls/OrbitControls.js';
 import Stats from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/stats.module.js';
 import { GUI } from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/lil-gui.module.min.js';
-import { PointerLockControls  } from 'https://unpkg.com/three@0.170.0/examples/jsm/controls/PointerLockControls.js';
+//import { PointerLockControls  } from 'https://unpkg.com/three@0.170.0/examples/jsm/controls/PointerLockControls.js';
 
+class Spaceship {
+  radius = 0.5;
+  height = 1.75;
+  jumpSpeed = 10;
+  onGround = false;
+  maxSpeed = 10;
+  input = new THREE.Vector3();
+  velocity = new THREE.Vector3();
+  #worldVelocity = new THREE.Vector3();//private var
+  mesh = null;
+  camera = new THREE.PerspectiveCamera( 70, window.innerWidth/window.innerHeight, 0.1, 200 );
+
+  constructor(scene){
+    const geometry = new THREE.BoxGeometry( 1, 1, 1 );
+    const material = new THREE.MeshBasicMaterial( { color: 0x00ff00,wireframe:true } );
+    this.mesh = new THREE.Mesh( geometry, material );
+
+    //scene.add(this.camera);
+    scene.add(this.mesh);
+    this.camera.position.set(0,1,3);
+    this.mesh.add(this.camera)
+
+    document.addEventListener('keydown', this.onKeyDown.bind(this));
+    document.addEventListener('keyup', this.onKeyUp.bind(this));
+  }
+
+  update(dt){
+    //console.log('update spaceship...')
+    this.applyInputs(dt);
+  }
+
+  applyInputs(dt){
+    this.velocity.x = this.input.x;
+    this.velocity.z = this.input.z;
+
+    this.mesh.translateX((this.velocity.x * dt));
+    this.mesh.translateZ((this.velocity.z * dt)*-1);
+    //console.log("this.mesh z:", this.mesh.position.z)
+  }
+
+  get position(){
+    //return this.camera.position;
+    return this.mesh.position;
+  }
+
+  onKeyDown(event){
+    //console.log('key down');
+    // if(!this.controls.isLocked){
+    //   this.controls.lock();
+    //   console.log('locked');
+    // }
+
+    switch(event.code){
+      case 'KeyW':
+        this.input.z = this.maxSpeed;
+        break;
+      case 'KeyA':
+        this.input.x = -this.maxSpeed;
+        break;
+      case 'KeyS':
+        this.input.z = -this.maxSpeed;
+        break;
+      case 'KeyD':
+        this.input.x = this.maxSpeed;
+        break;
+      case 'KeyR':
+        this.position.set(32,16,32);
+        this.velocity.set(0, 0, 0);
+        break;
+      case 'Space':
+        if(this.onGround){
+          this.velocity.y += this.jumpSpeed;
+        }
+        break;
+    }
+  }
+
+  onKeyUp(event){
+    //console.log('key up');
+    switch(event.code){
+      case 'KeyW':
+        this.input.z = 0;
+        break;
+      case 'KeyA':
+        this.input.x = 0;
+        break;
+      case 'KeyS':
+        this.input.z = 0;
+        break;
+      case 'KeyD':
+        this.input.x = 0;
+        break;
+    }
+  }
+
+}
 
 const {div, button, label, img} = van.tags;
 const stats = new Stats();
@@ -25,6 +121,8 @@ const scene = new THREE.Scene();
 const orbitCamera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 //orbit_camera.position.z = 5;
 orbitCamera.position.set( 0, 1, 5 );
+
+var isLocked = false;
 
 const renderer = new THREE.WebGLRenderer();
 //renderer.setClearColor( 0xffffff, 0 );
@@ -57,16 +155,35 @@ function setup_GridHelper(){
 //===============================================
 // SETUP SCENE
 //===============================================
+var player;
 function setup_Scene(){
-
+  player = new Spaceship(scene);
   setup_El();
   setup_GUI();
-  setup_cube();
+  //setup_cube();
 
   setup_GridHelper()
 
   renderer.setAnimationLoop( animate );
   van.add(document.body, renderer.domElement );
+  document.addEventListener('keydown', onKeyDown);
+  document.addEventListener('keyup', onKeyUp);
+}
+
+function onKeyDown(event){
+  //console.log("event.code: ", event.code);
+  if((isLocked == false)&&(event.code !='Escape')){
+    isLocked = true;
+    renderer.domElement.requestPointerLock();
+  }
+  if((isLocked == true)&&(event.code =='Escape')){
+    isLocked = false;
+    renderer.ownerDocument.exitPointerLock();
+  }
+}
+
+function onKeyUp(event){
+  
 }
 //===============================================
 // Element html
@@ -90,6 +207,7 @@ function setup_El(){
 // GUI
 //===============================================
 const myWorld ={
+  isDisplayOrbitControl:false,
   pos:{x:0,y:0,z:0},
   getCameraDir:function(){
     const dir = new THREE.Vector3( 0, 0, 0 );
@@ -112,7 +230,8 @@ const myWorld ={
 
 function setup_GUI(){
   const gui = new GUI();
-  const cameraFolder = gui.addFolder('Orbit Camera');
+
+  const cameraFolder = gui.addFolder('Orbit Camera').show(myWorld.isDisplayOrbitControl);
   cameraFolder.add(myWorld,'getCameraDir').name('Rotation')
   cameraFolder.add(myWorld,'getCameraPos').name('Position')
   const camPosFolder = cameraFolder.addFolder('Position');
@@ -125,6 +244,9 @@ function setup_GUI(){
   camRotFolder.add(orbitCamera.rotation,'z',-3,3).name('Z: ')
   cameraFolder.add(myWorld,'resetCamera').name(' RESET ')
   cameraFolder.add(orbitControls,'enabled');
+  gui.add(myWorld,'isDisplayOrbitControl').name('View Orbit Camera').onChange( value => {
+    cameraFolder.show( value );
+  } );
 }
 
 function animate() {
@@ -137,18 +259,21 @@ function animate() {
     //cube.rotation.x += 0.01;
 	  //cube.rotation.y += 0.01;
   }
+  if(player){
+    player.update(delta);
+  }
 
   // required if controls.enableDamping or controls.autoRotate are set to true
   if(orbitControls){
     orbitControls.update();
   }
+	if(player){
+    renderer.render( scene, player.camera );
+  }else{
+    renderer.render( scene, orbitCamera );
+  }
 	
-	renderer.render( scene, orbitCamera );
 }
-
-
-
-
 
 //===============================================
 // INIT
