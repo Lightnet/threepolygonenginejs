@@ -80,7 +80,7 @@ function scriptHtml03(_script){
     "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
     "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
     "remove-array-items": "https://unpkg.com/remove-array-items@3.0.0/src/remove-array-items.js",
-    "ecs":"https://unpkg.com/ecs@0.21.0/ecs.js"
+    "ecs":"https://unpkg.com/ecs@0.23.0/ecs.js"
   }
 }
 `),
@@ -145,6 +145,8 @@ var urlandjs = [
   {url:'/threejs_line_follow01',file:'/threejs_tests/threejs_line_follow01.js'},
   {url:'/threejs_sprite01',file:'/threejs_tests/threejs_sprite01.js'},
   {url:'/threejs_sprite02',file:'/threejs_tests/threejs_sprite02.js'},
+  {url:'/threejs_ecs01',file:'/threejs_tests/threejs_ecs01.js'},
+  {url:'/threejs_ecs02',file:'/threejs_tests/threejs_ecs02.js'},
 
   //{url:'/three',file:'/three_framework00.js'},
   
