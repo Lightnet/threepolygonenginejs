@@ -23,7 +23,7 @@ import { OrbitControls } from 'https://unpkg.com/three@0.170.0/examples/jsm/cont
 import Stats from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/stats.module.js';
 import { GUI } from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/lil-gui.module.min.js';
 import ECS from "https://unpkg.com/ecs@0.23.0/ecs.js";
-const {div} = van.tags;
+//const {div} = van.tags;
 //import initJolt from 'https://cdn.jsdelivr.net/npm/jolt-physics@0.23.0/dist/jolt-physics.wasm-compat.js';
 // const Jolt = await initJolt();
 // console.log(Jolt);
@@ -37,12 +37,9 @@ const JOLT_PATH = 'https://cdn.jsdelivr.net/npm/jolt-physics@0.29.0/dist/jolt-ph
 //===============================================
 const { default: initJolt } = await import( `${JOLT_PATH}` );
 
-const deltaState = van.state('');
-const stepState = van.state('');
-
 const stats = new Stats();
-let gridHelper;
-let axesHelper;
+// let gridHelper;
+// let axesHelper;
 
 const world = ECS.addWorld();
 
@@ -84,25 +81,15 @@ window.addEventListener('resize', function(event) {
 //===============================================
 function createCube(args){
   args = args || {};
+  //console.log(args);
   const width = args?.width || 1;
   const height = args?.height || 1;
   const depth = args?.depth || 1;
-  // console.log("width: ", width)
-  // console.log("height: ", height)
-  // console.log("depth: ", depth)
   const color = args?.color || 0x00ff00;
   const geometry = new THREE.BoxGeometry( width, height, depth );
   const material = new THREE.MeshBasicMaterial( { color: color } );
   const cube = new THREE.Mesh( geometry, material );
   return cube;
-}
-//===============================================
-// SETUP CUBE
-//===============================================
-// set up the cube
-function setupCube(){
-  const cube = createCube();
-  scene.add(cube);
 }
 //===============================================
 // CREATE LIGHTS
@@ -122,11 +109,7 @@ function createLights(){
 // SETUP SCENE
 //===============================================
 function setupScene(){
-
-  //setupCube();
   createLights();
-
-  //ECS.addSystem(world, rotateSystem)//simple rotate test mesh cube
   ECS.addSystem(world, physicsUpdateSystem)// update position and rotation
   ECS.addSystem(world, physicsSystem)// event when add and remove//add ingore? since add to physics world objects.
   ECS.addSystem(world, rendererSystem)// add and remove object3d from the scene
@@ -137,7 +120,6 @@ function setupScene(){
   createGUI();
   //physics
   createFloor();
-  //createShapes();
 }
 
 //===============================================
@@ -278,7 +260,7 @@ function setupCollisionFiltering( settings ) {
 //===============================================
 // _ RUN SIMULATION
 //===============================================
-var dynamicObjects = [];
+//var dynamicObjects = [];
 
 function _run_simulation(){
   console.log("SETUP...");
@@ -336,7 +318,7 @@ function addToThreeScene(body, color) {
 	threeObject.userData.body = body;
 
 	scene.add(threeObject);
-	dynamicObjects.push(threeObject);
+	//dynamicObjects.push(threeObject);
 }
 
 function addToScene(body, color) {
@@ -362,15 +344,13 @@ var controls = new OrbitControls( camera, renderer.domElement );
 
 function appLoop(){
   let deltaTime = clock.getDelta();
-  //deltaState.val = String(deltaTime.toFixed(4));
   myScene.delta = deltaTime.toFixed(4);
   // Don't go below 30 Hz to prevent spiral of death
   deltaTime = Math.min( deltaTime, 1.0 / 30.0 );
   // When running below 55 Hz, do 2 steps instead of 1
   const numSteps = deltaTime > 1.0 / 55.0 ? 2 : 1;
   myScene.step = numSteps.toFixed(4);
-  //stepState.val = String(numSteps);
-  //
+  // update...
   stats.update();
   controls.update();
   ECS.update(world, deltaTime);
@@ -384,10 +364,20 @@ function appLoop(){
   ECS.cleanup(world)
 }
 
-function createBodyBox(){
+function createBodyBox(args={}){
+
+  //console.log(args);
+  let width = args?.width || 2;
+  let height = args?.height || 2;
+  let depth = args?.depth || 2;
+
+  let x = args?.x || 0;
+  let y = args?.y || 0;
+  let z = args?.z || 0;
+
   // Create a box
 	let material = new Jolt.PhysicsMaterial();
-	let size = new Jolt.Vec3(2, 2, 2);
+	let size = new Jolt.Vec3(width/2, height/2, depth/2);
 	let box = new Jolt.BoxShapeSettings(size, 0.05, material); // 'material' is now owned by 'box'
 	Jolt.destroy(size);
 
@@ -403,7 +393,7 @@ function createBodyBox(){
 	Jolt.destroy(compound);
 
   // Create the body
-	let bodyPosition = new Jolt.RVec3(0, 20, 0);
+	let bodyPosition = new Jolt.RVec3(x, y, z);
 	let bodyRotation = new Jolt.Quat(0, 0, 0, 1);
 	let creationSettings = new Jolt.BodyCreationSettings(shape, bodyPosition, bodyRotation, Jolt.EMotionType_Dynamic, LAYER_MOVING); // 'creationSettings' now holds a reference to 'shape'
 	Jolt.destroy(bodyPosition);
@@ -415,30 +405,65 @@ function createBodyBox(){
 	// Add the body
 	bodyInterface.AddBody(body.GetID(), Jolt.EActivation_Activate);
 
-  const CUBE = ECS.addEntity(world);
-  const cube = createCube({width:4,height:4,depth:4});
+  const CUBE = ECS.addEntity(world);// entity
+  const cube = createCube({width:width,height:height,depth:height});//threejs mesh
   ECS.addComponent(world, CUBE, 'mesh', cube);
-  ECS.addComponentToEntity(world, CUBE, 'renderable');
-
-  ECS.addComponent(world, CUBE, 'rigid', body);
-  ECS.addComponentToEntity(world, CUBE, 'rigidcube');
+  ECS.addComponentToEntity(world, CUBE, 'renderable'); // tag
+  ECS.addComponent(world, CUBE, 'rigid', body); // jolt body
+  ECS.addComponentToEntity(world, CUBE, 'rigidcube'); // tag
   //console.log(body);
 }
 
 //===============================================
 // VAR FOR GUI
 //===============================================
+function getRandomArbitrary(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
 var controller;
 var EntitiesFolder;
 const myScene = {
   delta:0,
   step:0,
   currentEntity:0,
-  test:function(){
-    console.log('TEST...')
+  isRandom:false,
+  width:4,
+  height:4,
+  depth:4,
+  pos:{x:0,y:20,z:0},
+  min:{x:-20,y:0,z:-20},
+  max:{x:20,y:20,z:20},
+  createRigidBodyCube:function(){
+    if(myScene.isRandom){
+      createBodyBox({
+        width:this.width,
+        height:this.height,
+        depth:this.depth,
+        x:getRandomArbitrary(this.min.x,this.max.x),
+        y:getRandomArbitrary(this.min.y,this.max.y),
+        z:getRandomArbitrary(this.min.z,this.max.z),
+      })
+    }else{
+      createBodyBox({
+        width:this.width,
+        height:this.height,
+        depth:this.depth,
+        x:this.pos.x,
+        y:this.pos.y,
+        z:this.pos.z,
+      })
+    }
   },
   create_rigid_body:function(){
-    createBodyBox()
+    createBodyBox({
+      width:4,
+      height:4,
+      depth:4,
+      x:0,
+      y:20,
+      z:0,
+    })
   },
   remove_rigid_bodies:function(){
     ECS.removeEntities(world, ['rigidcube']);
@@ -448,7 +473,7 @@ const myScene = {
     let entityIds = [];
     for (const entity of ECS.getEntities(world, [ 'rigidcube' ])){
       const entity_id = ECS.getEntityId(world, entity)
-      console.log(entity_id);
+      //console.log(entity_id);
       entityIds.push(entity_id); 
     }
 
@@ -456,7 +481,6 @@ const myScene = {
       controller.destroy()//delete ui
       controller = EntitiesFolder.add(myScene, 'currentEntity', entityIds);
     }else{
-
       controller = EntitiesFolder.add(myScene,'currentEntity', entityIds)
     }
   },
@@ -476,6 +500,27 @@ function createGUI(){
   const timeFolder = gui.addFolder('Time');
   timeFolder.add(myScene,'delta').listen().disable();
   timeFolder.add(myScene,'step').listen().disable();
+  const randomFolder = gui.addFolder('Random');
+  const rangeFolder = randomFolder.addFolder('Range');
+  rangeFolder.add(myScene.min, 'x',-100,0).name('Min x:');
+  rangeFolder.add(myScene.min, 'y',-100,0).name('Min y:');
+  rangeFolder.add(myScene.min, 'z',-100,0).name('Min z:');
+  rangeFolder.add(myScene.max, 'x',0,100).name('Max x:');
+  rangeFolder.add(myScene.max, 'y',0,100).name('Max y:');
+  rangeFolder.add(myScene.max, 'z',0,100).name('Max z:');
+  
+  const cubeFolder = gui.addFolder('Cube');
+  const sizeFolder = cubeFolder.addFolder('Size');
+  sizeFolder.add(myScene, 'height',0.1,50)
+  sizeFolder.add(myScene, 'width',0.1,50)
+  sizeFolder.add(myScene, 'depth',0.1,50)
+  const positionFolder = cubeFolder.addFolder('Position');
+  positionFolder.add(myScene.pos, 'x',-50,50).name('x:')
+  positionFolder.add(myScene.pos, 'y',-50,50).name('y:')
+  positionFolder.add(myScene.pos, 'z',-50,50).name('z:')
+  cubeFolder.add(myScene, 'isRandom');
+  cubeFolder.add(myScene,'createRigidBodyCube').name('Create Box');
+
   const physicsSceneFolder = gui.addFolder('Physics Scene');
   physicsSceneFolder.add(myScene,'create_rigid_body').name('Create Box');
   physicsSceneFolder.add(myScene,'remove_rigid_bodies').name('Delete Boxes');
