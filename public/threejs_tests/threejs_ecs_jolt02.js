@@ -88,6 +88,9 @@ function createCube(args){
   const width = args?.width || 1;
   const height = args?.height || 1;
   const depth = args?.depth || 1;
+  console.log("width: ", width)
+  console.log("height: ", height)
+  console.log("depth: ", depth)
   const color = args?.color || 0x00ff00;
   const geometry = new THREE.BoxGeometry( width, height, depth );
   const material = new THREE.MeshBasicMaterial( { color: color } );
@@ -376,16 +379,16 @@ function appLoop(){
   ECS.cleanup(world)
 }
 
-function create_body(){
+function createBodyBox(){
   // Create a box
 	let material = new Jolt.PhysicsMaterial();
-	let size = new Jolt.Vec3(4, 0.5, 0.5);
+	let size = new Jolt.Vec3(2, 2, 2);
 	let box = new Jolt.BoxShapeSettings(size, 0.05, material); // 'material' is now owned by 'box'
 	Jolt.destroy(size);
 
   // Create a compound
 	let compound = new Jolt.StaticCompoundShapeSettings();
-	let boxPosition = new Jolt.Vec3(5, 50, 0);
+	let boxPosition = new Jolt.Vec3(0, 0, 0);
 	compound.AddShape(boxPosition, Jolt.Quat.prototype.sIdentity(), box); // 'box' is now owned by 'compound'
 	Jolt.destroy(boxPosition);
 	let shapeResult = compound.Create();
@@ -395,7 +398,7 @@ function create_body(){
 	Jolt.destroy(compound);
 
   // Create the body
-	let bodyPosition = new Jolt.RVec3(1, 2, 3);
+	let bodyPosition = new Jolt.RVec3(0, 20, 0);
 	let bodyRotation = new Jolt.Quat(0, 0, 0, 1);
 	let creationSettings = new Jolt.BodyCreationSettings(shape, bodyPosition, bodyRotation, Jolt.EMotionType_Dynamic, LAYER_MOVING); // 'creationSettings' now holds a reference to 'shape'
 	Jolt.destroy(bodyPosition);
@@ -408,7 +411,7 @@ function create_body(){
 	bodyInterface.AddBody(body.GetID(), Jolt.EActivation_Activate);
 
   const CUBE = ECS.addEntity(world);
-  const cube = createCube();
+  const cube = createCube({width:4,height:4,depth:4});
   ECS.addComponent(world, CUBE, 'mesh', cube);
   ECS.addComponentToEntity(world, CUBE, 'renderable');
 
@@ -416,6 +419,7 @@ function create_body(){
   ECS.addComponentToEntity(world, CUBE, 'rigidcube');
   console.log(body);
 }
+
 function setupDisplayInfo(){
   van.add(document.body,div({
     style:`
@@ -434,7 +438,7 @@ const myScene = {
     console.log('TEST...')
   },
   create_rigid_body:function(){
-    create_body()
+    createBodyBox()
   },
   remove_rigid_body:function(){
 
