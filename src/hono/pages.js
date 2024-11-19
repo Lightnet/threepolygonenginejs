@@ -151,6 +151,7 @@ var urlandjs = [
   {url:'/threejs_ecs_rapier01',file:'/threejs_tests/threejs_ecs_rapier01.js'},
   {url:'/threejs_ecs_ammo01',file:'/threejs_tests/threejs_ecs_ammo01.js'},
   {url:'/threejs_ecs_jolt01',file:'/threejs_tests/threejs_ecs_jolt01.js'},
+  {url:'/threejs_ecs_jolt02',file:'/threejs_tests/threejs_ecs_jolt02.js'},
 
   //{url:'/three',file:'/three_framework00.js'},
   
