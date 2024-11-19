@@ -10,7 +10,7 @@
 // https://codepen.io/rvcristiand/pen/pogXXyB?editors=1111
 // https://stackoverflow.com/questions/18260307/dat-gui-update-the-dropdown-list-values-for-a-controller
 // https://stackoverflow.com/questions/34278474/module-exports-and-es6-import
-// 
+// https://medium.com/@bluemagnificent/intro-to-javascript-3d-physics-using-ammo-js-and-three-js-dd48df81f591
 // 
 // 
 
@@ -78,18 +78,6 @@ function setupHelper(){
   axesHelper = new THREE.AxesHelper( 5 );
   //axesHelper.position.set(0.5,0.5,0.5)
   scene.add( axesHelper );
-}
-
-// set up the cube
-function setupCube(){
-  const CUBE = ECS.addEntity(world)
-  //console.log(CUBE);
-  const cube = createCube();
-  ECS.addComponent(world, CUBE, 'mesh', cube);
-  ECS.addComponent(world, CUBE, 'rotation', { x: 0, y: 0,z:0 });
-  ECS.addComponent(world, CUBE, 'isRotate', true);
-  ECS.addComponentToEntity(world, CUBE, 'renderable');
-  ECS.addComponentToEntity(world, CUBE, 'cube');
 }
 
 function createRigidGround(){
@@ -167,8 +155,9 @@ function createRigidBall(){
   let rbInfo = new Ammo.btRigidBodyConstructionInfo( mass, motionState, colShape, localInertia );
   let body = new Ammo.btRigidBody( rbInfo );
   physicsWorld.addRigidBody( body, colGroupGreenBall, colGroupRedBall);
+  console.log(physicsWorld);
   
-  ball.userData.physicsBody = body;
+  //ball.userData.physicsBody = body;
   ECS.addComponent(world, SPHERE, 'rigid', body);
   //rigidBodies.push(ball);
 }
@@ -265,10 +254,7 @@ function physicsSystem (world) {
       //scene.remove(result.entries[i].mesh);
       
       if(result.entries[i]?.rigid){
-        physics.removeRigidBody(result.entries[i].rigid);
-      }
-      if(result.entries[i]?.collider){
-        physics.removeCollider(result.entries[i].collider);
+        physicsWorld.removeRigidBody(result.entries[i].rigid);
       }
       if(result.entries[i]?.mesh){
         scene.remove(result.entries[i].mesh);
@@ -372,8 +358,8 @@ const myScene = {
     console.log(entity);
     entity.isRotate = this.isRotate;
   },
-  addRigIdCube:function(){
-    setupRigidCube();
+  addRigidCube:function(){
+    createRigidCube();
   },
   removeRigIdCubes(){
     ECS.removeEntities(world, ['rigidcube']);
@@ -407,11 +393,11 @@ function createGUI(){
   EntitiesFolder.add(myScene, 'get_entities').name('Get Entities'); //get entities
 
   const debugFolder = gui.addFolder('Debug');
-  debugFolder.add(rapierDebugRenderer,'enabled').name('Physics Render Wirefame');
+  // debugFolder.add(rapierDebugRenderer,'enabled').name('Physics Render Wirefame');
   const physicsFolder = gui.addFolder('Physics');
   physicsFolder.add(myScene, 'removeRigIdCubes').name('Remove Rigid Cubes');
-  physicsFolder.add(myScene, 'addRigIdCube').name('Add Rigid Cube');
-  
+  physicsFolder.add(myScene, 'addRigidCube').name('Add Rigid Cube');
+
 }
 
 function setupScene(){
@@ -445,45 +431,56 @@ async function run_simulation() {
   
 }
 
-function setupGround(){
-  // // Create the ground
-  // let groundColliderDesc = RAPIER.ColliderDesc.cuboid(10.0, 0.1, 10.0)
-  //   .setTranslation(0.0, -1.0, 0.0);
-  // physics.createCollider(groundColliderDesc);
-  // //let mesh = createCube({width:20,height:0.2,depth:20,color:0x00fff0});
-  // let mesh = createCube({width:20,height:0.2,depth:20,color:'gray'});
-  // mesh.position.set(0,-1,0);
-  // scene.add(mesh)
-}
-
-function setupRigidCube(){
+function createRigidCube(){
   
-  let mesh = createCube({color:0x00ffff});
+  let mesh = createCube({width:10,height:10,depth:10,color:0x00ffff});
 
   const CUBE = ECS.addEntity(world)
   ECS.addComponent(world, CUBE, 'mesh', mesh);
   ECS.addComponentToEntity(world, CUBE, 'renderable');
-  //ECS.addComponent(world, CUBE, 'rigid', rigidBody);
-  //ECS.addComponent(world, CUBE, 'colliderDesc', colliderDesc);
-  //ECS.addComponent(world, CUBE, 'collider', collider);
-  //ECS.addComponentToEntity(world, CUBE, 'rigidcube');
+
+  let pos = {x: 0, y: 20, z: 0};
+  let quat = {x: 0, y: 0, z: 0, w: 1};
+  let scale = {x: 10, y: 10, z: 10};
+  let mass = 1;
+
+  //Ammojs Section
+  let transform = new Ammo.btTransform();
+  transform.setIdentity();
+  transform.setOrigin( new Ammo.btVector3( pos.x, pos.y, pos.z ) );
+  transform.setRotation( new Ammo.btQuaternion( quat.x, quat.y, quat.z, quat.w ) );
+  let motionState = new Ammo.btDefaultMotionState( transform );
+  //shape
+
+  let blockColShape = new Ammo.btBoxShape( new Ammo.btVector3( scale.x * 0.5, scale.y * 0.5, scale.z * 0.5 ) );
+  blockColShape.setMargin( 0.05 );
+
+  let localInertia = new Ammo.btVector3( 0, 0, 0 );
+  blockColShape.calculateLocalInertia( mass, localInertia );
+  //info
+  let rbInfo = new Ammo.btRigidBodyConstructionInfo( mass, motionState, blockColShape, localInertia );
+  let body = new Ammo.btRigidBody( rbInfo );
+  physicsWorld.addRigidBody( body);
+  //physicsWorld.addRigidBody( body, colGroupGreenBall, colGroupRedBall);
+  console.log(physicsWorld);
+
+  ECS.addComponent(world, CUBE, 'rigid', body);
+  ECS.addComponentToEntity(world, CUBE, 'rigidcube');
 }
 
-
-function _run_simulation(AMMO){
+function _run_simulation(){
   //console.log("RAPIER...");
   // Use the RAPIER module here.
   let gravity = { x: 0.0, y: -9.81, z: 0.0 };
   //physics = new AMMO.World(gravity);
-  console.log(Ammo);
+  //console.log(Ammo);
   var collisionConfiguration  = new Ammo.btDefaultCollisionConfiguration();
   var dispatcher              = new Ammo.btCollisionDispatcher(collisionConfiguration);
   var overlappingPairCache    = new Ammo.btDbvtBroadphase();
   var solver                  = new Ammo.btSequentialImpulseConstraintSolver();
-  physicsWorld               = new Ammo.btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
+  physicsWorld                = new Ammo.btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
   physicsWorld.setGravity(new Ammo.btVector3(gravity.x, gravity.y, gravity.z));
   tmpTrans = new Ammo.btTransform();
-  setupGround()
   setupScene();
 }
 
