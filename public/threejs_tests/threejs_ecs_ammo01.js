@@ -11,7 +11,7 @@
 // https://stackoverflow.com/questions/18260307/dat-gui-update-the-dropdown-list-values-for-a-controller
 // https://stackoverflow.com/questions/34278474/module-exports-and-es6-import
 // https://medium.com/@bluemagnificent/intro-to-javascript-3d-physics-using-ammo-js-and-three-js-dd48df81f591
-// 
+// https://medium.com/@bluemagnificent/collision-detection-in-javascript-3d-physics-using-ammo-js-and-three-js-31a5569291ef
 // 
 
 import van from "https://cdn.jsdelivr.net/npm/vanjs-core@1.5.2/src/van.min.js";
@@ -32,6 +32,9 @@ const RENDERABLE_FILTER = [ 'renderable' ];
 const CUBE_FILTER = [ 'cube' ];
 
 const PHYSICSABLE_FILTER = [ 'rigidcube' ];
+
+const STATE = { DISABLE_DEACTIVATION : 4 };
+
 const stats = new Stats();
 let gridHelper;
 let axesHelper;
@@ -273,6 +276,7 @@ function appLoop(){
   controls.update();
   if(physicsWorld){
     physicsWorld.stepSimulation(frameTime,10);
+    detectCollision();
   }
   // run onUpdate for all added systems
   ECS.update(world, frameTime);
@@ -314,8 +318,8 @@ const myScene = {
         height:this.height,
         depth:this.depth,
         x:getRandomArbitrary(this.min.x, this.max.x),
-        y:getRandomArbitrary(this.min.x, this.max.x),
-        z:getRandomArbitrary(this.min.x, this.max.x),
+        y:getRandomArbitrary(this.min.y, this.max.y),
+        z:getRandomArbitrary(this.min.z, this.max.z),
       });
     }else{
       createRigidCube({
@@ -399,7 +403,6 @@ function createGUI(){
   physicsFolder.add(myScene, 'currentEntityId').listen();
   physicsFolder.add(myScene, 'removeRigidBodyBoxId').name('Remove Box');
   
-
 }
 
 function setupScene(){
@@ -477,6 +480,25 @@ function createRigidCube(args){
 
   ECS.addComponent(world, CUBE, 'rigid', body);
   ECS.addComponentToEntity(world, CUBE, 'rigidcube');
+}
+
+function detectCollision(){
+  let dispatcher = physicsWorld.getDispatcher();
+	let numManifolds = dispatcher.getNumManifolds();
+
+	for ( let i = 0; i < numManifolds; i ++ ) {
+
+		let contactManifold = dispatcher.getManifoldByIndexInternal( i );
+		let numContacts = contactManifold.getNumContacts();
+
+		for ( let j = 0; j < numContacts; j++ ) {
+
+			let contactPoint = contactManifold.getContactPoint( j );
+			let distance = contactPoint.getDistance();
+      console.log("collision detected...")
+			//console.log({manifoldIndex: i, contactIndex: j, distance: distance});
+		}
+	}
 }
 
 function _run_simulation(){
