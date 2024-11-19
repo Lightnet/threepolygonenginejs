@@ -5,9 +5,15 @@
   GitHub: https://github.com/Lightnet/threepolygonenginejs
   
 */
+//simple test tile map
 
 // three.js Sprite Animation - Implement a Sprite Flipbook / Sprite Mixer
 // https://www.youtube.com/watch?v=pGO1Hm-JB90&t=83s
+// https://threejs.org/docs/#api/en/objects/Sprite
+// https://en.threejs-university.com/2021/08/03/chapter-7-sprites-and-particles-in-three-js/
+// https://threejs.org/docs/?q=PlaneGeometry#api/en/geometries/PlaneGeometry
+// https://discourse.threejs.org/t/texture-blur-when-using-pixelart-three-js-editor/32535
+// 
 
 import van from "https://cdn.jsdelivr.net/npm/vanjs-core@1.5.2/src/van.min.js";
 import * as THREE from 'https://unpkg.com/three@0.170.0/build/three.module.js';
@@ -16,7 +22,6 @@ import Stats from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/stats.modul
 import { GUI } from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/lil-gui.module.min.js';
 
 const {div,style} = van.tags;
-
 const stats = new Stats();
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
@@ -32,7 +37,6 @@ window.addEventListener('resize', function(event) {
   renderer.setSize( window.innerWidth, window.innerHeight );
 });
 
-var cube;
 const myObject ={
   offset:{
     x:0,
@@ -47,31 +51,18 @@ const myObject ={
   }
 }
 
-function create_cube(){
-  const geometry = new THREE.BoxGeometry( 1, 1, 1 );
-  const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-  cube = new THREE.Mesh( geometry, material );
-  scene.add( cube );
-}
-// https://threejs.org/docs/#api/en/objects/Sprite
-// https://en.threejs-university.com/2021/08/03/chapter-7-sprites-and-particles-in-three-js/
-// https://threejs.org/docs/?q=PlaneGeometry#api/en/geometries/PlaneGeometry
-// https://discourse.threejs.org/t/texture-blur-when-using-pixelart-three-js-editor/32535
-// 
-// 
 var mapTexture;
 function create_sprite(){
 
-
   mapTexture = new THREE.TextureLoader().load( '/textures/characters/small_8_direction_characters.png' );
-  //mapTexture.
+  // PIXEL IMAGE
   mapTexture.magFilter = THREE.NearestFilter;
   mapTexture.wrapS = THREE.RepeatWrapping;
   mapTexture.wrapT = THREE.RepeatWrapping;
   //mapTexture.repeat.set(1, 1);
-  mapTexture.repeat.set(1/myObject.tile.x, 1/myObject.tile.y);
-  //mapTexture.offset.x = 0.0125;
-  //mapTexture.offset.y = 0.5;
+  mapTexture.repeat.set(1/myObject.tile.x, 1/myObject.tile.y);// TILE MAP
+  //mapTexture.offset.x = 0.0125; // TILE MAP X
+  //mapTexture.offset.y = 0.5; // TILE MAP Y
 
   const spritePlane = new THREE.PlaneGeometry(2, 2);
   const spriteMaterial = new THREE.MeshBasicMaterial({
@@ -84,7 +75,6 @@ function create_sprite(){
   scene.add(mesh);
 }
 
-
 function setup_Helpers(){
   const size = 10;
   const divisions = 10;
@@ -93,22 +83,19 @@ function setup_Helpers(){
   scene.add( gridHelper );
 }
 
-var clock = new THREE.Clock();
+//var clock = new THREE.Clock();
 var controls = new OrbitControls( camera, renderer.domElement );
 function animate() {
 
-	// cube.rotation.x += 0.01;
-	// cube.rotation.y += 0.01;
   stats.update();
   controls.update();
 
 	renderer.render( scene, camera );
 }
 
-
 function createGUI(){
   const gui = new GUI();
-  gui.add(myObject,'test')
+  //gui.add(myObject,'test')
   const tileMapFolder = gui.addFolder('Tile Map')
 
   tileMapFolder.add(mapTexture.offset,'x',0 , 1 , 0.01).name('Offset x:')
@@ -123,7 +110,7 @@ function createGUI(){
 }
 
 function setup_scene(){
-  //create_cube();
+
   create_sprite();
   setup_Helpers();
 
@@ -133,6 +120,5 @@ function setup_scene(){
   renderer.setAnimationLoop( animate );
   createGUI();
 }
-
 
 setup_scene()

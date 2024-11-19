@@ -6,6 +6,7 @@
   
 */
 // tile map by cols and rows select image to render.
+// movement test
 
 // three.js Sprite Animation - Implement a Sprite Flipbook / Sprite Mixer
 // https://www.youtube.com/watch?v=pGO1Hm-JB90&t=83s
@@ -41,6 +42,7 @@ window.addEventListener('resize', function(event) {
 });
 
 const myObject ={
+  deltaTime:0,
   offset:{
     x:0,
     y:0,
@@ -53,7 +55,25 @@ const myObject ={
   currentTileIndex:0,
   test:()=>{
     console.log('test');
-  }
+  },
+  isPlay:false,
+  playSpriteIndices:[],
+  runningTileArrayIndex:0,
+  currentTile:0,
+  maxDisplayTime:1.5,
+  elapsedTime:0,
+  play_up:function(){
+    loopPlay([8,16,24], 1.5); //up
+  },
+  play_down:function(){
+    loopPlay([12,20,28], 1.5);
+  },
+  play_right:function(){
+    loopPlay([10,18,26], 1.5);
+  },
+  play_left:function(){
+    loopPlay([14,22,30], 1.5);
+  },
 }
 
 var mapTexture;
@@ -90,7 +110,12 @@ function setup_Helpers(){
 var clock = new THREE.Clock();
 var controls = new OrbitControls( camera, renderer.domElement );
 function animate() {
-
+  let dt = clock.getDelta();
+  myObject.deltaTime = dt.toFixed(6);
+  if(myObject.isPlay){
+    updateAnimation(dt);
+  }
+  
   stats.update();
   controls.update();
 
@@ -99,7 +124,7 @@ function animate() {
 
 function createGUI(){
   const gui = new GUI();
-  //gui.add(myObject,'test')
+  gui.add(myObject,'deltaTime').listen().disable();
   const tileMapFolder = gui.addFolder('Tile Map')
 
   tileMapFolder.add(mapTexture.offset,'x',0 , 1 , 0.01).name('Offset x:').listen();
@@ -113,16 +138,66 @@ function createGUI(){
   });
 
   tileMapFolder.add(myObject,'currentTileIndex', 0 , myObject.maxTile , 1).name('Image Index:').onChange( value => {
-    const cols = myObject.tile.cols;
-    const rows = myObject.tile.rows;
-    
-    const col = value % cols;
-    const row = Math.floor( value / cols );
-    myObject.offset.x = col / cols
-    myObject.offset.y = 1 - ( ( 1 + row ) / rows )
-    mapTexture.offset.x = col / cols;
-    mapTexture.offset.y = 1 - ( ( 1 + row ) / rows );
+    textureTileMapIdx(value);
   });
+  const animationFolder = gui.addFolder('Animation')
+  
+  animationFolder.add(myObject,'play_up');
+  animationFolder.add(myObject,'play_down');
+  animationFolder.add(myObject,'play_right');
+  animationFolder.add(myObject,'play_left');
+
+  animationFolder.add(myObject,'runningTileArrayIndex').listen();
+  animationFolder.add(myObject,'currentTile').listen();
+  animationFolder.add(myObject,'elapsedTime').listen().disable();
+  animationFolder.add(myObject,'maxDisplayTime');
+  // animationFolder.add(myObject,'maxDisplayTime').onChange( value => {
+  //   myObject.totalDuration = value;
+  // });
+
+  animationFolder.add(myObject,'isPlay');
+}
+
+function textureTileMapIdx(index){
+  const cols = myObject.tile.cols;
+  const rows = myObject.tile.rows;
+  
+  const col = index % cols;
+  const row = Math.floor( index / cols );
+  myObject.offset.x = col / cols
+  myObject.offset.y = 1 - ( ( 1 + row ) / rows )
+  mapTexture.offset.x = col / cols;
+  mapTexture.offset.y = 1 - ( ( 1 + row ) / rows );
+}
+
+function onKeyDown(event){
+
+}
+
+function onKeyUp(event){
+
+}
+
+function loopPlay(playSpriteIndices, totalDuration){
+  myObject.playSpriteIndices = playSpriteIndices;
+  myObject.runningTileArrayIndex = 0;
+  myObject.currentTile = playSpriteIndices[myObject.runningTileArrayIndex];
+  myObject.maxDisplayTime = totalDuration / myObject.playSpriteIndices.length;
+  //console.log(myObject);
+}
+
+let elapsedTime = 0;
+function updateAnimation(dt){
+  //console.log(dt)
+  elapsedTime += dt;
+  myObject.elapsedTime = elapsedTime.toFixed(4);//gui debug
+  //console.log(myObject.maxDisplayTime);
+  if(myObject.maxDisplayTime > 0 && elapsedTime >= myObject.maxDisplayTime){
+    elapsedTime = 0;
+    myObject.runningTileArrayIndex = (myObject.runningTileArrayIndex + 1) % myObject.playSpriteIndices.length;
+    myObject.currentTile = myObject.playSpriteIndices[myObject.runningTileArrayIndex];
+    textureTileMapIdx(myObject.currentTile)
+  }
 }
 
 function setup_scene(){
@@ -135,6 +210,9 @@ function setup_scene(){
   
   renderer.setAnimationLoop( animate );
   createGUI();
+
+  //loopPlay([0,1,2,3,4], 1.5);
+  loopPlay([8,16,24], 1.5); //up
 }
 
 setup_scene()

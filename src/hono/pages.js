@@ -146,6 +146,7 @@ var urlandjs = [
   {url:'/threejs_line_follow01',file:'/threejs_tests/threejs_line_follow01.js'},
   {url:'/threejs_sprite01',file:'/threejs_tests/threejs_sprite01.js'},
   {url:'/threejs_sprite02',file:'/threejs_tests/threejs_sprite02.js'},
+  {url:'/threejs_sprite03',file:'/threejs_tests/threejs_sprite03.js'},
   {url:'/threejs_ecs01',file:'/threejs_tests/threejs_ecs01.js'},
   {url:'/threejs_ecs02',file:'/threejs_tests/threejs_ecs02.js'},
   {url:'/threejs_ecs_rapier01',file:'/threejs_tests/threejs_ecs_rapier01.js'},

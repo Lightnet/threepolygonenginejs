@@ -11,11 +11,10 @@
 
 // https://www.npmjs.com/package/ecs
 // https://github.com/mrdoob/three.js/blob/dev/examples/jsm/physics/JoltPhysics.js
-// https://github.com/mrdoob/three.js/blob/dev/examples/jsm/physics/JoltPhysics.js
 // https://jrouwe.github.io/JoltPhysics.js/
 // https://github.com/jrouwe/JoltPhysics.js/?tab=readme-ov-file
-// 
 // https://github.com/jrouwe/JoltPhysics.js/blob/main/helloworld/HelloWorld.js
+// 
 
 import van from "https://cdn.jsdelivr.net/npm/vanjs-core@1.5.2/src/van.min.js";
 import * as THREE from 'https://unpkg.com/three@0.170.0/build/three.module.js';
