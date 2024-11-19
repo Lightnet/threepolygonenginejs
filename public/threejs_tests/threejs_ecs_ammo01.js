@@ -20,7 +20,6 @@ import { OrbitControls } from 'https://unpkg.com/three@0.170.0/examples/jsm/cont
 import Stats from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/stats.module.js';
 import { GUI } from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/lil-gui.module.min.js';
 import ECS from "https://unpkg.com/ecs@0.23.0/ecs.js";
-//import RAPIER from 'https://cdn.skypack.dev/@dimforge/rapier3d-compat';
 
 //does not work here need html to load script
 //import * as Ammo from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/ammo.wasm.js';
@@ -238,8 +237,8 @@ function physicsSystem (world) {
 
     ECS.getEntities(world, PHYSICSABLE_FILTER, 'added', result);
     for (let i=0; i < result.count; i++){
-      console.log("physicsSystem add")
-      console.log('[physicsSystem] added new entity:', result.entries[i])
+      //console.log("physicsSystem add")
+      //console.log('[physicsSystem] added new entity:', result.entries[i])
       // if((result.entries[i]?.mesh !=null)&&(result.entries[i]?.rigid !=null)){
       //   result.entries[i].mesh.position.copy(result.entries[i].rigid.translation())
       //   result.entries[i].mesh.quaternion.copy(result.entries[i].rigid.rotation())
@@ -292,38 +291,42 @@ function getRandomArbitrary(min, max) {
   return Math.random() * (max - min) + min;
 }
 
-var controller_entities;
-var EntitiesFolder;
+var controller;
+var physicsFolder;
 const myScene = {
   entity_id:0,
-  minx:-5,
-  miny:-5,
-  minz:-5,
-  maxx:5,
-  maxy:5,
-  maxz:5,
+  pos:{x:0,y:10,z:0},
+  min:{x:-15,y:1,z:-15},
+  max:{x:15,y:15,z:15},
+  width:1,
+  height:1,
+  depth:1,
   isRandom:true,
   isRotate:false,
   isCreateRotate:true,
-  entityIds:[],
+  //entityIds:[],
   currentEntityId:0,
-  create_cube:function(){
-    const CUBE = ECS.addEntity(world)
-    const cube = createCube()
+  //currentEntity:0,
+  createRigidBodyCube:function(){
     if(this.isRandom){
-      cube.position.set(
-        getRandomArbitrary(-5,5),
-        getRandomArbitrary(-5,5),
-        getRandomArbitrary(-5,5)
-      )
+      createRigidCube({
+        width:this.width,
+        height:this.height,
+        depth:this.depth,
+        x:getRandomArbitrary(this.min.x, this.max.x),
+        y:getRandomArbitrary(this.min.x, this.max.x),
+        z:getRandomArbitrary(this.min.x, this.max.x),
+      });
+    }else{
+      createRigidCube({
+        width:this.width,
+        height:this.height,
+        depth:this.depth,
+        x:this.pos.x,
+        y:this.pos.y,
+        z:this.pos.z,
+      });
     }
-    ECS.addComponent(world, CUBE, 'mesh', cube);
-    ECS.addComponent(world, CUBE, 'rotation', { x: 0, y: 0,z:0 });
-    ECS.addComponent(world, CUBE, 'isRotate', this.isCreateRotate);
-    ECS.addComponentToEntity(world, CUBE, 'renderable');//add/remove event scene
-    ECS.addComponentToEntity(world, CUBE, 'cube');//tag 
-    
-    //scene.add(cube);
   },
   delete_cube:function(){
     console.log("this.entity_id: ", this.currentEntityId)
@@ -331,72 +334,71 @@ const myScene = {
     const deferredRemoval = false  // by default this is true. setting it to false immediately removes the component
     ECS.removeEntity(world, entity, deferredRemoval)
   },
-  get_entities:function(){
-    //let entities = ECS.getEntities(world, [ 'renderable' ])
-    // //this.entityIds = entities;
-    let entityIds = [];
-    for (const entity of ECS.getEntities(world, [ 'renderable' ])){
-      const entity_id = ECS.getEntityId(world, entity)
-      console.log(entity_id);
-      entityIds.push(entity_id); 
-    }
-
-    if(controller_entities){// if exist delete gui since they need to update html docs list
-      controller_entities.destroy()//delete ui
-      controller_entities = EntitiesFolder.add(myScene, 'currentEntityId', entityIds);
-    }else{
-      //create ui
-      controller_entities = EntitiesFolder.add(myScene, 'currentEntityId', entityIds);
-    }
-  },
-  remove_cubes:function(){
-    ECS.removeEntities(world, ['cube']);
-  },
-  stop_rotate_cube:function(){
-    console.log("this.entity_id: ", this.currentEntityId)
-    const entity = ECS.getEntityById(world, this.currentEntityId);
-    console.log(entity);
-    entity.isRotate = this.isRotate;
-  },
   addRigidCube:function(){
     createRigidCube();
   },
   removeRigIdCubes(){
     ECS.removeEntities(world, ['rigidcube']);
-  }
+  },
+  getRigidBodies(){
+    console.log(this);
+    let entityIds = [];
+    for (const entity of ECS.getEntities(world, [ 'rigidcube' ])){
+      const entity_id = ECS.getEntityId(world, entity)
+      //console.log(entity_id);
+      entityIds.push(entity_id); 
+    }
+
+    if(controller){
+      controller.destroy()//delete ui
+      controller = physicsFolder.add(myScene, 'currentEntityId', entityIds);
+    }else{
+      controller = physicsFolder.add(myScene,'currentEntityId', entityIds)
+    }
+  },
+  removeRigidBodyBoxId:function(){
+    console.log("this.currentEntity: ", this.currentEntityId)
+    const entity = ECS.getEntityById(world, this.currentEntityId);
+    const deferredRemoval = false  // by default this is true. setting it to false immediately removes the component
+    ECS.removeEntity(world, entity, deferredRemoval)
+  },
 }
 
 function createGUI(){
   const gui = new GUI();
-  const cubeFolder = gui.addFolder('Cube').show(false);
-  const ranPosFolder = cubeFolder.addFolder('Random Position');
-  ranPosFolder.add(myScene, 'minx').name('Min X:');
-  ranPosFolder.add(myScene, 'miny').name('Min Y:');
-  ranPosFolder.add(myScene, 'minz').name('Min Z:');
+  const cubeFolder = gui.addFolder('Cube').show(true);
+  const randomFolder = cubeFolder.addFolder('Random');
+  const ranMinFolder = randomFolder.addFolder('Min');
+  ranMinFolder.add(myScene.min, 'x',-100,10).name('X:');
+  ranMinFolder.add(myScene.min, 'y',-100,10).name('Y:');
+  ranMinFolder.add(myScene.min, 'z',-100,10).name('Z:');
 
-  ranPosFolder.add(myScene, 'maxx').name('Max X:');
-  ranPosFolder.add(myScene, 'maxy').name('Max Y:');
-  ranPosFolder.add(myScene, 'maxz').name('Max Z:');
+  const ranMaxFolder = randomFolder.addFolder('Max');
+  ranMaxFolder.add(myScene.max, 'x',0,100).name('X:');
+  ranMaxFolder.add(myScene.max, 'y',0,100).name('Y:');
+  ranMaxFolder.add(myScene.max, 'z',0,100).name('Z:');
 
+  const positionFolder = cubeFolder.addFolder('Position');
+  positionFolder.add(myScene.pos, 'x',-100,100).name('X:');
+  positionFolder.add(myScene.pos, 'y',-100,100).name('Y:');
+  positionFolder.add(myScene.pos, 'z',-100,100).name('Z:');
+  const sizeFolder = cubeFolder.addFolder('Size');
+  sizeFolder.add(myScene, 'width',0.01,100);
+  sizeFolder.add(myScene, 'height',0.01,100);
+  sizeFolder.add(myScene, 'depth',0.01,100);
+  
   cubeFolder.add(myScene, 'isRandom').name('is Random');
-  cubeFolder.add(myScene, 'isCreateRotate').name('is Rotate');
-  cubeFolder.add(myScene, 'create_cube').name('Create');
-  
-  const sceneFolder = gui.addFolder('Scene').show(false);
-  sceneFolder.add(myScene, 'currentEntityId').name('Entity ID:').listen();
-  sceneFolder.add(myScene, 'isRotate').name('isRotate')
-  sceneFolder.add(myScene, 'stop_rotate_cube').name('Update Rotate')
-  sceneFolder.add(myScene, 'delete_cube').name('Delete')
-  
-  EntitiesFolder = gui.addFolder('Entities').show(false);// folder
-  EntitiesFolder.add(myScene, 'remove_cubes').name('Remove Cubes');
-  EntitiesFolder.add(myScene, 'get_entities').name('Get Entities'); //get entities
+  //cubeFolder.add(myScene, 'isCreateRotate').name('is Rotate');
+  cubeFolder.add(myScene, 'createRigidBodyCube').name('Create');
 
   const debugFolder = gui.addFolder('Debug');
   // debugFolder.add(rapierDebugRenderer,'enabled').name('Physics Render Wirefame');
-  const physicsFolder = gui.addFolder('Physics');
-  physicsFolder.add(myScene, 'removeRigIdCubes').name('Remove Rigid Cubes');
-  physicsFolder.add(myScene, 'addRigidCube').name('Add Rigid Cube');
+  physicsFolder = gui.addFolder('Physics');
+  physicsFolder.add(myScene, 'removeRigIdCubes').name('Remove All Rigid Body Cubes');
+  physicsFolder.add(myScene, 'getRigidBodies').name('Get Rigid Cubes');
+  physicsFolder.add(myScene, 'currentEntityId').listen();
+  physicsFolder.add(myScene, 'removeRigidBodyBoxId').name('Remove Box');
+  
 
 }
 
@@ -414,7 +416,7 @@ function setupScene(){
   setupHelper();
 
   createRigidGround();
-  createRigidBall();
+  //createRigidBall();
 
   renderer.setAnimationLoop( appLoop );
 }
@@ -431,17 +433,26 @@ async function run_simulation() {
   
 }
 
-function createRigidCube(){
+function createRigidCube(args){
+  args = args || {};
+  const width = args?.width || 2;
+  const height = args?.height || 2;
+  const depth = args?.depth || 2;
+  const color = args?.color || 0x00ffff;
+
+  const x = args?.x || 0;
+  const y = args?.y || 0;
+  const z = args?.z || 0;
   
-  let mesh = createCube({width:10,height:10,depth:10,color:0x00ffff});
+  let mesh = createCube({width:width,height:height,depth:depth,color:color});
 
   const CUBE = ECS.addEntity(world)
   ECS.addComponent(world, CUBE, 'mesh', mesh);
   ECS.addComponentToEntity(world, CUBE, 'renderable');
 
-  let pos = {x: 0, y: 20, z: 0};
+  let pos = {x: x, y: y, z: z};
   let quat = {x: 0, y: 0, z: 0, w: 1};
-  let scale = {x: 10, y: 10, z: 10};
+  let scale = {x: width, y:height, z: depth};
   let mass = 1;
 
   //Ammojs Section
@@ -462,7 +473,7 @@ function createRigidCube(){
   let body = new Ammo.btRigidBody( rbInfo );
   physicsWorld.addRigidBody( body);
   //physicsWorld.addRigidBody( body, colGroupGreenBall, colGroupRedBall);
-  console.log(physicsWorld);
+  //console.log(physicsWorld);
 
   ECS.addComponent(world, CUBE, 'rigid', body);
   ECS.addComponentToEntity(world, CUBE, 'rigidcube');
