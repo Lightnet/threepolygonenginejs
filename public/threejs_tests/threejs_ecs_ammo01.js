@@ -9,6 +9,10 @@
 // https://www.npmjs.com/package/ecs
 // https://codepen.io/rvcristiand/pen/pogXXyB?editors=1111
 // https://stackoverflow.com/questions/18260307/dat-gui-update-the-dropdown-list-values-for-a-controller
+// https://stackoverflow.com/questions/34278474/module-exports-and-es6-import
+// 
+// 
+// 
 
 import van from "https://cdn.jsdelivr.net/npm/vanjs-core@1.5.2/src/van.min.js";
 import * as THREE from 'https://unpkg.com/three@0.170.0/build/three.module.js';
@@ -16,32 +20,14 @@ import { OrbitControls } from 'https://unpkg.com/three@0.170.0/examples/jsm/cont
 import Stats from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/stats.module.js';
 import { GUI } from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/lil-gui.module.min.js';
 import ECS from "https://unpkg.com/ecs@0.23.0/ecs.js";
-import RAPIER from 'https://cdn.skypack.dev/@dimforge/rapier3d-compat';
+//import RAPIER from 'https://cdn.skypack.dev/@dimforge/rapier3d-compat';
 
-//DRAW PHYSICS VERTICES
-class RapierDebugRenderer {
-  mesh
-  world
-  enabled = true
+//does not work here need html to load script
+//import * as Ammo from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/ammo.wasm.js';
 
-  constructor(scene, world) {
-    this.world = world
-    this.mesh = new THREE.LineSegments(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: 0xffffff, vertexColors: true }))
-    this.mesh.frustumCulled = false
-    scene.add(this.mesh)
-  }
-
-  update() {
-    if (this.enabled) {
-      const { vertices, colors } = this.world.debugRender()
-      this.mesh.geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3))
-      this.mesh.geometry.setAttribute('color', new THREE.BufferAttribute(colors, 4))
-      this.mesh.visible = true
-    } else {
-      this.mesh.visible = false
-    }
-  }
-}
+//console.log(Ammo);
+//var AMMO;
+let colGroupPlane = 1, colGroupRedBall = 2, colGroupGreenBall = 4;
 
 const RENDERABLE_FILTER = [ 'renderable' ];
 const CUBE_FILTER = [ 'cube' ];
@@ -53,12 +39,14 @@ let axesHelper;
 
 // generates a new entity component system
 const world = ECS.addWorld();
-var physics;
-var rapierDebugRenderer;
+var physicsWorld;
+var tmpTrans;
+
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 //camera.position.z = 5;
-camera.position.set(0, 5, 5);
+//camera.position.set(0, 5, 5);
+camera.position.set(0, 30, 30);
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
@@ -94,7 +82,7 @@ function setupHelper(){
 
 // set up the cube
 function setupCube(){
-  const CUBE = ECS.addEntity(world);
+  const CUBE = ECS.addEntity(world)
   //console.log(CUBE);
   const cube = createCube();
   ECS.addComponent(world, CUBE, 'mesh', cube);
@@ -102,6 +90,87 @@ function setupCube(){
   ECS.addComponent(world, CUBE, 'isRotate', true);
   ECS.addComponentToEntity(world, CUBE, 'renderable');
   ECS.addComponentToEntity(world, CUBE, 'cube');
+}
+
+function createRigidGround(){
+  let pos = {x: 0, y: 0, z: 0};
+  let scale = {x: 50, y: 2, z: 50};
+  let quat = {x: 0, y: 0, z: 0, w: 1};
+  let mass = 0;
+  //threeJS Section
+  let blockPlane = new THREE.Mesh(
+    new THREE.BoxGeometry(), 
+    //new THREE.MeshPhongMaterial({color: 0xa0afa4})
+    new THREE.MeshBasicMaterial( { color: 0xa0afa4 } )
+  );
+  blockPlane.position.set(pos.x, pos.y, pos.z);
+  blockPlane.scale.set(scale.x, scale.y, scale.z);
+  blockPlane.castShadow = true;
+  blockPlane.receiveShadow = true;
+  scene.add(blockPlane);
+
+  //Ammojs Section
+  let transform = new Ammo.btTransform();
+  transform.setIdentity();
+  transform.setOrigin( new Ammo.btVector3( pos.x, pos.y, pos.z ) );
+  transform.setRotation( new Ammo.btQuaternion( quat.x, quat.y, quat.z, quat.w ) );
+  let motionState = new Ammo.btDefaultMotionState( transform );
+
+  let colShape = new Ammo.btBoxShape( new Ammo.btVector3( scale.x * 0.5, scale.y * 0.5, scale.z * 0.5 ) );
+  colShape.setMargin( 0.05 );
+
+  let localInertia = new Ammo.btVector3( 0, 0, 0 );
+  colShape.calculateLocalInertia( mass, localInertia );
+
+  let rbInfo = new Ammo.btRigidBodyConstructionInfo( mass, motionState, colShape, localInertia );
+  let body = new Ammo.btRigidBody( rbInfo );
+
+
+  physicsWorld.addRigidBody( body );
+}
+
+function createRigidBall(){
+
+  const SPHERE = ECS.addEntity(world)
+
+  let pos = {x: 0, y: 20, z: 0};
+  let radius = 2;
+  let quat = {x: 0, y: 0, z: 0, w: 1};
+  let mass = 1;
+  //threeJS Section
+  //let ball = new THREE.Mesh(new THREE.SphereGeometry(radius,6,6), new THREE.MeshPhongMaterial({color: 0x00ff08}));
+  let ball = new THREE.Mesh(
+    new THREE.SphereGeometry(radius,6,6),
+    //new THREE.MeshPhongMaterial({color: 0x00ff08})
+    new THREE.MeshBasicMaterial( { color: 'blue' } )
+  );
+  ball.position.set(pos.x, pos.y, pos.z);
+  ball.castShadow = true;
+  ball.receiveShadow = true;
+  //scene.add(ball);
+  ECS.addComponent(world, SPHERE, 'mesh', ball);
+  ECS.addComponentToEntity(world, SPHERE, 'renderable');
+
+  //Ammojs Section
+  let transform = new Ammo.btTransform();
+  transform.setIdentity();
+  transform.setOrigin( new Ammo.btVector3( pos.x, pos.y, pos.z ) );
+  transform.setRotation( new Ammo.btQuaternion( quat.x, quat.y, quat.z, quat.w ) );
+  let motionState = new Ammo.btDefaultMotionState( transform );
+
+  let colShape = new Ammo.btSphereShape( radius );
+  colShape.setMargin( 0.05 );
+
+  let localInertia = new Ammo.btVector3( 0, 0, 0 );
+  colShape.calculateLocalInertia( mass, localInertia );
+
+  let rbInfo = new Ammo.btRigidBodyConstructionInfo( mass, motionState, colShape, localInertia );
+  let body = new Ammo.btRigidBody( rbInfo );
+  physicsWorld.addRigidBody( body, colGroupGreenBall, colGroupRedBall);
+  
+  ball.userData.physicsBody = body;
+  ECS.addComponent(world, SPHERE, 'rigid', body);
+  //rigidBodies.push(ball);
 }
 
 function rotateSystem(world){
@@ -151,8 +220,18 @@ function physicsUpdateSystem(world) {
   const onUpdate = function (dt) {
     for (const entity of ECS.getEntities(world, ['mesh', 'rigid'])) {
       if((entity?.mesh !=null)&&(entity?.rigid !=null)){
-        entity.mesh.position.copy(entity.rigid.translation())
-        entity.mesh.quaternion.copy(entity.rigid.rotation())
+        let objThree = entity.mesh;
+        let objAmmo = entity.rigid;
+        let ms = objAmmo.getMotionState();
+        if ( ms ) {
+          ms.getWorldTransform( tmpTrans );
+          let p = tmpTrans.getOrigin();
+          let q = tmpTrans.getRotation();
+          objThree.position.set( p.x(), p.y(), p.z() );
+          objThree.quaternion.set( q.x(), q.y(), q.z(), q.w() );
+        }
+        //entity.mesh.position.copy(entity.rigid.translation())
+        //entity.mesh.quaternion.copy(entity.rigid.rotation())
       }
     }
   }
@@ -207,15 +286,15 @@ function appLoop(){
   currentTime = newTime
   stats.update();
   controls.update();
-  if(physics){
-    physics.step();
+  if(physicsWorld){
+    physicsWorld.stepSimulation(frameTime,10);
   }
   // run onUpdate for all added systems
   ECS.update(world, frameTime);
   //draw physics
-  if(rapierDebugRenderer){
-    rapierDebugRenderer.update();
-  }
+  // if(rapierDebugRenderer){
+  //   rapierDebugRenderer.update();
+  // }
   
   renderer.render( scene, camera );
 
@@ -346,52 +425,64 @@ function setupScene(){
   van.add(document.body, renderer.domElement);
   van.add(document.body, stats.dom);
   createGUI();
-  setupHelper()
+  setupHelper();
+
+  createRigidGround();
+  createRigidBall();
 
   renderer.setAnimationLoop( appLoop );
 }
 
 async function run_simulation() {
-  await RAPIER.init();
   // Run the simulation.
-  _run_simulation(RAPIER);
+  // Ammo().then( function(){
+  //   console.log(Ammo);
+  //   console.log("init...")
+  // });
+  let AMMO = await Ammo();
+  console.log(AMMO);
+  _run_simulation(AMMO)
+  
 }
 
 function setupGround(){
-  // Create the ground
-  let groundColliderDesc = RAPIER.ColliderDesc.cuboid(10.0, 0.1, 10.0)
-    .setTranslation(0.0, -1.0, 0.0);
-  physics.createCollider(groundColliderDesc);
-  //let mesh = createCube({width:20,height:0.2,depth:20,color:0x00fff0});
-  let mesh = createCube({width:20,height:0.2,depth:20,color:'gray'});
-  mesh.position.set(0,-1,0);
-  scene.add(mesh)
+  // // Create the ground
+  // let groundColliderDesc = RAPIER.ColliderDesc.cuboid(10.0, 0.1, 10.0)
+  //   .setTranslation(0.0, -1.0, 0.0);
+  // physics.createCollider(groundColliderDesc);
+  // //let mesh = createCube({width:20,height:0.2,depth:20,color:0x00fff0});
+  // let mesh = createCube({width:20,height:0.2,depth:20,color:'gray'});
+  // mesh.position.set(0,-1,0);
+  // scene.add(mesh)
 }
 
 function setupRigidCube(){
-  let rigidBodyDesc = RAPIER.RigidBodyDesc.dynamic()
-    .setTranslation(0.0, 1.0, 0.0);
-  let rigidBody = physics.createRigidBody(rigidBodyDesc);
-
-  let colliderDesc = RAPIER.ColliderDesc.cuboid(0.5, 0.5, 0.5);
-  let collider = physics.createCollider(colliderDesc, rigidBody);
+  
   let mesh = createCube({color:0x00ffff});
 
   const CUBE = ECS.addEntity(world)
   ECS.addComponent(world, CUBE, 'mesh', mesh);
   ECS.addComponentToEntity(world, CUBE, 'renderable');
-  ECS.addComponent(world, CUBE, 'rigid', rigidBody);
-  ECS.addComponent(world, CUBE, 'colliderDesc', colliderDesc);
-  ECS.addComponent(world, CUBE, 'collider', collider);
-  ECS.addComponentToEntity(world, CUBE, 'rigidcube');
+  //ECS.addComponent(world, CUBE, 'rigid', rigidBody);
+  //ECS.addComponent(world, CUBE, 'colliderDesc', colliderDesc);
+  //ECS.addComponent(world, CUBE, 'collider', collider);
+  //ECS.addComponentToEntity(world, CUBE, 'rigidcube');
 }
 
-function _run_simulation(RAPIER){
+
+function _run_simulation(AMMO){
   //console.log("RAPIER...");
   // Use the RAPIER module here.
   let gravity = { x: 0.0, y: -9.81, z: 0.0 };
-  physics = new RAPIER.World(gravity);
-  rapierDebugRenderer = new RapierDebugRenderer(scene, physics);
+  //physics = new AMMO.World(gravity);
+  console.log(Ammo);
+  var collisionConfiguration  = new Ammo.btDefaultCollisionConfiguration();
+  var dispatcher              = new Ammo.btCollisionDispatcher(collisionConfiguration);
+  var overlappingPairCache    = new Ammo.btDbvtBroadphase();
+  var solver                  = new Ammo.btSequentialImpulseConstraintSolver();
+  physicsWorld               = new Ammo.btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
+  physicsWorld.setGravity(new Ammo.btVector3(gravity.x, gravity.y, gravity.z));
+  tmpTrans = new Ammo.btTransform();
   setupGround()
   setupScene();
 }

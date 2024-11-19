@@ -1,0 +1,1 @@
+https://stackoverflow.com/questions/34278474/module-exports-and-es6-import

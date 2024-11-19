@@ -41,6 +41,7 @@ function scriptHtml02(_script){
         overflow: hidden;
       }
       `),
+      script({src:"https://unpkg.com/three@0.170.0/examples/jsm/libs/ammo.wasm.js"}),
       script({type:"importmap"},`{
   "imports": {
     "three": "https://unpkg.com/three@0.170.0/build/three.module.js",
@@ -148,6 +149,8 @@ var urlandjs = [
   {url:'/threejs_ecs01',file:'/threejs_tests/threejs_ecs01.js'},
   {url:'/threejs_ecs02',file:'/threejs_tests/threejs_ecs02.js'},
   {url:'/threejs_ecs_rapier01',file:'/threejs_tests/threejs_ecs_rapier01.js'},
+  {url:'/threejs_ecs_ammo01',file:'/threejs_tests/threejs_ecs_ammo01.js'},
+  {url:'/threejs_ecs_jolt01',file:'/threejs_tests/threejs_ecs_jolt01.js'},
 
   //{url:'/three',file:'/three_framework00.js'},
   
