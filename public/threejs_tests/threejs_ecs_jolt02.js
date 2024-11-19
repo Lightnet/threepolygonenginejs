@@ -61,7 +61,6 @@ const unwrapRVec3 = (v) => new Jolt.RVec3(v.x, v.y, v.z);
 const wrapQuat = (q) => new THREE.Quaternion(q.GetX(), q.GetY(), q.GetZ(), q.GetW());
 const unwrapQuat = (q) => new Jolt.Quat(q.x, q.y, q.z, q.w);
 
-
 //===============================================
 // CREATE THREEJS
 //===============================================
@@ -88,9 +87,9 @@ function createCube(args){
   const width = args?.width || 1;
   const height = args?.height || 1;
   const depth = args?.depth || 1;
-  console.log("width: ", width)
-  console.log("height: ", height)
-  console.log("depth: ", depth)
+  // console.log("width: ", width)
+  // console.log("height: ", height)
+  // console.log("depth: ", depth)
   const color = args?.color || 0x00ff00;
   const geometry = new THREE.BoxGeometry( width, height, depth );
   const material = new THREE.MeshBasicMaterial( { color: color } );
@@ -136,7 +135,6 @@ function setupScene(){
   van.add(document.body, stats.dom);
   renderer.setAnimationLoop( appLoop );
   createGUI();
-  setupDisplayInfo();
   //physics
   createFloor();
   //createShapes();
@@ -179,14 +177,20 @@ function physicsUpdateSystem(world) {
     for (const entity of ECS.getEntities(world, ['mesh', 'rigid'])) {
       //console.log(entity);
       if((entity?.mesh !=null)&&(entity?.rigid !=null)){
-        let pos = entity.rigid.GetPosition();
+        
+        //wrapVec3 helper
+        //wrapQuat helper
+        entity.mesh.position.copy(wrapVec3(entity.rigid.GetPosition()));
+	      entity.mesh.quaternion.copy(wrapQuat(entity.rigid.GetRotation()));
+
+        //let pos = entity.rigid.GetPosition();
         //console.log("X: ",pos.GetX()," Y:",pos.GetY()," :", pos.GetZ())
-        entity.mesh.position.set(
-          pos.GetX(),
-          pos.GetY(),
-          pos.GetZ()
-        );
-        let rot = entity.rigid.GetPosition();
+        // entity.mesh.position.set(
+        //   pos.GetX(),
+        //   pos.GetY(),
+        //   pos.GetZ()
+        // );
+        // let rot = entity.rigid.GetPosition();
         //entity.mesh.position.copy(entity.rigid.translation())
         //entity.mesh.quaternion.copy(entity.rigid.rotation())
       }
@@ -358,13 +362,14 @@ var controls = new OrbitControls( camera, renderer.domElement );
 
 function appLoop(){
   let deltaTime = clock.getDelta();
-  deltaState.val = String(deltaTime.toFixed(4));
+  //deltaState.val = String(deltaTime.toFixed(4));
+  myScene.delta = deltaTime.toFixed(4);
   // Don't go below 30 Hz to prevent spiral of death
   deltaTime = Math.min( deltaTime, 1.0 / 30.0 );
   // When running below 55 Hz, do 2 steps instead of 1
   const numSteps = deltaTime > 1.0 / 55.0 ? 2 : 1;
-  
-  stepState.val = String(numSteps);
+  myScene.step = numSteps.toFixed(4);
+  //stepState.val = String(numSteps);
   //
   stats.update();
   controls.update();
@@ -417,35 +422,50 @@ function createBodyBox(){
 
   ECS.addComponent(world, CUBE, 'rigid', body);
   ECS.addComponentToEntity(world, CUBE, 'rigidcube');
-  console.log(body);
+  //console.log(body);
 }
 
-function setupDisplayInfo(){
-  van.add(document.body,div({
-    style:`
-    position:fixed;
-    top:60px;
-    left:10px;
-    color:blue;
-    `
-  },'Delta:', ()=>deltaState.val, " Step: ", ()=>stepState.val))
-}
 //===============================================
 // VAR FOR GUI
 //===============================================
+var controller;
+var EntitiesFolder;
 const myScene = {
+  delta:0,
+  step:0,
+  currentEntity:0,
   test:function(){
     console.log('TEST...')
   },
   create_rigid_body:function(){
     createBodyBox()
   },
-  remove_rigid_body:function(){
-
-  },
   remove_rigid_bodies:function(){
     ECS.removeEntities(world, ['rigidcube']);
-  }
+  },
+  get_rigidBodies:function(){
+
+    let entityIds = [];
+    for (const entity of ECS.getEntities(world, [ 'rigidcube' ])){
+      const entity_id = ECS.getEntityId(world, entity)
+      console.log(entity_id);
+      entityIds.push(entity_id); 
+    }
+
+    if(controller){
+      controller.destroy()//delete ui
+      controller = EntitiesFolder.add(myScene, 'currentEntity', entityIds);
+    }else{
+
+      controller = EntitiesFolder.add(myScene,'currentEntity', entityIds)
+    }
+  },
+  remove_rigid_body:function(){
+    console.log("this.currentEntity: ", this.currentEntity)
+    const entity = ECS.getEntityById(world, this.currentEntity);
+    const deferredRemoval = false  // by default this is true. setting it to false immediately removes the component
+    ECS.removeEntity(world, entity, deferredRemoval)
+  },
 };
 //===============================================
 // CREATE GUI
@@ -453,11 +473,15 @@ const myScene = {
 function createGUI(){
 
   const gui = new GUI();
-  gui.add(myScene,'test');
-  const physicsFolder = gui.addFolder('Physics');
-  physicsFolder.add(myScene,'create_rigid_body').name('Create Box');
-  physicsFolder.add(myScene,'remove_rigid_body').name('Remove Box');
-  physicsFolder.add(myScene,'remove_rigid_bodies').name('Delete Boxes');
+  const timeFolder = gui.addFolder('Time');
+  timeFolder.add(myScene,'delta').listen().disable();
+  timeFolder.add(myScene,'step').listen().disable();
+  const physicsSceneFolder = gui.addFolder('Physics Scene');
+  physicsSceneFolder.add(myScene,'create_rigid_body').name('Create Box');
+  physicsSceneFolder.add(myScene,'remove_rigid_bodies').name('Delete Boxes');
+  EntitiesFolder = gui.addFolder('Entities Box');
+  EntitiesFolder.add(myScene,'remove_rigid_body').name('Remove Box');
+  EntitiesFolder.add(myScene,'get_rigidBodies').name('Get RigidBodies');
 
 }
 //===============================================
