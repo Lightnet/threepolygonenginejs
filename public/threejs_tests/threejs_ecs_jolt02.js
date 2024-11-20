@@ -23,7 +23,7 @@ import { OrbitControls } from 'https://unpkg.com/three@0.170.0/examples/jsm/cont
 import Stats from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/stats.module.js';
 import { GUI } from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/lil-gui.module.min.js';
 import ECS from "https://unpkg.com/ecs@0.23.0/ecs.js";
-//const {div} = van.tags;
+const {div,textarea} = van.tags;
 //import initJolt from 'https://cdn.jsdelivr.net/npm/jolt-physics@0.23.0/dist/jolt-physics.wasm-compat.js';
 // const Jolt = await initJolt();
 // console.log(Jolt);
@@ -46,8 +46,9 @@ const world = ECS.addWorld();
 // Create very simple object layer filter with only a single layer
 const MY_LAYER = 0;
 let Jolt; // upper case API
-let jolt; // lower case world and objects
-let bodyInterface;
+var jolt; // lower case world and objects
+var bodyInterface;
+var physicsSystem;
 // https://github.com/jrouwe/JoltPhysics.js/blob/main/Examples/js/example.js
 const DegreesToRadians = (deg) => deg * (Math.PI / 180.0);
 
@@ -104,14 +105,19 @@ function createLights(){
 	dirLight.shadow.camera.zoom = 2;
 	scene.add( dirLight );
 }
-
+function setupLogs(){
+  van.add(document.body,div({style:`position:fixed;top:60px;left:0px;`},
+    textarea({id:'collision-log',style:``,rows:"5",cols:"60"})
+  ))
+}
 //===============================================
 // SETUP SCENE
 //===============================================
 function setupScene(){
+  
   createLights();
   ECS.addSystem(world, physicsUpdateSystem)// update position and rotation
-  ECS.addSystem(world, physicsSystem)// event when add and remove//add ingore? since add to physics world objects.
+  ECS.addSystem(world, physicsSystemECS)// event when add and remove//add ingore? since add to physics world objects.
   ECS.addSystem(world, rendererSystem)// add and remove object3d from the scene
 
   van.add(document.body, renderer.domElement);
@@ -181,7 +187,7 @@ function physicsUpdateSystem(world) {
   return { onUpdate }
 }
 
-function physicsSystem (world) {
+function physicsSystemECS (world) {
   // data structure to store all entities that were added or removed last frame
   const result = {
     count: 0,
@@ -264,15 +270,56 @@ function setupCollisionFiltering( settings ) {
 
 function _run_simulation(){
   console.log("SETUP...");
+  setupLogs();
   const settings = new Jolt.JoltSettings();
   setupCollisionFiltering(settings)
   jolt = new Jolt.JoltInterface( settings );// world physics
   
   Jolt.destroy( settings );
-  const physicsSystem = jolt.GetPhysicsSystem();
+  physicsSystem = jolt.GetPhysicsSystem();
   bodyInterface = physicsSystem.GetBodyInterface();
-
+  //detect collision
+  setupContactListener();
   setupScene();
+}
+
+
+function setupContactListener(){
+  var collisionLog = document.getElementById('collision-log');
+  // Register contact listener
+  const contactListener = new Jolt.ContactListenerJS();
+	contactListener.OnContactValidate = (body1, body2, baseOffset, collideShapeResult) => {
+		body1 = Jolt.wrapPointer(body1, Jolt.Body);
+		body2 = Jolt.wrapPointer(body2, Jolt.Body);
+		collideShapeResult = Jolt.wrapPointer(collideShapeResult, Jolt.CollideShapeResult);
+		collisionLog.value += 'OnContactValidate ' + body1.GetID().GetIndex() + ' ' + body2.GetID().GetIndex() + ' ' + collideShapeResult.mPenetrationAxis.ToString() + '\n';
+		return Jolt.ValidateResult_AcceptAllContactsForThisBodyPair;
+	};
+	contactListener.OnContactAdded = (body1, body2, manifold, settings) => {
+		body1 = Jolt.wrapPointer(body1, Jolt.Body);
+		body2 = Jolt.wrapPointer(body2, Jolt.Body);
+		manifold = Jolt.wrapPointer(manifold, Jolt.ContactManifold);
+		settings = Jolt.wrapPointer(settings, Jolt.ContactSettings);
+		collisionLog.value += 'OnContactAdded ' + body1.GetID().GetIndex() + ' ' + body2.GetID().GetIndex() + ' ' + manifold.mWorldSpaceNormal.ToString() + '\n';
+
+		// Override the restitution to 0.5
+		//settings.mCombinedRestitution = 0.5;
+	};
+	contactListener.OnContactPersisted = (body1, body2, manifold, settings) => {
+		body1 = Jolt.wrapPointer(body1, Jolt.Body);
+		body2 = Jolt.wrapPointer(body2, Jolt.Body);
+		manifold = Jolt.wrapPointer(manifold, Jolt.ContactManifold);
+		settings = Jolt.wrapPointer(settings, Jolt.ContactSettings);
+		collisionLog.value += 'OnContactPersisted ' + body1.GetID().GetIndex() + ' ' + body2.GetID().GetIndex() + ' ' + manifold.mWorldSpaceNormal.ToString() + '\n';
+
+		// Override the restitution to 0.5
+		//settings.mCombinedRestitution = 0.5;
+	};
+	contactListener.OnContactRemoved = (subShapePair) => {
+		subShapePair = Jolt.wrapPointer(subShapePair, Jolt.SubShapeIDPair);
+		collisionLog.value += 'OnContactRemoved ' + subShapePair.GetBody1ID().GetIndex() + ' ' + subShapePair.GetBody2ID().GetIndex() + '\n';
+	};
+	physicsSystem.SetContactListener(contactListener);
 }
 
 function getThreeObjectForBody(body, color) {

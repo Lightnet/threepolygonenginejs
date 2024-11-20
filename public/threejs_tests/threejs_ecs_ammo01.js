@@ -495,7 +495,8 @@ function detectCollision(){
 
 			let contactPoint = contactManifold.getContactPoint( j );
 			let distance = contactPoint.getDistance();
-      console.log("collision detected...")
+      //console.log("collision detected...",contactPoint)
+      //console.log("collision detected...",contactManifold)
 			//console.log({manifoldIndex: i, contactIndex: j, distance: distance});
 		}
 	}

@@ -51,6 +51,38 @@ npm run devh
 ```
   Run the server.
 
+# Testing stand alone features:
+ 
+ * threejs
+   * [x] animation sprite 2D 
+   * [x] line path
+   * [x] tween.js
+   * [x] pointerlock for mouse
+   * [x] entity component system
+   * [x] extrude test
+   * [x] camera forward simple movement
+   * [x] camera spaceship control
+   * [x] tilemap
+   * [x] card animation test
+
+ * threejs rapier physics js
+   * [x] collision detect test 
+   * [ ] gui
+     * [x] cube test
+     * [x] random create cube
+
+ * threejs ammo physics js
+   * [x] collision detect test 
+   * [ ] gui
+     * [x] cube test
+     * [x] random create cube
+
+ * threejs jolt physics js
+   * [x] collision detect test 
+   * [ ] gui
+     * [x] cube test
+     * [x] random create cube
+
 # Notes:
  Below this section are just notes. It still work in progress.
 
