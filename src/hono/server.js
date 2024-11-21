@@ -219,6 +219,7 @@ if(typeServer=='node'){
     `http://localhost:${PORT}/threejs_ecs_ammo01`,
     //`http://localhost:${PORT}/threejs_ecs_jolt01`,
     `http://localhost:${PORT}/threejs_ecs_jolt02`,
+    `http://localhost:${PORT}/threejspolygon`,
     //`http://localhost:${PORT}/threecss2d`,
     //`http://localhost:${PORT}/threecss3d`,
     // `http://localhost:${PORT}/three_css3srenderer_resize`,

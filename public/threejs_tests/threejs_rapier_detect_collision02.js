@@ -231,7 +231,7 @@ function create_Rigid_Ground(){
   let groundColliderDesc = RAPIER.ColliderDesc.cuboid(10.0, 0.1, 10.0)
     .setTranslation(0.0, -1.0, 0.0);
   let collider = world.createCollider(groundColliderDesc);
-  //console.log("ground collider: ", collider)
+  console.log("GROUND collider: ", collider)
   let _meshCube = create_cube({width:20,height:0.2,depth:20,color:0x00ff00});
   _meshCube.position.set(0,-1,0);
 }
@@ -248,7 +248,7 @@ function create_Rigid_Cube(){
   colliderDesc.setActiveEvents(RAPIER.ActiveEvents.COLLISION_EVENTS );
   //console.log("cube colliderDesc: ",colliderDesc);
   let collider = world.createCollider(colliderDesc, rigidBodyCube);
-  //console.log("cube collider: ", collider)
+  console.log("CUBE collider: ", collider)
 
   let _meshCube = create_cube({color:0x00ffff});
   rigidBodies.push({rigid:rigidBodyCube,mesh:_meshCube,collider:collider});

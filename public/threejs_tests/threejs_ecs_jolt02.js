@@ -107,6 +107,7 @@ function createLights(){
 }
 function setupLogs(){
   van.add(document.body,div({style:`position:fixed;top:60px;left:0px;`},
+    div(' Contact collision'),
     textarea({id:'collision-log',style:``,rows:"5",cols:"60"})
   ))
 }
@@ -269,10 +270,10 @@ function setupCollisionFiltering( settings ) {
 //var dynamicObjects = [];
 
 function _run_simulation(){
-  console.log("SETUP...");
+  //console.log("SETUP...");
   setupLogs();
   const settings = new Jolt.JoltSettings();
-  setupCollisionFiltering(settings)
+  setupCollisionFiltering(settings);
   jolt = new Jolt.JoltInterface( settings );// world physics
   
   Jolt.destroy( settings );
@@ -283,7 +284,6 @@ function _run_simulation(){
   setupScene();
 }
 
-
 function setupContactListener(){
   var collisionLog = document.getElementById('collision-log');
   // Register contact listener
@@ -291,6 +291,8 @@ function setupContactListener(){
 	contactListener.OnContactValidate = (body1, body2, baseOffset, collideShapeResult) => {
 		body1 = Jolt.wrapPointer(body1, Jolt.Body);
 		body2 = Jolt.wrapPointer(body2, Jolt.Body);
+    console.log("body1:",body1);
+    console.log("body2:",body2);
 		collideShapeResult = Jolt.wrapPointer(collideShapeResult, Jolt.CollideShapeResult);
 		collisionLog.value += 'OnContactValidate ' + body1.GetID().GetIndex() + ' ' + body2.GetID().GetIndex() + ' ' + collideShapeResult.mPenetrationAxis.ToString() + '\n';
 		return Jolt.ValidateResult_AcceptAllContactsForThisBodyPair;
@@ -458,7 +460,8 @@ function createBodyBox(args={}){
   ECS.addComponentToEntity(world, CUBE, 'renderable'); // tag
   ECS.addComponent(world, CUBE, 'rigid', body); // jolt body
   ECS.addComponentToEntity(world, CUBE, 'rigidcube'); // tag
-  //console.log(body);
+  console.log("CUBE: ", body);
+  return body
 }
 
 //===============================================

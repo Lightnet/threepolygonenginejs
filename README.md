@@ -53,7 +53,7 @@ npm run devh
 
 # Testing stand alone features:
  
- * threejs
+ * [ ] threejs
    * [x] animation sprite 2D 
    * [x] line path
    * [x] tween.js
@@ -64,24 +64,49 @@ npm run devh
    * [x] camera spaceship control
    * [x] tilemap
    * [x] card animation test
+   * [x] follow path line
 
- * threejs rapier physics js
+ * [ ] threejs rapier physics js
    * [x] collision detect test 
    * [ ] gui
      * [x] cube test
      * [x] random create cube
 
- * threejs ammo physics js
+ * [ ] threejs ammo physics js
    * [x] collision detect test 
    * [ ] gui
      * [x] cube test
      * [x] random create cube
 
- * threejs jolt physics js
+ * [ ] threejs jolt physics js
    * [x] collision detect test 
    * [ ] gui
      * [x] cube test
      * [x] random create cube
+
+# Physics:
+  Note physics has own ways to handle identity for to match the event collision contacts. 
+
+  Still work in progress API testing.
+
+## Joltphysics.js:
+ * rigidbody.Pya = id
+ * shape
+ * settings
+
+ Note this is has more config and destroy to clean up.
+
+## Ammo.js:
+ * rigidbody.hy = id
+ * 
+
+## Rapier:
+  Note it required 3 objects for id, collision detect and update object
+ * rigidBody
+ * colliderDesc
+ * collider
+
+ * collider.handle = id
 
 # Notes:
  Below this section are just notes. It still work in progress.

@@ -115,8 +115,9 @@ function createRigidGround(){
   let rbInfo = new Ammo.btRigidBodyConstructionInfo( mass, motionState, colShape, localInertia );
   let body = new Ammo.btRigidBody( rbInfo );
 
-
+  console.log("GROUND BODY: ",body);
   physicsWorld.addRigidBody( body );
+  return body;
 }
 
 function createRigidBall(){
@@ -480,23 +481,29 @@ function createRigidCube(args){
 
   ECS.addComponent(world, CUBE, 'rigid', body);
   ECS.addComponentToEntity(world, CUBE, 'rigidcube');
+  console.log("CUBE: ",body);
+  return body;
 }
 
 function detectCollision(){
   let dispatcher = physicsWorld.getDispatcher();
 	let numManifolds = dispatcher.getNumManifolds();
-
+  //console.log("numManifolds: ", numManifolds);
 	for ( let i = 0; i < numManifolds; i ++ ) {
 
 		let contactManifold = dispatcher.getManifoldByIndexInternal( i );
 		let numContacts = contactManifold.getNumContacts();
+    //console.log("contactManifold...",contactManifold);
+    let body0 = contactManifold.getBody0();
+    let body1 = contactManifold.getBody1();
+    //console.log("body0: ", body0);//body.hy ID
+    //console.log("body1: ", body1);//body.hy ID
 
 		for ( let j = 0; j < numContacts; j++ ) {
-
+      
 			let contactPoint = contactManifold.getContactPoint( j );
 			let distance = contactPoint.getDistance();
       //console.log("collision detected...",contactPoint)
-      //console.log("collision detected...",contactManifold)
 			//console.log({manifoldIndex: i, contactIndex: j, distance: distance});
 		}
 	}
