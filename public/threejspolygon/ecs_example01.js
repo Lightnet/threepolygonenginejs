@@ -9,7 +9,10 @@
 import van from "https://cdn.jsdelivr.net/npm/vanjs-core@1.5.2/src/van.min.js";
 
 import CorePolygon from "./corepolygon.js";
-
+console.log("init core...");
+// const corePolygon = new CorePolygon();
+// console.log(corePolygon);
+// van.add(document.body, corePolygon.domElement );
 class SampleCube extends CorePolygon{
   // debugObject={
   //   createCube:'test'
@@ -24,8 +27,12 @@ class SampleCube extends CorePolygon{
 
   setupInit(){
     console.log("init ...");
+    //this.createCubeTest();
     this.ECS.addSystem(this.world, this.rotateSystem.bind(this));
+    //this.debugObject.createCube = this.createCube;
+    
     console.log(this.debugObject);
+
     this.createGUI();
   }
 
@@ -74,17 +81,11 @@ class SampleCube extends CorePolygon{
     this.ECS.removeEntities(this.world, ['cube']);
   }
 
-  checkPhysics(){
-    console.log("physics: ", this.physics);
-    console.log("physicsType: ", this.physicsType);
-  }
-
   createGUI(){
     const gui = this.gui;
     const debugObject = this.debugObject;
     console.log(debugObject)
     gui.add(this,'debugLogs').name('Test Func Logs')
-    gui.add(this,'checkPhysics').name('Check Physics')
     gui.add(this,'createTestChains').name('create entity chains')
     gui.add(this,'createCube').name('add entity cube')
     gui.add(this,'removeCube').name('remove entity cube')

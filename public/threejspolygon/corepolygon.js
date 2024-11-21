@@ -24,6 +24,7 @@ import { GUI } from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/lil-gui.m
 //import { PointerLockControls  } from 'https://unpkg.com/three@0.170.0/examples/jsm/controls/PointerLockControls.js';
 //import TWEEN from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/tween.module.js';
 import ECS from "https://unpkg.com/ecs@0.23.0/ecs.js";
+//import PhysicsAmmo from "./physics_ammo";
 
 const RENDERABLE_FILTER = [ 'renderable' ];
 const CUBE_FILTER = [ 'cube' ];
@@ -38,10 +39,18 @@ class CorePolygon{
   renderer=null;
   world=null;
   physics=null;
+  physicsType='None';
   //=============================================
   // INIT MAIN SET UP
   //=============================================
   constructor(args={}){
+
+    let isPhysics = args?.isPhysics || true;
+    let physicsType = args?.isPhysics || "ammo";
+    physicsType = "jolt";
+    physicsType = "rapier";
+
+    this.physicsType = physicsType;
 
     let isAutoResize = args?.isAutoResize || true;
     let isResize = args?.isResize || true;
@@ -63,7 +72,12 @@ class CorePolygon{
     this.setupECS();
     this.setupGUI();
     this.setupElement()
-    this.setupInit();
+    
+    if(isPhysics){
+      this.setupPhysics(physicsType);
+    }else{
+      this.setupInit();
+    }
     
     this.renderer.setAnimationLoop( this.update.bind(this));
   }
@@ -93,15 +107,52 @@ class CorePolygon{
   // LOAD PHYSICS
   //=============================================
   //Note there is need for await call for finish loading
-  setupPhysics(){
+  async setupPhysics(physicsType){
+    console.log("physicsType: ", physicsType)
+    if(!physicsType){
+      console.log("ERROR NULL PHYSICS")
+      return
+    };
+    if(physicsType=="ammo"){
+      //const physics = new PhysicsAmmo();
+      //load script what is needed
+      const {default:_Physics} = await import("./physics_ammo.js");
+      //console.log(_Physics)
+      const physics = new _Physics();
+      //console.log(physics);
+      await physics.setup();
+      //console.log("LOADED?");
+      this.physics = physics;
+      this.buildPhysics();
+    }
+    if(physicsType=="jolt"){
+      const {default:_Physics} = await import("./physics_jolt.js");
+      //console.log(_Physics)
+      const physics = new _Physics();
+      //console.log(physics);
+      await physics.setup();
+      //console.log("LOADED?");
+      this.physics = physics;
+      this.buildPhysics();
+    }
 
+    if(physicsType=="rapier"){
+      const {default:_Physics} = await import("./physics_rapier.js");
+      //console.log(_Physics)
+      const physics = new _Physics();
+      //console.log(physics);
+      await physics.setup();
+      //console.log("LOADED?");
+      this.physics = physics;
+      this.buildPhysics();
+    }
   }
   //=============================================
   // SET UP PHYSICS
   //=============================================
   //this for setup after script is loaded
   buildPhysics(){
-
+    this.setupInit();
   }
   //=============================================
   // DEBUG GUI
