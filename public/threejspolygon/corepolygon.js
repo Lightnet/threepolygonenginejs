@@ -38,7 +38,9 @@ class CorePolygon{
   renderer=null;
   world=null;
   physics=null;
-
+  //=============================================
+  // INIT MAIN SET UP
+  //=============================================
   constructor(args={}){
 
     let isAutoResize = args?.isAutoResize || true;
@@ -61,53 +63,77 @@ class CorePolygon{
     this.setupECS();
     this.setupGUI();
     this.setupElement()
-    this.setup();
+    this.setupInit();
     
     this.renderer.setAnimationLoop( this.update.bind(this));
   }
 
+  //=============================================
+  // DOC HTML BODY ADD TO ...
+  //=============================================
   setupElement(){
     van.add(document.body,this.stats.dom);
   }
-
+  //=============================================
+  // SETUP ENTITY COMPONENT SYSTEM
+  //=============================================
   setupECS(){
     //console.log(this.scene);
     ECS.addSystem(this.world, this.rendererSystem.bind(this));
   }
 
+  //=============================================
+  // USER SETUP
+  //=============================================
   // user set up when extend class
-  setup(){
-
+  setupInit(){
+    //? error?
   }
+  //=============================================
+  // LOAD PHYSICS
+  //=============================================
   //Note there is need for await call for finish loading
   setupPhysics(){
 
   }
+  //=============================================
+  // SET UP PHYSICS
+  //=============================================
   //this for setup after script is loaded
   buildPhysics(){
 
   }
-  //debug gui
+  //=============================================
+  // DEBUG GUI
+  //=============================================
   setupGUI(){
     this.gui = new GUI();
   }
-
+  //=============================================
+  // DOCS LISTEN EVENT RESIZE WINDOW
+  //=============================================
   setupListeners(){
     window.addEventListener('resize',this.windowResize.bind(this));
   }
-
+  //=============================================
+  // Orbit Control
+  //=============================================
   setupOrbitControl(){
     this.orbitControl = new OrbitControls( this.orbitCamera, this.renderer.domElement );
     //must be called after any manual changes to the camera's transform
     this.orbitControl.update();
   }
-
+  //=============================================
+  // WINDOW RESIZE FOR RENDERER and ORBIT CONTROL
+  //=============================================
   windowResize(event){
     this.orbitCamera.aspect = window.innerWidth / window.innerHeight;
     this.orbitCamera.updateProjectionMatrix();
     this.renderer.setSize( window.innerWidth, window.innerHeight );
   }
-
+  //=============================================
+  // CREATE MESH CUBE/BOX
+  //=============================================
   createMeshCube(args){
     args = args || {};
     const width = args?.width || 1;
@@ -118,6 +144,45 @@ class CorePolygon{
     const material = new THREE.MeshBasicMaterial( { color: color } );
     const cube = new THREE.Mesh( geometry, material );
     return cube;
+  }
+
+  //===============================================
+  // CREATE ENTITY
+  //===============================================
+  createEntity(){
+    const ECS = this.ECS;
+    const world = this.world;
+    //const _ENTITY = ECS.addEntity(world);
+    //console.log("createEntity")
+
+    class ADDENTITY{
+      constructor(_world){
+        this.world = _world;
+        this._ENTITY = ECS.addEntity(_world);;
+      }
+      addComponent=function(_name,_data){
+        ECS.addComponent(this.world, this._ENTITY, _name, _data);
+        return this;
+      }
+      addComponentToEntity=function(_name){
+        ECS.addComponentToEntity(this.world, this._ENTITY, _name);
+        return this;
+      }
+      //??
+      cleanUp=function(){
+        //console.log('Clean up');
+        this.world = null;
+        this._ENTITY = null;
+        delete this.world;
+        delete this._ENTITY;
+        //console.log('this.world', this.world);
+        //console.log('this._ENTITY', this._ENTITY);
+      }
+    }
+
+    let _ENTITY = new ADDENTITY(world);
+    //console.log(_ENTITY);
+    return _ENTITY;
   }
 
   //===============================================
@@ -151,7 +216,9 @@ class CorePolygon{
 
     return { onUpdate }
   }
-
+  //=============================================
+  // UPDATE CALL FOR RENDER AND OTHERS
+  //=============================================
   update(){
     const delta = this.clock.getDelta();
     ECS.update(this.world, delta);
@@ -166,18 +233,29 @@ class CorePolygon{
 
     ECS.cleanup(this.world)
   }
-
+  //=============================================
+  // html element
+  //=============================================
   get domElement(){
     return this.renderer.domElement;
   }
-
+  //=============================================
+  // SCENE
+  //=============================================
   get scene(){
     return this.scene;
   }
-
+  //=============================================
+  // CAMERA
+  //=============================================
   get camera(){
     return this.orbitCamera;
   }
 }
-
+//===============================================
+//
+//===============================================
 export default CorePolygon;
+/*
+import CorePolygon from "{path}/corepolygon.js";
+*/

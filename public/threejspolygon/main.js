@@ -14,15 +14,24 @@ console.log("init core...");
 // console.log(corePolygon);
 // van.add(document.body, corePolygon.domElement );
 class SampleCube extends CorePolygon{
+  // debugObject={
+  //   createCube:'test'
+  // };
+  debugObject={};
+
   constructor(args){
     super(args);
+    //console.log(this.debugObject);
+    this.debugObject.createCube='test';
   }
 
-  setup(){
-
+  setupInit(){
+    console.log("init ...");
     //this.createCubeTest();
-
     this.ECS.addSystem(this.world, this.rotateSystem.bind(this));
+    //this.debugObject.createCube = this.createCube;
+    
+    console.log(this.debugObject);
 
     this.createGUI();
   }
@@ -38,15 +47,29 @@ class SampleCube extends CorePolygon{
     ECS.addComponent(this.world, CUBE, 'rotation', { x: 0, y: 0,z:0 });
   }
 
-  createEntity(){
-    this.ECS.addEntity(this.world);
+  debugLogs(){
+    console.log(this.debugObject);
+  }
+
+  createTestChains(){
+    const ECS = this.ECS;
+    console.log("CREATE CUBE CHAINS");
+    let mesh = this.createMeshCube();
+    let _CUBE = this.createEntity();
+    _CUBE.addComponent('mesh', mesh);
+    _CUBE.addComponentToEntity('renderable');
+    _CUBE.addComponentToEntity('renderable');
+    _CUBE.addComponent('rotation', { x: 0, y: 0,z:0 });
+    _CUBE.cleanUp();
+    _CUBE = null;
+    //console.log("CUBE:", _CUBE);
   }
 
   createCube(){
     const ECS = this.ECS;
-    console.log("test add");
+    console.log("CREATE CUBE");
     let mesh = this.createMeshCube();
-    const CUBE = ECS.addEntity(this.world)
+    const CUBE = ECS.addEntity(this.world);
     ECS.addComponent(this.world, CUBE, 'mesh', mesh);
     ECS.addComponentToEntity(this.world, CUBE, 'renderable');
     ECS.addComponentToEntity(this.world, CUBE, 'cube');
@@ -60,8 +83,12 @@ class SampleCube extends CorePolygon{
 
   createGUI(){
     const gui = this.gui;
-    gui.add(this,'createCube')
-    gui.add(this,'removeCube')
+    const debugObject = this.debugObject;
+    console.log(debugObject)
+    gui.add(this,'debugLogs').name('Test Func Logs')
+    gui.add(this,'createTestChains').name('create entity chains')
+    gui.add(this,'createCube').name('add entity cube')
+    gui.add(this,'removeCube').name('remove entity cube')
   }
 
   rotateSystem(world){
@@ -82,6 +109,6 @@ class SampleCube extends CorePolygon{
 }
 
 const threejsSample = new SampleCube();
-console.log(threejsSample);
+//console.log(threejsSample);
 van.add(document.body, threejsSample.domElement );
 
