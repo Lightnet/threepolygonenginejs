@@ -6,6 +6,10 @@
   
 */
 
+/*
+  ammo physics test.
+*/
+
 import van from "https://cdn.jsdelivr.net/npm/vanjs-core@1.5.2/src/van.min.js";
 
 import CorePolygon from "./corepolygon.js";
@@ -254,7 +258,6 @@ class SampleCube extends CorePolygon{
     const y = args?.y || 5;
     const z = args?.z || 0;
 
-    let pos = {x: x, y: y, z: z};
     let quat = {x: 0, y: 0, z: 0, w: 1};
 
     console.log("test rigid cube")
@@ -270,24 +273,32 @@ class SampleCube extends CorePolygon{
     _CUBE.addComponentToEntity('renderable');
 
     //Ammojs Section
-    let transform = new this.physics.Ammo.btTransform();
-    transform.setIdentity();
-    transform.setOrigin( new this.physics.Ammo.btVector3( pos.x, pos.y, pos.z ) );
-    transform.setRotation( new this.physics.Ammo.btQuaternion( quat.x, quat.y, quat.z, quat.w ) );
-    let motionState = new this.physics.Ammo.btDefaultMotionState( transform );
-    //shape
+    // let transform = new this.physics.Ammo.btTransform();
+    // transform.setIdentity();
+    // transform.setOrigin( new this.physics.Ammo.btVector3( pos.x, pos.y, pos.z ) );
+    // transform.setRotation( new this.physics.Ammo.btQuaternion( quat.x, quat.y, quat.z, quat.w ) );
+    // let motionState = new this.physics.Ammo.btDefaultMotionState( transform );
+    // //shape
 
-    let blockColShape = new Ammo.btBoxShape( new this.physics.Ammo.btVector3( width * 0.5, height * 0.5, depth * 0.5 ) );
-    blockColShape.setMargin( 0.05 );
+    // let blockColShape = new Ammo.btBoxShape( new this.physics.Ammo.btVector3( width * 0.5, height * 0.5, depth * 0.5 ) );
+    // blockColShape.setMargin( 0.05 );
 
-    let localInertia = new this.physics.Ammo.btVector3( 0, 0, 0 );
-    blockColShape.calculateLocalInertia( mass, localInertia );
-    //info
-    let rbInfo = new this.physics.Ammo.btRigidBodyConstructionInfo( mass, motionState, blockColShape, localInertia );
-    let body = new this.physics.Ammo.btRigidBody( rbInfo );
-    this.physics.world.addRigidBody( body);
-    //physicsWorld.addRigidBody( body, colGroupGreenBall, colGroupRedBall);
-    //console.log(physicsWorld);
+    // let localInertia = new this.physics.Ammo.btVector3( 0, 0, 0 );
+    // blockColShape.calculateLocalInertia( mass, localInertia );
+    // //info
+    // let rbInfo = new this.physics.Ammo.btRigidBodyConstructionInfo( mass, motionState, blockColShape, localInertia );
+    // let body = new this.physics.Ammo.btRigidBody( rbInfo );
+    // this.physics.world.addRigidBody( body);
+    // //physicsWorld.addRigidBody( body, colGroupGreenBall, colGroupRedBall);
+    let body = this.physics.createBoxShape({
+      width:width,
+      height:height,
+      depth:depth,
+      x:x,
+      y:y,
+      z:z,
+    })
+
 
     _CUBE.addComponent('rigid', body);
     _CUBE.addComponentToEntity('rigidcube');

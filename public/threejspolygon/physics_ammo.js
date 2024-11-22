@@ -68,6 +68,39 @@ class PhysicsAmmo extends CorePhysics{
   	}
   }
 
+  createBoxShape(args={}){
+    const width = args?.width || 2;
+    const height = args?.height || 2;
+    const depth = args?.depth || 2;
+    let mass = args?.mass || 1;
+
+    const x = args?.x || 0;
+    const y = args?.y || 0;
+    const z = args?.z || 0;
+    let quat = {x: 0, y: 0, z: 0, w: 1};
+    
+    const Ammo = this.Ammo;
+
+    let transform = new Ammo.btTransform();
+    transform.setIdentity();
+    transform.setOrigin( new Ammo.btVector3( x, y, z ) );
+    transform.setRotation( new Ammo.btQuaternion( quat.x, quat.y, quat.z, quat.w ) );
+    let motionState = new Ammo.btDefaultMotionState( transform );
+    //shape
+
+    let blockColShape = new Ammo.btBoxShape( new Ammo.btVector3( width * 0.5, height * 0.5, depth * 0.5 ) );
+    blockColShape.setMargin( 0.05 );
+
+    let localInertia = new Ammo.btVector3( 0, 0, 0 );
+    blockColShape.calculateLocalInertia( mass, localInertia );
+    //info
+    let rbInfo = new Ammo.btRigidBodyConstructionInfo( mass, motionState, blockColShape, localInertia );
+    let body = new Ammo.btRigidBody( rbInfo );
+    this.world.addRigidBody( body);
+
+    return body;
+  }
+
 }
 
 export default PhysicsAmmo;
