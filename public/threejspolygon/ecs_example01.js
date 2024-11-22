@@ -24,8 +24,13 @@ class SampleCube extends CorePolygon{
     this.debugObject.createCube='test';
   }
 
-  setupInit(){
-    console.log("init ...");
+  async setup(){
+    //need to load variable else there will be null var not set up yet.
+    //await new Promise(resolve => setTimeout(resolve, 1000));
+    //super();
+    super.setup();
+    await new Promise(resolve => setTimeout(resolve, 1));
+    console.log("example setup init ...");
     this.ECS.addSystem(this.world, this.rotateSystem.bind(this));
     console.log(this.debugObject);
     this.createGUI();
@@ -90,16 +95,17 @@ class SampleCube extends CorePolygon{
       console.log(entity_id);
       entityIds.push(entity_id); 
     }
-    const controller_entities = this.controller_entities;
+    let controller_entities = this.controller_entities;
     const entityFolder = this.entityFolder;
 
     if(controller_entities){// if exist delete gui since they need to update html docs list
       controller_entities.destroy()//delete ui
-      this.controller_entities = entityFolder.add(this, 'currentEntityId', entityIds);
+      controller_entities = entityFolder.add(this, 'currentEntityId', entityIds);
     }else{
       //create ui
-      this.controller_entities = entityFolder.add(this, 'currentEntityId', entityIds);
+      controller_entities = entityFolder.add(this, 'currentEntityId', entityIds);
     }
+    this.controller_entities = controller_entities
   }
 
   deleteSelectEntityId(){
@@ -109,7 +115,10 @@ class SampleCube extends CorePolygon{
     const entity = ECS.getEntityById(world, this.currentEntityId);
     const deferredRemoval = false  // by default this is true. setting it to false immediately removes the component
     ECS.removeEntity(world, entity, deferredRemoval)
+  }
 
+  createPhysicsCube(){
+    console.log("test rigid cube")
   }
 
   createGUI(){
@@ -128,8 +137,9 @@ class SampleCube extends CorePolygon{
     entityFolder.add(this,'currentEntityId').listen();
     entityFolder.add(this,'deleteSelectEntityId').name('Delete ID')
     this.entityFolder = entityFolder;
-
-
+    //console.log(this.currentEntityId);
+    const physicsFolder = gui.addFolder('Physics');
+    physicsFolder.add(this,'createPhysicsCube').name('Create')
   }
 
   rotateSystem(world){
@@ -149,7 +159,11 @@ class SampleCube extends CorePolygon{
   }
 }
 
-const threejsSample = new SampleCube();
+const threejsSample = new SampleCube({
+  isPhysics:false,
+  //isPhysics:true,
+  physicsType:"none",
+  //physicsType:"ammo",
+});
 //console.log(threejsSample);
 van.add(document.body, threejsSample.domElement );
-

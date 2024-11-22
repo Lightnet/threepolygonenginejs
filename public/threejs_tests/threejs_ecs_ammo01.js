@@ -275,6 +275,7 @@ function appLoop(){
   currentTime = newTime
   stats.update();
   controls.update();
+  console.log(frameTime)
   if(physicsWorld){
     physicsWorld.stepSimulation(frameTime,10);
     detectCollision();

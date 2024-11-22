@@ -51,7 +51,7 @@ class CorePolygon{
       isPhysics = args.isPhysics;
     }
     console.log(isPhysics);
-    let physicsType = args?.isPhysics || "none";
+    let physicsType = args?.physicsType || "none";
     //physicsType = "ammo";
     //physicsType = "jolt";
     //physicsType = "rapier";
@@ -291,6 +291,10 @@ class CorePolygon{
     ECS.update(this.world, delta);
     if(this.stats){
       this.stats.update();
+    }
+
+    if(this.physics){
+      this.physics.update(delta);
     }
     
     if(this.orbitControl){
