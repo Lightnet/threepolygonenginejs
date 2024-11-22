@@ -154,6 +154,9 @@ var urlandjs = [
   {url:'/threejs_ecs_jolt01',file:'/threejs_tests/threejs_ecs_jolt01.js'},
   {url:'/threejs_ecs_jolt02',file:'/threejs_tests/threejs_ecs_jolt02.js'},
   {url:'/threejspolygon',file:'/threejspolygon/main.js'},
+  {url:'/example_ammophysics01',file:'/threejspolygon/example_ammophysics01.js'},
+  {url:'/example_joltphysics01',file:'/threejspolygon/example_joltphysics01.js'},
+  {url:'/example_rapierphysics01',file:'/threejspolygon/example_rapierphysics01.js'},
   {url:'/threejs_canvas_text01',file:'/threejs_tests/threejs_canvas_text01.js'},
 
   //{url:'/three',file:'/three_framework00.js'},

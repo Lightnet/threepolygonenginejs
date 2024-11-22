@@ -9,6 +9,7 @@
 class CorePhysics{
 
   isPhysics=false;
+  isPause=false;
   world=null;
   gravity = { x: 0.0, y: -9.81, z: 0.0 };
 
@@ -16,16 +17,14 @@ class CorePhysics{
     //this.setup();
   }
 
-  async setup(){
+  async setup(){}
 
-  }
+  async build(){}
 
-  build(){
+  update(delta){}
 
-  }
-
-  update(delta){
-
+  get API(){
+    return this.Ammo;
   }
 
 }

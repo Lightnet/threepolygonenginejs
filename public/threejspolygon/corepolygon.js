@@ -94,7 +94,6 @@ class CorePolygon{
       this.setupInit();
     }
     
-    this.renderer.setAnimationLoop( this.update.bind(this));
   }
 
   //=============================================
@@ -125,7 +124,9 @@ class CorePolygon{
     this.setupECS();
     this.setupGUI();
     this.setupElement()
-    //await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 1));
+    this.renderer.setAnimationLoop( this.update.bind(this));
+    
   }
   //=============================================
   // LOAD PHYSICS
@@ -353,6 +354,10 @@ class CorePolygon{
   //=============================================
   get camera(){
     return this.orbitCamera;
+  }
+
+  get physicsAPI(){
+    return this.physics.API;
   }
 }
 //===============================================
