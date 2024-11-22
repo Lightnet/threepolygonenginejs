@@ -26,11 +26,17 @@ import { GUI } from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/lil-gui.m
 import ECS from "https://unpkg.com/ecs@0.23.0/ecs.js";
 //import PhysicsAmmo from "./physics_ammo";
 
-const RENDERABLE_FILTER = [ 'renderable' ];
+// need for just render right and no rigid
+const RENDERABLE_FILTER = [ 'renderable','!rigid' ];
 const CUBE_FILTER = [ 'cube' ];
-const PHYSICSABLE_FILTER = [ 'rigidcube' ];
+//it need one for filter else hard to check right?
+const PHYSICSABLE_FILTER = [ 'rigid' ];
 
 class CorePolygon{
+  RENDERABLE_FILTER = [ 'renderable' ];
+  CUBE_FILTER = [ 'cube' ];
+  PHYSICSABLE_FILTER = [ 'rigid' ];
+
   stats = new Stats();
   clock = new THREE.Clock();
   scene = new THREE.Scene();

@@ -20,10 +20,11 @@ class PhysicsAmmo extends CorePhysics{
     let AMMO = await Ammo();
     //console.log(AMMO);
     this.Ammo = AMMO;
-    this.build();
+    this.tmpTrans = new this.Ammo.btTransform();
+    await this.build();
   }
 
-  build(){
+  async build(){
     //this.gravity
     var collisionConfiguration  = new this.Ammo.btDefaultCollisionConfiguration();
     var dispatcher              = new this.Ammo.btCollisionDispatcher(collisionConfiguration);
@@ -32,7 +33,9 @@ class PhysicsAmmo extends CorePhysics{
     this.world                = new this.Ammo.btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
     this.world.setGravity(new this.Ammo.btVector3(this.gravity.x, this.gravity.y, this.gravity.z));
     this.tmpTrans = new this.Ammo.btTransform();
+    console.log("this.tmpTrans: ", this.tmpTrans);
     console.log("Ammo finish setup...")
+    await new Promise(resolve => setTimeout(resolve, 1));
   }
 
   update(delta){
