@@ -112,7 +112,23 @@ npm run devh
    * [ ] rapierjs
      * [x] load script
      * [ ] config setup
+   * [ ] example_ammophysics01
+     * [x] create box
+     * [x] remove boxes
+     * [x] create ground
+     * [x] remove ground
+   * [ ] example_joltphysics01
+     * [x] create box
+     * [x] remove boxes
+     * [x] create ground
+     * [x] remove ground
+   * [ ] example_rapierphysics01
+     * [x] create box
+     * [x] remove boxes
+     * [x] create ground
+     * [x] remove ground
 
+Note not easy to update script to match the layout for those three phyiscs. There are few different way to handle setup.
 
 # Physics:
   Note physics has own ways to handle identity for to match the event collision contacts. 
