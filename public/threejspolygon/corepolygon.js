@@ -33,17 +33,21 @@ const CUBE_FILTER = [ 'cube' ];
 const PHYSICSABLE_FILTER = [ 'rigid' ];
 
 class CorePolygon{
+  //testing...
   RENDERABLE_FILTER = [ 'renderable' ];
   CUBE_FILTER = [ 'cube' ];
   PHYSICSABLE_FILTER = [ 'rigid' ];
-
+  //debug
   stats = new Stats();
+  //threejs
   clock = new THREE.Clock();
   scene = new THREE.Scene();
   orbitCamera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
   orbitControl=null;
   renderer=null;
+  //ECS
   world=null;
+  //physics
   physics=null;
   physicsType='None';
   //=============================================
@@ -51,12 +55,12 @@ class CorePolygon{
   //=============================================
   constructor(args={}){
     console.log(args);
-    let isPhysics = args?.isPhysics || false;
-    console.log(typeof args?.isPhysics);
+    let isPhysics = false;
+    //console.log(typeof args?.isPhysics);
     if(typeof args?.isPhysics == 'boolean'){
       isPhysics = args.isPhysics;
     }
-    console.log(isPhysics);
+    //console.log(isPhysics);
     let physicsType = args?.physicsType || "none";
     //physicsType = "ammo";
     //physicsType = "jolt";
@@ -81,15 +85,12 @@ class CorePolygon{
     if(isAutoResize){
       this.setupListeners();
     }
-    this.setupECS();
-    this.setupGUI();
-    this.setupElement()
-    
+    //if physics need to setup after else the variable error for debug ui
     if(isPhysics==true){
-      console.log("PHYSICS!")
+      //console.log("PHYSICS!")
       this.setupPhysics(physicsType);
     }else{
-      console.log("NO PHYSICS!")
+      //console.log("NO PHYSICS!")
       this.setupInit();
     }
     
@@ -120,7 +121,10 @@ class CorePolygon{
   }
 
   async setup(){
-    console.log("setup core setup");
+    //console.log("setup core setup");
+    this.setupECS();
+    this.setupGUI();
+    this.setupElement()
     //await new Promise(resolve => setTimeout(resolve, 1000));
   }
   //=============================================
@@ -130,7 +134,7 @@ class CorePolygon{
   async setupPhysics(physicsType){
     console.log("physicsType: ", physicsType)
     if(!physicsType){
-      console.log("ERROR NULL PHYSICS")
+      console.log("ERROR NULL PHYSICS");
       return
     };
     if(physicsType=="ammo"){
@@ -143,7 +147,6 @@ class CorePolygon{
       await physics.setup();
       //console.log("LOADED?");
       this.physics = physics;
-      //this.buildPhysics();
       this.setupInit();
     }
     if(physicsType=="jolt"){
@@ -154,7 +157,6 @@ class CorePolygon{
       await physics.setup();
       //console.log("LOADED?");
       this.physics = physics;
-      //this.buildPhysics();
       this.setupInit();
     }
 
@@ -169,13 +171,7 @@ class CorePolygon{
       this.setupInit();
     }
   }
-  //=============================================
-  // SET UP PHYSICS
-  //=============================================
-  //this for setup after script is loaded
-  buildPhysics(){
-    this.setupInit();
-  }
+
   //=============================================
   // DEBUG GUI
   //=============================================
@@ -219,6 +215,36 @@ class CorePolygon{
     return cube;
   }
 
+  getEntityById(_entityId){
+    return this.ECS.getEntityById(this.world, _entityId);
+  }
+  //===============================================
+  // ECS GET ENTITY ID
+  //===============================================
+  getEntityId(_entity){
+    return this.ECS.getEntityId(this.world, _entity);
+  }
+  //===============================================
+  // ECS GET ENTITIES
+  //===============================================
+  // https://github.com/mreinstein/ecs/blob/main/ecs.js
+  getEntities(componentNames, listenerType , listenerEntities){
+    return this.ECS.getEntities(this.world, componentNames, listenerType, listenerEntities)
+  }
+  //===============================================
+  // ECS ADDSYSTEM
+  //===============================================
+  addSystem(_func){
+    //console.log("__func",_func)
+    this.ECS.addSystem(this.world, _func);
+  }
+  //===============================================
+  // ECS REMOVE ENTITIES
+  //===============================================
+  //remove all entities tags
+  removeEntities(data=[]){
+    this.ECS.removeEntities(this.world, data);
+  }
   //===============================================
   // CREATE ENTITY
   //===============================================

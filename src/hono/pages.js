@@ -154,6 +154,7 @@ var urlandjs = [
   {url:'/threejs_ecs_jolt01',file:'/threejs_tests/threejs_ecs_jolt01.js'},
   {url:'/threejs_ecs_jolt02',file:'/threejs_tests/threejs_ecs_jolt02.js'},
   {url:'/threejspolygon',file:'/threejspolygon/main.js'},
+  {url:'/threejs_canvas_text01',file:'/threejs_tests/threejs_canvas_text01.js'},
 
   //{url:'/three',file:'/three_framework00.js'},
   

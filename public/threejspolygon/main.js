@@ -13,6 +13,14 @@
 import van from "https://cdn.jsdelivr.net/npm/vanjs-core@1.5.2/src/van.min.js";
 
 import CorePolygon from "./corepolygon.js";
+// https://www.w3resource.com/javascript-exercises/javascript-math-exercise-33.php
+function degrees_to_radians(degrees)
+{
+  // Store the value of pi.
+  var pi = Math.PI;
+  // Multiply degrees by pi divided by 180 to convert to radians.
+  return degrees * (pi/180);
+}
 
 class SampleCube extends CorePolygon{
   // debugObject={
@@ -22,6 +30,9 @@ class SampleCube extends CorePolygon{
   currentEntityId=0;
   controller_entities=null;
   ground=null;
+  rigidGround=null;
+  groundPos={x:0,y:0,z:0};
+  groundRot={x:0,y:0,z:0,w:1};
 
   constructor(args){
     super(args);
@@ -36,13 +47,16 @@ class SampleCube extends CorePolygon{
     super.setup();
     await new Promise(resolve => setTimeout(resolve, 1));//need to load var from this class.
     console.log("example setup init ...");
-    this.ECS.addSystem(this.world, this.rotateSystem.bind(this));
+    //this.ECS.addSystem(this.world, this.rotateSystem.bind(this));
+    this.addSystem(this.rotateSystem.bind(this));
     console.log(this.debugObject);
     this.createGUI();
     const ECS = this.ECS;
-    ECS.addSystem(this.world, this.physicsSystem.bind(this));
-    ECS.addSystem(this.world, this.physicsCubeSystem.bind(this));
-    ECS.addSystem(this.world, this.physicsUpdateSystem.bind(this))// update position and rotation
+    this.addSystem(this.physicsSystem.bind(this));
+    this.addSystem(this.physicsCubeSystem.bind(this));
+    this.addSystem(this.physicsUpdateSystem.bind(this))// update position and rotation
+
+    console.log(this.getEntityById);
   }
 
   setupECS(){
@@ -120,7 +134,7 @@ class SampleCube extends CorePolygon{
     }
     return { onUpdate }
   }
-
+  //handle rigid cube remove tag rigidcube
   physicsCubeSystem(world) {
     const scene = this.scene;
     const physics = this.physics.world;
@@ -217,9 +231,9 @@ class SampleCube extends CorePolygon{
     const world = this.world;
     const ECS = this.ECS;
     let entityIds = [];
-    for (const entity of ECS.getEntities(world, [ 'renderable' ])){
-      const entity_id = ECS.getEntityId(world, entity)
-      console.log(entity_id);
+    for (const entity of this.getEntities([ 'renderable' ])){
+      const entity_id = this.getEntityId( entity)
+      console.log("entity_id: ",entity_id);
       entityIds.push(entity_id); 
     }
     let controller_entities = this.controller_entities;
@@ -239,7 +253,7 @@ class SampleCube extends CorePolygon{
     const world = this.world;
     const ECS = this.ECS;
     console.log("this.entity_id: ", this.currentEntityId)
-    const entity = ECS.getEntityById(world, this.currentEntityId);
+    const entity = this.getEntityById(this.currentEntityId);
     const deferredRemoval = false  // by default this is true. setting it to false immediately removes the component
     ECS.removeEntity(world, entity, deferredRemoval)
   }
@@ -351,6 +365,7 @@ class SampleCube extends CorePolygon{
 
       let rbInfo = new this.physics.Ammo.btRigidBodyConstructionInfo( mass, motionState, colShape, localInertia );
       let body = new this.physics.Ammo.btRigidBody( rbInfo );
+      this.rigidGround = body
 
       console.log("GROUND BODY: ",body);
       this.physics.world.addRigidBody( body );
@@ -364,11 +379,11 @@ class SampleCube extends CorePolygon{
   }
 
   removePhysicsGround(){
-    this.ECS.removeEntities(this.world, ['rigidground']);
+    this.removeEntities(['rigidground']);
     this.ground = null;
   }
   removePhysicsCubes(){
-    this.ECS.removeEntities(this.world, ['rigidcube']);
+    this.removeEntities(['rigidcube']);
   }
 
   createGUI(){
@@ -396,7 +411,66 @@ class SampleCube extends CorePolygon{
     groundFolder.add(this,'addPhysicsGround').name('Add')
     groundFolder.add(this,'removePhysicsGround').name('Remove')
     const groundPosFolder = groundFolder.addFolder('Position')
+    groundPosFolder.add(this.groundPos, 'x')
+    groundPosFolder.add(this.groundPos, 'y')
+    groundPosFolder.add(this.groundPos, 'z')
     const groundRotFolder = groundFolder.addFolder('Rotation')
+    var self = this;
+    var transformAux1 =  new this.physics.API.btTransform();
+
+    groundRotFolder.add(this.groundRot, 'x',-180,180).onChange( value => {
+      //console.log(typeof self.ground)
+      if(self.ground!=null){
+        let radians = degrees_to_radians(value);
+        //self.rigidGround.getMotionState().getWorldTransform( transformAux1 )
+        self.rigidGround.getWorldTransform( transformAux1 )
+        //transformAux1.getRotation().setX(radians);
+        //console.log("transformAux1: ", transformAux1)
+        //let q = transformAux1.getRotation();
+        //console.log("q: ",q);
+        //console.log("q.x: ",q.x());
+        //================= PASS
+        // let transform = new this.physics.Ammo.btTransform();
+        // transform.setIdentity();
+        // transform.setRotation( new Ammo.btQuaternion( radians, 0, 0, 1) );
+        // let motionState = new this.physics.Ammo.btDefaultMotionState( transform );
+        // self.rigidGround.setMotionState(motionState)
+        //=================
+        console.log("transformAux1: ", transformAux1);
+        //transformAux1.setIdentity();
+        transformAux1.setRotation( new Ammo.btQuaternion( radians, 0, 0, 1) );
+        //console.log("t: :", t)
+        //self.rigidGround.setWorldTransform(transformAux1)
+        self.rigidGround.getMotionState().setWorldTransform(transformAux1)
+
+
+        //console.log(transformAux1);
+        //console.log(transformAux1.getRotation().x());
+        //self.rigidGround.setWorldTransform(transform);
+        
+
+        //self.rigidGround.getMotionState()
+        // const pi = Math.PI;
+        // var radians = value * (pi/180);
+        // console.log(radians);
+        // console.log(self.ground)
+        //self.ground.rotation.x = radians;
+        //self.ground.rotation.x = degrees_to_radians(value);
+        console.log(self.rigidGround);
+      }
+    })
+    groundRotFolder.add(this.groundRot, 'y',-180,180).onChange( value => {
+      if(self.ground){
+        self.ground.rotation.y = degrees_to_radians(value);
+      }
+    })
+    groundRotFolder.add(this.groundRot, 'z',-180,180).onChange( value => {
+      var z = degrees_to_radians(value);
+      console.log(z);
+      if(self.ground){
+        self.ground.rotation.z = degrees_to_radians(value);
+      }
+    })
 
   }
 

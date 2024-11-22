@@ -15,6 +15,7 @@ class PhysicsAmmo extends CorePhysics{
     super(args);
     
   }
+
   async setup(){
     //required html script can't import from script
     let AMMO = await Ammo();
@@ -33,8 +34,8 @@ class PhysicsAmmo extends CorePhysics{
     this.world                = new this.Ammo.btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
     this.world.setGravity(new this.Ammo.btVector3(this.gravity.x, this.gravity.y, this.gravity.z));
     this.tmpTrans = new this.Ammo.btTransform();
-    console.log("this.tmpTrans: ", this.tmpTrans);
-    console.log("Ammo finish setup...")
+    //console.log("this.tmpTrans: ", this.tmpTrans);
+    //console.log("Ammo finish setup...")
     await new Promise(resolve => setTimeout(resolve, 1));
   }
 
@@ -99,6 +100,10 @@ class PhysicsAmmo extends CorePhysics{
     this.world.addRigidBody( body);
 
     return body;
+  }
+
+  get API(){
+    return this.Ammo
   }
 
 }
