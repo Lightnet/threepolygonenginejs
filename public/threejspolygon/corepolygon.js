@@ -44,11 +44,17 @@ class CorePolygon{
   // INIT MAIN SET UP
   //=============================================
   constructor(args={}){
-
-    let isPhysics = args?.isPhysics || true;
-    let physicsType = args?.isPhysics || "ammo";
-    physicsType = "jolt";
-    physicsType = "rapier";
+    console.log(args);
+    let isPhysics = args?.isPhysics || false;
+    console.log(typeof args?.isPhysics);
+    if(typeof args?.isPhysics == 'boolean'){
+      isPhysics = args.isPhysics;
+    }
+    console.log(isPhysics);
+    let physicsType = args?.isPhysics || "none";
+    //physicsType = "ammo";
+    //physicsType = "jolt";
+    //physicsType = "rapier";
 
     this.physicsType = physicsType;
 
@@ -73,9 +79,11 @@ class CorePolygon{
     this.setupGUI();
     this.setupElement()
     
-    if(isPhysics){
+    if(isPhysics==true){
+      console.log("PHYSICS!")
       this.setupPhysics(physicsType);
     }else{
+      console.log("NO PHYSICS!")
       this.setupInit();
     }
     
@@ -100,8 +108,14 @@ class CorePolygon{
   // USER SETUP
   //=============================================
   // user set up when extend class
-  setupInit(){
+  async setupInit(){
     //? error?
+    await this.setup();
+  }
+
+  async setup(){
+    console.log("setup core setup");
+    //await new Promise(resolve => setTimeout(resolve, 1000));
   }
   //=============================================
   // LOAD PHYSICS
@@ -123,7 +137,8 @@ class CorePolygon{
       await physics.setup();
       //console.log("LOADED?");
       this.physics = physics;
-      this.buildPhysics();
+      //this.buildPhysics();
+      this.setupInit();
     }
     if(physicsType=="jolt"){
       const {default:_Physics} = await import("./physics_jolt.js");
@@ -133,7 +148,8 @@ class CorePolygon{
       await physics.setup();
       //console.log("LOADED?");
       this.physics = physics;
-      this.buildPhysics();
+      //this.buildPhysics();
+      this.setupInit();
     }
 
     if(physicsType=="rapier"){
@@ -144,7 +160,7 @@ class CorePolygon{
       await physics.setup();
       //console.log("LOADED?");
       this.physics = physics;
-      this.buildPhysics();
+      this.setupInit();
     }
   }
   //=============================================

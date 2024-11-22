@@ -84,6 +84,36 @@ npm run devh
      * [x] cube test
      * [x] random create cube
 
+## threejspolygon folder test:
+  Work in progress test build. Working on physics test.
+
+  There are some area are being test. Threejs render, physics, gui and other still testing.
+
+  GUI is depend on the html and threejs embbed renderer. As well canvas and shader render.
+
+  Note config and params will take time to test and make sure the default works.
+
+### Features / Noes:
+ * strange bug that variable not loaded. Added delay to get the variable.
+ * [ ] debug gui
+   * [ ] add, remove and select entity cube.
+ * Entity Component System:
+   * [x] simple cube add / remove test
+   * [ ] entity component chain
+   * [ ] physics system
+   * [x] renderer system (handle add and remove from scene test)
+ * [ ] physics:
+   * [ ] ammo.js
+     * [x] load script
+     * [ ] config setup
+   * [ ] joltphysics.js
+     * [x] load script
+     * [ ] config setup
+   * [ ] rapierjs
+     * [x] load script
+     * [ ] config setup
+
+
 # Physics:
   Note physics has own ways to handle identity for to match the event collision contacts. 
 

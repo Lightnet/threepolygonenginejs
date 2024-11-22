@@ -9,15 +9,14 @@
 import van from "https://cdn.jsdelivr.net/npm/vanjs-core@1.5.2/src/van.min.js";
 
 import CorePolygon from "./corepolygon.js";
-console.log("init core...");
-// const corePolygon = new CorePolygon();
-// console.log(corePolygon);
-// van.add(document.body, corePolygon.domElement );
+
 class SampleCube extends CorePolygon{
   // debugObject={
   //   createCube:'test'
   // };
   debugObject={};
+  currentEntityId=0;
+  controller_entities=null;
 
   constructor(args){
     super(args);
@@ -27,12 +26,8 @@ class SampleCube extends CorePolygon{
 
   setupInit(){
     console.log("init ...");
-    //this.createCubeTest();
     this.ECS.addSystem(this.world, this.rotateSystem.bind(this));
-    //this.debugObject.createCube = this.createCube;
-    
     console.log(this.debugObject);
-
     this.createGUI();
   }
 
@@ -76,9 +71,45 @@ class SampleCube extends CorePolygon{
     ECS.addComponent(this.world, CUBE, 'rotation', { x: 0, y: 0,z:0 });
   }
 
-  removeCube(){
+  removeCubes(){
     console.log("test remove")
     this.ECS.removeEntities(this.world, ['cube']);
+  }
+
+  checkPhysics(){
+    console.log("physics: ", this.physics);
+    console.log("physicsType: ", this.physicsType);
+  }
+
+  getEntitiesList(){
+    const world = this.world;
+    const ECS = this.ECS;
+    let entityIds = [];
+    for (const entity of ECS.getEntities(world, [ 'renderable' ])){
+      const entity_id = ECS.getEntityId(world, entity)
+      console.log(entity_id);
+      entityIds.push(entity_id); 
+    }
+    const controller_entities = this.controller_entities;
+    const entityFolder = this.entityFolder;
+
+    if(controller_entities){// if exist delete gui since they need to update html docs list
+      controller_entities.destroy()//delete ui
+      this.controller_entities = entityFolder.add(this, 'currentEntityId', entityIds);
+    }else{
+      //create ui
+      this.controller_entities = entityFolder.add(this, 'currentEntityId', entityIds);
+    }
+  }
+
+  deleteSelectEntityId(){
+    const world = this.world;
+    const ECS = this.ECS;
+    console.log("this.entity_id: ", this.currentEntityId)
+    const entity = ECS.getEntityById(world, this.currentEntityId);
+    const deferredRemoval = false  // by default this is true. setting it to false immediately removes the component
+    ECS.removeEntity(world, entity, deferredRemoval)
+
   }
 
   createGUI(){
@@ -86,9 +117,19 @@ class SampleCube extends CorePolygon{
     const debugObject = this.debugObject;
     console.log(debugObject)
     gui.add(this,'debugLogs').name('Test Func Logs')
-    gui.add(this,'createTestChains').name('create entity chains')
-    gui.add(this,'createCube').name('add entity cube')
-    gui.add(this,'removeCube').name('remove entity cube')
+    gui.add(this,'checkPhysics').name('Check Physics')
+    const debugFolder = gui.addFolder('Debug')
+
+    const entityFolder = gui.addFolder('Entity')
+    entityFolder.add(this,'createTestChains').name('Create Box Entity Chains')
+    entityFolder.add(this,'createCube').name('Add Entity Box')
+    entityFolder.add(this,'removeCubes').name('Remove Entity Boxes')
+    entityFolder.add(this,'getEntitiesList').name('Get entities Boxes')
+    entityFolder.add(this,'currentEntityId').listen();
+    entityFolder.add(this,'deleteSelectEntityId').name('Delete ID')
+    this.entityFolder = entityFolder;
+
+
   }
 
   rotateSystem(world){
