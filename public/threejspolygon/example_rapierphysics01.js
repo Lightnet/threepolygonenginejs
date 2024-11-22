@@ -7,7 +7,7 @@
 */
 
 /*
-  ammo physics test.
+  rapier physics test.
 */
 
 import van from "https://cdn.jsdelivr.net/npm/vanjs-core@1.5.2/src/van.min.js";
@@ -157,17 +157,6 @@ class SampleCube extends CorePolygon{
   debugLogs(){
     console.log(this.debugObject);
   }
-
-  // createCube(){
-  //   const ECS = this.ECS;
-  //   console.log("CREATE CUBE");
-  //   let mesh = this.createMeshCube();
-  //   const CUBE = ECS.addEntity(this.world);
-  //   ECS.addComponent(this.world, CUBE, 'mesh', mesh);
-  //   ECS.addComponentToEntity(this.world, CUBE, 'renderable');
-  //   ECS.addComponentToEntity(this.world, CUBE, 'cube');
-  //   ECS.addComponent(this.world, CUBE, 'rotation', { x: 0, y: 0,z:0 });
-  // }
 
   removeCubes(){
     console.log("test remove")

@@ -7,7 +7,7 @@
 */
 
 import CorePhysics from "./corephysics.js";
-
+import * as THREE from 'https://unpkg.com/three@0.170.0/build/three.module.js';
 const JOLT_PATH = 'https://cdn.jsdelivr.net/npm/jolt-physics@0.29.0/dist/jolt-physics.wasm-compat.js';
 
 class PhysicsJolt extends CorePhysics{
@@ -19,6 +19,14 @@ class PhysicsJolt extends CorePhysics{
   jolt=null;
   physicsSystem=null;
   bodyInterface=null;
+
+  DegreesToRadians=null;
+  wrapVec3=null;
+  unwrapVec3=null;
+  wrapRVec3=null;
+  unwrapRVec3=null;
+  wrapQuat=null;
+  unwrapQuat=null;
 
 
   constructor(args){
@@ -69,6 +77,15 @@ class PhysicsJolt extends CorePhysics{
     this.Jolt.destroy( settings );
     this.physicsSystem = this.jolt.GetPhysicsSystem();
     this.bodyInterface = this.physicsSystem.GetBodyInterface();
+
+    this.DegreesToRadians = (deg) => deg * (Math.PI / 180.0);
+
+    this.wrapVec3 = (v) => new THREE.Vector3(v.GetX(), v.GetY(), v.GetZ());
+    this.unwrapVec3 = (v) => new this.Jolt.Vec3(v.x, v.y, v.z);
+    this.wrapRVec3 = this.wrapVec3;
+    this.unwrapRVec3 = (v) => new this.Jolt.RVec3(v.x, v.y, v.z);
+    this.wrapQuat = (q) => new THREE.Quaternion(q.GetX(), q.GetY(), q.GetZ(), q.GetW());
+    this.unwrapQuat = (q) => new this.Jolt.Quat(q.x, q.y, q.z, q.w);
   }
 
   update(delta){

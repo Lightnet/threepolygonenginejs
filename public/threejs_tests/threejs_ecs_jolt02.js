@@ -159,7 +159,7 @@ function rendererSystem (world) {
   return { onUpdate }
 }
 //===============================================
-// PHYSICS UPDATE SYSTEM ECS
+// ECS PHYSICS UPDATE SYSTEM
 //===============================================
 function physicsUpdateSystem(world) {
   const onUpdate = function (dt) {
