@@ -159,6 +159,9 @@ var urlandjs = [
   {url:'/example_rapierphysics01',file:'/threejspolygon/example_rapierphysics01.js'},
   {url:'/threejs_canvas_text01',file:'/threejs_tests/threejs_canvas_text01.js'},
   {url:'/example_base01',file:'/threejspolygon/example_base01.js'},
+  {url:'/layercssrenderer01',file:'/threejspolygon/layercssrenderer01.js'},
+  {url:'/layercssrenderer02',file:'/threejspolygon/layercssrenderer02.js'},
+  {url:'/layercssrenderer03',file:'/threejspolygon/layercssrenderer03.js'},
 
   //{url:'/three',file:'/three_framework00.js'},
   
