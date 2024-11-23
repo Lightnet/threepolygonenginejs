@@ -224,6 +224,7 @@ if(typeServer=='node'){
     `http://localhost:${PORT}/example_ammophysics01`,
     `http://localhost:${PORT}/example_joltphysics01`,
     `http://localhost:${PORT}/example_rapierphysics01`,
+    `http://localhost:${PORT}/example_base01`,
     //`http://localhost:${PORT}/threecss2d`,
     //`http://localhost:${PORT}/threecss3d`,
     // `http://localhost:${PORT}/three_css3srenderer_resize`,

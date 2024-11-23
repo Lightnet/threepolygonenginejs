@@ -7,7 +7,7 @@
 */
 
 /*
-  ammo physics test.
+  no physics test.
 */
 
 import van from "https://cdn.jsdelivr.net/npm/vanjs-core@1.5.2/src/van.min.js";

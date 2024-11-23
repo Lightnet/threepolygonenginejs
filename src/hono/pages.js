@@ -158,6 +158,7 @@ var urlandjs = [
   {url:'/example_joltphysics01',file:'/threejspolygon/example_joltphysics01.js'},
   {url:'/example_rapierphysics01',file:'/threejspolygon/example_rapierphysics01.js'},
   {url:'/threejs_canvas_text01',file:'/threejs_tests/threejs_canvas_text01.js'},
+  {url:'/example_base01',file:'/threejspolygon/example_base01.js'},
 
   //{url:'/three',file:'/three_framework00.js'},
   

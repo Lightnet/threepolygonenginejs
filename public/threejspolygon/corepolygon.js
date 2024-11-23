@@ -24,7 +24,6 @@ import { GUI } from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/lil-gui.m
 //import { PointerLockControls  } from 'https://unpkg.com/three@0.170.0/examples/jsm/controls/PointerLockControls.js';
 //import TWEEN from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/tween.module.js';
 import ECS from "https://unpkg.com/ecs@0.23.0/ecs.js";
-//import PhysicsAmmo from "./physics_ammo";
 
 // need for just render right and no rigid
 const RENDERABLE_FILTER = [ 'renderable','!rigid' ];
@@ -54,7 +53,7 @@ class CorePolygon{
   // INIT MAIN SET UP
   //=============================================
   constructor(args={}){
-    console.log(args);
+    //console.log(args);
     let isPhysics = false;
     //console.log(typeof args?.isPhysics);
     if(typeof args?.isPhysics == 'boolean'){
@@ -87,10 +86,10 @@ class CorePolygon{
     }
     //if physics need to setup after else the variable error for debug ui
     if(isPhysics==true){
-      //console.log("PHYSICS!")
+      //console.log("PHYSICS!");
       this.setupPhysics(physicsType);
     }else{
-      //console.log("NO PHYSICS!")
+      //console.log("NO PHYSICS!");
       this.setupInit();
     }
     
