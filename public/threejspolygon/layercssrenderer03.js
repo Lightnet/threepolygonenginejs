@@ -6,9 +6,9 @@
   
 */
 
-//test resize for renderer domElement to css3dobject to 2D to 3D plane resize.
-// for menu layer html
-// note some input hmlt may conflict if there preventDefault() that button can interact 3D space that can't clicked.
+// notes:
+// testing div gui style
+//
 
 // https://discourse.threejs.org/t/css3drednerer-object/36464/7
 // https://stackoverflow.com/questions/41279071/how-to-use-three-css3drenderer-in-angular2
@@ -56,7 +56,6 @@ class CSSRenderer {
   }
 
   setup(){
-
     this.setupRenderer();
     this.setupCSSRenderer();
 
@@ -65,10 +64,11 @@ class CSSRenderer {
 
     this.setupElements();
     this.setupListeners();
+    
     this.setupController();
-    this.setupUpdate();
     this.createGUI();
-
+    this.setupUpdate();
+    
     window.dispatchEvent(new Event('resize'));
   }
 
@@ -93,7 +93,7 @@ class CSSRenderer {
     //this.cssCamera.position.set(200, 0, 200);
     this.cssCamera.position.set(0, 0, window.innerWidth);
     this.cssCamera.lookAt(new THREE.Vector3(0, 0, 0));
-    //console.log(this.camera.position)
+
     //this.cssCamera.position.set(0, 0, window.innerWidth);
     //this.cssCamera.position.set(0, 0, 1120);
 
@@ -121,14 +121,14 @@ class CSSRenderer {
 
   setupCSSScene(){
 
-    //const element = document.createElement('div');
-    const element = div({},button({onclick:this.c_hello.bind(this)},'CLick Me'));
+    // 
+    // const element = document.createElement('div');
+    const element = div({},button({onclick:this.c_hello.bind(this)},'Click Me'));
     element.style.width = '100px';
     element.style.height = '100px';
     //element.style.opacity =  1;
     element.style.background = new THREE.Color(Math.random() * 0xffffff).getStyle();
     const cssObject = new CSS3DObject(element);
-    //cssObject.position.x = (window.innerWidth/2)+window.innerWidth;
     cssObject.position.z = 1;
     this.cssScene.add(cssObject);
 
@@ -139,21 +139,30 @@ class CSSRenderer {
     //console.log(webGlRenderer)
     webGlRenderer.style.width = '1024px';
     webGlRenderer.style.height = '720px';
+    
     const cssThreejs = new CSS3DObject(webGlRenderer);
     //console.log(cssThreejs);
-    //cssThreejs.position.x = (window.innerWidth/2)*-1;
     this.cssScene.add(cssThreejs);
+  }
+
+  setupController(){
+    //need to append render before this else not working
+    this.trackBallControls = new TrackballControls(this.cssCamera, this.cssRenderer.domElement);
+    //this.trackBallControls = new TrackballControls(this.camera, this.cssRenderer.domElement);
+    //this.trackBallControls.rotateSpeed = 10.0
+    //this.trackBallControls = new TrackballControls(this.camera, this.renderer.domElement);
+    //console.log(this.trackBallControls);
+  }
+
+  setupListeners(){
+    window.addEventListener('resize',this.onResize.bind(this));
+    window.addEventListener("mousemove", this.onMouseMove.bind(this));
   }
 
   setupElements(){
     van.add(document.body,stats.dom);
     //van.add(document.body, this.renderer.domElement);
     van.add(document.body, this.cssRenderer.domElement);
-  }
-
-  setupListeners(){
-    window.addEventListener('resize',this.onResize.bind(this));
-    window.addEventListener("mousemove", this.onMouseMove.bind(this));
   }
 
   resetCamera(){
@@ -169,6 +178,7 @@ class CSSRenderer {
   createGUI(){
     const gui = new GUI();
     this.gui = gui;
+    // console.log(this.trackBallControls);
     const trackBallControlsFolder = gui.addFolder('trackBallControls')
     //reason is default prevent call function to disable html button
     trackBallControlsFolder.add(this.trackBallControls,'enabled').name('enabled(uncheck to click button)')
@@ -207,10 +217,12 @@ class CSSRenderer {
     //console.log(pos);
     let _width = Math.abs(pos.x)*2;
     let _height = Math.abs(pos.y)*2;
+
     //note test screen 2D
     //this.camera.aspect = window.innerWidth / window.innerHeight;
     //this.camera.updateProjectionMatrix();
     //this.renderer.setSize( window.innerWidth, window.innerHeight );
+
     //note this is for cssobject3d position (x:0,y:0,z:0) forward z
     this.camera.aspect = _width / _height;
     this.camera.updateProjectionMatrix();
@@ -219,15 +231,6 @@ class CSSRenderer {
     this.cssCamera.aspect = window.innerWidth / window.innerHeight;
     this.cssCamera.updateProjectionMatrix();
     this.cssRenderer.setSize( window.innerWidth, window.innerHeight );
-  }
-
-  setupController(){
-    //need to append render before this else not working
-    this.trackBallControls = new TrackballControls(this.cssCamera, this.cssRenderer.domElement);
-    //this.trackBallControls = new TrackballControls(this.camera, this.cssRenderer.domElement);
-    //this.trackBallControls.rotateSpeed = 10.0
-    //this.trackBallControls = new TrackballControls(this.camera, this.renderer.domElement);
-    //console.log(this.trackBallControls);
   }
 
   setupUpdate(){
@@ -246,6 +249,7 @@ class CSSRenderer {
     stats.update();
     this.renderer.render(this.scene, this.camera);
     this.cssRenderer.render(this.cssScene, this.cssCamera);
+
   }
 
   // get domElement(){
