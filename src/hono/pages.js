@@ -164,6 +164,7 @@ var urlandjs = [
   {url:'/layercssrenderer03',file:'/threejspolygon/layercssrenderer03.js'},
   {url:'/threejs_transformhelper01',file:'/threejs_tests/threejs_transformhelper01.js'},
   {url:'/threejs_viewhelper01',file:'/threejs_tests/threejs_viewhelper01.js'},
+  {url:'/threejs_raycast01',file:'/threejs_tests/threejs_raycast01.js'},
 
   //{url:'/three',file:'/three_framework00.js'},
   
