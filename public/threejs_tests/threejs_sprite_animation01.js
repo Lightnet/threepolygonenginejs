@@ -73,7 +73,12 @@ const myObject ={
     loopPlay([10,18,26], 1.5);
   },
   play_left:function(){
+    console.log("loop")
     loopPlay([14,22,30], 1.5);
+  },
+  once_play_left:function(){
+    console.log("once")
+    oncePlay([14,22,30], 1.5);
   },
 }
 
@@ -146,6 +151,8 @@ function createGUI(){
   animationFolder.add(myObject,'play_right');
   animationFolder.add(myObject,'play_left');
 
+  animationFolder.add(myObject,'once_play_left');
+
   animationFolder.add(myObject,'runningTileArrayIndex').listen();
   animationFolder.add(myObject,'currentTile').listen();
   animationFolder.add(myObject,'elapsedTime').listen().disable();
@@ -155,6 +162,7 @@ function createGUI(){
   // });
 
   animationFolder.add(myObject,'isPlay');
+  animationFolder.add(myObject,'isLoop').listen();
 }
 
 function textureTileMapIdx(index){
@@ -177,10 +185,22 @@ function onKeyUp(event){
 }
 
 function loopPlay(playSpriteIndices, totalDuration){
+  myObject.isLoop=true;
   myObject.playSpriteIndices = playSpriteIndices;
   myObject.runningTileArrayIndex = 0;
   myObject.currentTile = playSpriteIndices[myObject.runningTileArrayIndex];
   myObject.maxDisplayTime = totalDuration / myObject.playSpriteIndices.length;
+  myObject.isPlay = true;
+  //console.log(myObject);
+}
+
+function oncePlay(playSpriteIndices, totalDuration){
+  myObject.isLoop=false;
+  myObject.playSpriteIndices = playSpriteIndices;
+  myObject.runningTileArrayIndex = 0;
+  myObject.currentTile = playSpriteIndices[myObject.runningTileArrayIndex];
+  myObject.maxDisplayTime = totalDuration / myObject.playSpriteIndices.length;
+  myObject.isPlay = true;
   //console.log(myObject);
 }
 
@@ -192,7 +212,21 @@ function updateAnimation(dt){
   //console.log(myObject.maxDisplayTime);
   if(myObject.maxDisplayTime > 0 && elapsedTime >= myObject.maxDisplayTime){
     elapsedTime = 0;
-    myObject.runningTileArrayIndex = (myObject.runningTileArrayIndex + 1) % myObject.playSpriteIndices.length;
+    if(myObject.isLoop){
+      console.log("loop...")
+      myObject.runningTileArrayIndex = (myObject.runningTileArrayIndex + 1) % myObject.playSpriteIndices.length;
+    }else{
+      
+      let index = myObject.runningTileArrayIndex + 1
+      console.log("once... index: ", index ," LEN:", myObject.playSpriteIndices.length)
+      if (index >= myObject.playSpriteIndices.length){
+        index = myObject.playSpriteIndices.length
+        myObject.isPlay = false;
+        console.log("Finish...")
+      }
+      myObject.runningTileArrayIndex = (index) % myObject.playSpriteIndices.length;
+    }
+    
     myObject.currentTile = myObject.playSpriteIndices[myObject.runningTileArrayIndex];
     textureTileMapIdx(myObject.currentTile)
   }
