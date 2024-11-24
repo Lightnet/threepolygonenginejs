@@ -231,6 +231,7 @@ if(typeServer=='node'){
     `http://localhost:${PORT}/threejs_transformhelper01`,
     `http://localhost:${PORT}/threejs_viewhelper01`,
     `http://localhost:${PORT}/threejs_raycast01`,
+    `http://localhost:${PORT}/threejs_noise_texture01`,
     //`http://localhost:${PORT}/threecss2d`,
     //`http://localhost:${PORT}/threecss3d`,
     // `http://localhost:${PORT}/three_css3srenderer_resize`,

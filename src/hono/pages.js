@@ -165,6 +165,7 @@ var urlandjs = [
   {url:'/threejs_transformhelper01',file:'/threejs_tests/threejs_transformhelper01.js'},
   {url:'/threejs_viewhelper01',file:'/threejs_tests/threejs_viewhelper01.js'},
   {url:'/threejs_raycast01',file:'/threejs_tests/threejs_raycast01.js'},
+  {url:'/threejs_noise_texture01',file:'/threejs_tests/threejs_noise_texture01.js'},
 
   //{url:'/three',file:'/three_framework00.js'},
   
