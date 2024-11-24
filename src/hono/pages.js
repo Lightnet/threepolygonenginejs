@@ -7,9 +7,15 @@
 */
 
 // pages for url
+import fs from 'fs';
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import { Hono } from 'hono';
-import van from "mini-van-plate/van-plate"
+import van from "mini-van-plate/van-plate";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
 const {head, body, style, script} = van.tags
 const route = new Hono();
 
@@ -114,79 +120,62 @@ var urlandjs = [
   {url:'/threejs_test',file:'/threejs_test.js'},
   {url:'/flipclock',file:'/tests/flip_clock.js'},
   {url:'/texteditortest',file:'/texteditortest.js'},
-  {url:'/e01',file:'/threejs_tests/e01.js'},
-  {url:'/threejs_mapping',file:'/threejs_tests/threejs_mapping.js'},
-  {url:'/threejs_mc01',file:'/threejs_tests/threejs_mc01.js'},
-  {url:'/threejs_mc02',file:'/threejs_tests/threejs_mc02.js'},
-  {url:'/threejs_mc03',file:'/threejs_tests/threejs_mc03.js'},
-  {url:'/threejs_mc04',file:'/threejs_tests/threejs_mc04.js'},
-  {url:'/threejs_mc05',file:'/threejs_tests/threejs_mc05.js'},
-  {url:'/threejs_mc06',file:'/threejs_tests/threejs_mc06.js'},
-  {url:'/threejs_mc07',file:'/threejs_tests/threejs_mc07.js'},
-  {url:'/threejs_mc08',file:'/threejs_tests/threejs_mc08.js'},
-  {url:'/threejs_rapier01',file:'/threejs_tests/threejs_rapier01.js'},
-  {url:'/threejs_rapier02',file:'/threejs_tests/threejs_rapier02.js'},
-  {url:'/threejs_rapier03',file:'/threejs_tests/threejs_rapier03.js'},
-  {url:'/threejs_rapier_spaceship01',file:'/threejs_tests/threejs_rapier_spaceship01.js'},
-  {url:'/threejs_rapier_spaceship01',file:'/threejs_tests/threejs_rapier_spaceship02.js'},
-  {url:'/threejs_rapier_controller01',file:'/threejs_tests/threejs_rapier_controller01.js'},
-  {url:'/threejs_rapier_controller02',file:'/threejs_tests/threejs_rapier_controller02.js'},
-  {url:'/threejs_rapier_controller03',file:'/threejs_tests/threejs_rapier_controller03.js'},
-  {url:'/threejs_camera_forward01',file:'/threejs_tests/threejs_camera_forward01.js'},
-  {url:'/threejs_camera_forward02',file:'/threejs_tests/threejs_camera_forward02.js'},
-  {url:'/threejs_camera_forward03',file:'/threejs_tests/threejs_camera_forward03.js'},
-  {url:'/threejs_tween01',file:'/threejs_tests/threejs_tween01.js'},
-  {url:'/threejs_rapier_detect_collision01',file:'/threejs_tests/threejs_rapier_detect_collision01.js'},
-  {url:'/threejs_rapier_detect_collision02',file:'/threejs_tests/threejs_rapier_detect_collision02.js'},
+  // {url:'/triecs_sample01',file:'/tests/three_ecs_sample01.js'},
+  // {url:'/triecs_sample02',file:'/tests/three_ecs_sample02.js'},
+  // {url:'/triecs_sample03',file:'/tests/three_ecs_sample03.js'},
+  // {url:'/triecs_sample04',file:'/tests/three_ecs_sample04.js'},
+  // {url:'/worker',file:'/tests/worker_main.js'},
+  // {url:'/ecs_worker',file:'/tests/ecs_worker_main.js'},
+  // {url:'/threeammo',file:'/tests/three_ammo.js'},
+  // {url:'/threerapier',file:'/tests/three_rapier.js'},
+  // {url:'/threerapierjsm',file:'/tests/three_reapier_jsm.js'},
+  // {url:'/threecss2d',file:'/tests/three_css2drenderer.js'},
+  // {url:'/threecss3d',file:'/tests/three_css3drenderer.js'},
+  // {url:'/three_css3srenderer_resize',file:'/tests/three_css3drenderer_resize.js'},
+  //{url:'/three',file:'/tests/three_framework00.js'},
+  // {url:'/entitiesomponentssystems',file:'/tests/entitiesomponentssystems.js'},
+
   {url:'/mobilespace',file:'/mobilespace/main.js'},
-  {url:'/threejs_spaceship_control01',file:'/threejs_tests/threejs_spaceship_control01.js'},
-  {url:'/card_game01',file:'/threejs_tests/card_game01.js'},
-  {url:'/card_game02',file:'/threejs_tests/card_game02.js'},
-  {url:'/threejs_extrude01',file:'/threejs_tests/threejs_extrude01.js'},
-  {url:'/threejs_line_follow01',file:'/threejs_tests/threejs_line_follow01.js'},
-  {url:'/threejs_sprite01',file:'/threejs_tests/threejs_sprite01.js'},
-  {url:'/threejs_sprite02',file:'/threejs_tests/threejs_sprite02.js'},
-  {url:'/threejs_sprite03',file:'/threejs_tests/threejs_sprite03.js'},
-  {url:'/threejs_ecs01',file:'/threejs_tests/threejs_ecs01.js'},
-  {url:'/threejs_ecs02',file:'/threejs_tests/threejs_ecs02.js'},
-  {url:'/threejs_ecs_rapier01',file:'/threejs_tests/threejs_ecs_rapier01.js'},
-  {url:'/threejs_ecs_ammo01',file:'/threejs_tests/threejs_ecs_ammo01.js'},
-  {url:'/threejs_ecs_jolt01',file:'/threejs_tests/threejs_ecs_jolt01.js'},
-  {url:'/threejs_ecs_jolt02',file:'/threejs_tests/threejs_ecs_jolt02.js'},
-  {url:'/threejspolygon',file:'/threejspolygon/main.js'},
-  {url:'/example_ammophysics01',file:'/threejspolygon/example_ammophysics01.js'},
-  {url:'/example_joltphysics01',file:'/threejspolygon/example_joltphysics01.js'},
-  {url:'/example_rapierphysics01',file:'/threejspolygon/example_rapierphysics01.js'},
-  {url:'/threejs_canvas_text01',file:'/threejs_tests/threejs_canvas_text01.js'},
-  {url:'/example_base01',file:'/threejspolygon/example_base01.js'},
-  {url:'/layercssrenderer01',file:'/threejspolygon/layercssrenderer01.js'},
-  {url:'/layercssrenderer02',file:'/threejspolygon/layercssrenderer02.js'},
-  {url:'/layercssrenderer03',file:'/threejspolygon/layercssrenderer03.js'},
-  {url:'/threejs_transformhelper01',file:'/threejs_tests/threejs_transformhelper01.js'},
-  {url:'/threejs_viewhelper01',file:'/threejs_tests/threejs_viewhelper01.js'},
-  {url:'/threejs_raycast01',file:'/threejs_tests/threejs_raycast01.js'},
-  {url:'/threejs_noise_texture01',file:'/threejs_tests/threejs_noise_texture01.js'},
+  {url:'/threejspolygon',             file:'/threejspolygon/main.js'},
+  {url:'/example_ammophysics01',      file:'/threejspolygon/example_ammophysics01.js'},
+  {url:'/example_joltphysics01',      file:'/threejspolygon/example_joltphysics01.js'},
+  {url:'/example_rapierphysics01',    file:'/threejspolygon/example_rapierphysics01.js'},
+  {url:'/example_base01',             file:'/threejspolygon/example_base01.js'},
+  {url:'/layercssrenderer01',         file:'/threejspolygon/layercssrenderer01.js'},
+  {url:'/layercssrenderer02',         file:'/threejspolygon/layercssrenderer02.js'},
+  {url:'/layercssrenderer03',         file:'/threejspolygon/layercssrenderer03.js'},
 
-  //{url:'/three',file:'/three_framework00.js'},
   
-  // {url:'/entitiesomponentssystems',file:'/entitiesomponentssystems.js'},
   
-  // {url:'/triecs_sample01',file:'/three_ecs_sample01.js'},
-  // {url:'/triecs_sample02',file:'/three_ecs_sample02.js'},
-  // {url:'/triecs_sample03',file:'/three_ecs_sample03.js'},
-  // {url:'/triecs_sample04',file:'/three_ecs_sample04.js'},
+];
 
-  // {url:'/worker',file:'/worker_main.js'},
-  // {url:'/ecs_worker',file:'/ecs_worker_main.js'},
+var testFilesPath = __dirname + "../../../public/threejs_tests";
 
-  // {url:'/threeammo',file:'/three_ammo.js'},
-  // {url:'/threerapier',file:'/three_rapier.js'},
-  // {url:'/threerapierjsm',file:'/three_reapier_jsm.js'},
+fs.readdir(testFilesPath, (err, files) => {
+  if (err)
+    console.log(err);
+  else {
+    //console.log("\nCurrent directory filenames:");
+    files.forEach(file => {
+      //console.log(file);
+      try {
+        let filesplits = file.split('.');
+        if(filesplits[1] == 'js'){
+          //console.log("found")
+          //console.log(file.split('.')[0])
+          urlandjs.push({url:'/'+filesplits[0],file:`/threejs_tests/${filesplits[0]}.js`})
+        }  
+      } catch (error) {
+        
+      }
+      //{url:'/threejs_raycast02',file:'/threejs_tests/threejs_raycast02.js'},
+    })
+  }
+})
 
-  // {url:'/threecss2d',file:'/three_css2drenderer.js'},
-  // {url:'/threecss3d',file:'/three_css3drenderer.js'},
-  // {url:'/three_css3srenderer_resize',file:'/three_css3drenderer_resize.js'},
-]
+
+
+
 //console.log("URLS...");
 route.get("/:name", (c, next) => {
   let isFound = false;

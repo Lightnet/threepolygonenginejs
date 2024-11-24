@@ -9,7 +9,7 @@
 // https://stackoverflow.com/questions/68301885/transforming-simplex-noise-value-to-color
 // https://github.com/philfrei/SiVi
 // https://stackoverflow.com/questions/13623663/i-cannot-generate-smooth-simplex-noise-in-javascript
-// 
+// https://github.com/jackunion/tooloud
 // 
 import van from "https://cdn.jsdelivr.net/npm/vanjs-core@1.5.2/src/van.min.js";
 //import { FloatingWindow } from "https://cdn.jsdelivr.net/npm/vanjs-ui@0.10.1/dist/van-ui.min.js";
