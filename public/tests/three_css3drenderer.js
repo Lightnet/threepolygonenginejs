@@ -14,7 +14,7 @@ import {
   CSS3DRenderer,
   CSS3DObject,
   OrbitControls
-} from "../triengine/dps.js";
+} from "/dps.js";
 import { TrackballControls } from 'three/addons/controls/TrackballControls.js';
 
 const { 

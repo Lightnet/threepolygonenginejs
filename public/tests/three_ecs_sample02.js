@@ -8,7 +8,7 @@
 
 //testing
 // physics test
-import { THREE, ECS, van } from "../triengine/dps.js";
+import { THREE, ECS, van } from "/dps.js";
 import { TriECSEngine } from "../triengine/triecsengine.js";
 
 const {button, canvas, input, label, div} = van.tags;
@@ -116,5 +116,8 @@ class TriECS_Sample extends TriECSEngine {
   }
 }
 
-const app = new TriECS_Sample({isPhysics:true,isEditor:true});
+const app = new TriECS_Sample({
+  isPhysics:true,
+  isEditor:true
+});
 app.run();

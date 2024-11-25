@@ -9,7 +9,7 @@
 // for broswer and bun server test ...
 // does not work for worker on import call for external site only local host
 
-import { van } from "../triengine/dps";
+import { van } from "/dps.js";
 
 const {button, div, label} = van.tags;
 

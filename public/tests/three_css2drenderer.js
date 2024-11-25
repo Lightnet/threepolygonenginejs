@@ -7,7 +7,7 @@
 */
 
 //testing
-// TrackballControls block click event UI since there another element layer over top for mouse handle.
+// TrackballControls block click event UI since preventdefault mouse handle.
 
 // https://threejs.org/examples/#css2d_label
 // https://github.com/mrdoob/three.js/blob/master/examples/css2d_label.html
@@ -16,12 +16,13 @@ import {
   van,
   //CSS3DRenderer,
   //CSS3DObject 
-} from "../triengine/dps.js";
+} from "/dps.js";
 import { TrackballControls } from 'three/addons/controls/TrackballControls.js';
 import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+import { GUI } from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/lil-gui.module.min.js';
 
 function init(){
-
+  const gui = new GUI();
   const renderer = new THREE.WebGLRenderer();
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setSize( window.innerWidth, window.innerHeight );
@@ -53,16 +54,19 @@ function init(){
   const mesh = new THREE.Mesh( geometry, material );
   scene.add( mesh );
 
-  const group = new THREE.Group();
-  scene.add(group)
-  //group.add( new Element( 'SJOz3qjfQXU', 0, 0, 240, 0 ) );
+  //=============================================
+  // 2D ELEMENT
+  //=============================================
 
   const earthDiv = document.createElement( 'div' );
-	earthDiv.className = 'label';
+	//earthDiv.className = 'label';
 	earthDiv.textContent = 'Earth';
 	//earthDiv.style.backgroundColor = 'transparent';
-	earthDiv.style.backgroundColor = 'blue';
-  earthDiv.style.display = 'block';
+	earthDiv.style.backgroundColor = 'gray';
+  //earthDiv.style.display = 'block';
+  earthDiv.style.width = '200px;'
+  earthDiv.style.height = '200px;'
+  console.log(earthDiv)
   earthDiv.addEventListener("click",function(){
     console.log("test click");
   });
@@ -74,15 +78,20 @@ function init(){
 	//earth.add( earthLabel );
 	earthLabel.layers.set( 0 );
   scene.add(earthLabel)
-  
-  //const controls = new TrackballControls( camera, cssRenderer.domElement );
-	//controls.rotateSpeed = 4;
-  
-  window.addEventListener( 'resize', onWindowResize );
+  //=============================================
+  // 2D ELEMENT END
+  //=============================================
 
   //document.body.appendChild( renderer.domElement );
   van.add(document.body,  renderer.domElement); //render append to body
   van.add(document.body, cssRenderer.domElement); //render append to body
+  
+  //const controls = new TrackballControls( camera, renderer.domElement );
+  const controls = new TrackballControls( camera, cssRenderer.domElement );
+	//controls.rotateSpeed = 4;
+  gui.add(controls,'enabled').name('TrackballControls uncheck for click ')
+  
+  window.addEventListener( 'resize', onWindowResize );
 
   function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
@@ -95,11 +104,12 @@ function init(){
     //console.log('update...');
     cssRenderer.render( scene, camera );
     renderer.render( scene, camera );
-    //controls.update();
-    requestAnimationFrame( animate );
+    controls.update();
+    //requestAnimationFrame( animate );
   }
 
-  animate();
+  //animate();
+  renderer.setAnimationLoop( animate );
 }
 
 init();

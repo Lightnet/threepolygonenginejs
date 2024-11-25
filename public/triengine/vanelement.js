@@ -6,7 +6,7 @@
   
 */
 
-import { THREE, OrbitControls, van  } from "./dps.js";
+import { THREE, OrbitControls, van  } from "/dps.js";
 
 const ThreeSceneEL = () => {
   const engine = van.state(null);

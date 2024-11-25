@@ -24,7 +24,7 @@ import {
   THREE, 
   van, 
   RAPIER
-} from '../triengine/dps.js';
+} from '/dps.js';
 import {TriEngine} from '../triengine/triengine.js';
 
 const {canvas, div} = van.tags;
@@ -48,12 +48,8 @@ class ThreeRapierTest extends TriEngine{
     this.clock = new THREE.Clock();
   }
 
-  init(){
-    super.init();
-    this.setup();
-  }
-
   async setup(){
+    super.setup()
     console.log("setup three rapier...");
     await this.setup_physics();
     this.setupScene();

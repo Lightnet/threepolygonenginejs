@@ -11,7 +11,7 @@
     vanjs main client entry point
 */
 
-import { THREE, OrbitControls, van  } from "./dps.js";
+import { THREE, OrbitControls, van  } from "/dps.js";
 import {TriEngine} from './triengine.js';
 const {button, canvas, input, label, div} = van.tags;
 

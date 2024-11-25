@@ -13,10 +13,16 @@
 
 // https://www.geeksforgeeks.org/enums-in-javascript/#:~:text=Enums%20in%20JavaScript%20are%20used,readability%2C%20maintainability%20and%20prevent%20errors.
 
-import * as THREE from 'https://unpkg.com/three@0.170.0/build/three.module.js';
-import ECS from "https://unpkg.com/ecs@0.23.0/ecs.js";
-import van from "https://cdn.jsdelivr.net/gh/vanjs-org/van/public/van-1.5.2.min.js";
-//import { THREE, CSS3DRenderer, CSS3DObject, ECS, van } from "/dps.js";
+//import * as THREE from 'https://unpkg.com/three@0.170.0/build/three.module.js';
+//import ECS from "https://unpkg.com/ecs@0.23.0/ecs.js";
+//import van from "https://cdn.jsdelivr.net/gh/vanjs-org/van/public/van-1.5.2.min.js";
+import { 
+  THREE, 
+  CSS3DRenderer, 
+  CSS3DObject, 
+  ECS, 
+  van,
+} from "/dps.js";
 //import { PhysicsFrameWork } from './physics_rapier.js';
 
 const { canvas, div, button, input } = van.tags;

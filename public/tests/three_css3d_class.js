@@ -8,10 +8,16 @@
 
 //testing
 
-import { THREE, van } from "../triengine/dps.js";
+import { 
+  THREE, 
+  van,
+  CSS3DRenderer, 
+  CSS3DObject,
+  OrbitControls,
+} from "/dps.js";
+//import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
+import { GUI } from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/lil-gui.module.min.js';
 const {div} = van.tags;
-
-import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
 
 var content = '<div>' +
       '<h1>This is an H1 Element.</h1>' +
@@ -31,6 +37,7 @@ class CSSRender{
   constructor(args){
     console.log("init...")
     this.clock = new THREE.Clock();
+    this.gui = new GUI();
     
     // check for canvas element
     if (args?.canvas){
@@ -40,7 +47,7 @@ class CSSRender{
         //alpha: true,
       });
       this.renderer = _renderer;
-      console.log(this.renderer)
+      //console.log(this.renderer)
       van.add(args.canvas,this.renderer.domElement)
     }else{
       console.log("ERROR Canvas Element needed!");
@@ -57,7 +64,7 @@ class CSSRender{
     var cssElement = this.createCSS3DObject(content);
     //cssElement.position.set(100, 100, 100);
     cssElement.position.set(0, 0, 0);
-    console.log(cssElement.position)
+    //console.log(cssElement.position);
     this.scene.add(cssElement);
   }
 
@@ -101,8 +108,13 @@ class CSSRender{
     //this.camera.position.set( 100, 0, 0 );
     //this.camera.lookAt( 0, 0, 0 );
 
-    //this.controls = new OrbitControls(this.camera, this.renderer.domElement)
-    this.update();
+    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    this.gui.add(this.controls,'enabled').name('is OrbitControls')
+
+    // init loop frame render
+    this.update() 
+    //this.renderer.setAnimationLoop( this.update.bind(this) );
+    console.log(this.renderer);
   }
 
   setup_window_resize(){
@@ -110,11 +122,10 @@ class CSSRender{
   }
 
   update(){
+    //console.log("update")
     requestAnimationFrame( this.update.bind(this) );
 
     this.renderer.render( this.scene, this.camera );
-    //console.log("update")
-    //console.log(this.scene)
   }
 
   resize_window(){

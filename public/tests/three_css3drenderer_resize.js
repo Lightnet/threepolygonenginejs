@@ -12,14 +12,16 @@
 // https://discourse.threejs.org/t/convert-screen-2d-to-world-3d-coordiate-system-without-using-raycaster/13739
 
 
-import { THREE, van } from "../triengine/dps.js";
-const {button, canvas, div} = van.tags;
-
-import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
+import { 
+  THREE,
+  CSS3DRenderer, 
+  CSS3DObject,
+  van 
+} from "/dps.js";
+//import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
 import { ThreeScene } from "../triengine/threescene.js";
-
-var content = '<div>' +
-'</div>';
+const {button, canvas, div} = van.tags;
+//var content = '<div>' +'</div>';
 
 class TriCSS3DRenderer{
 

@@ -32,6 +32,7 @@ class TriEngine {
   clock=null;
   physics=null;
   isPhysics=false;
+  isResize=true;
 
   constructor(args){
     console.log("init: ",args)
@@ -51,14 +52,13 @@ class TriEngine {
       //throw new Error('Parameter is need Canvas Element!');
     }
 
-    if(args?.resize == 'parent'){
-
-    }else if(args?.resize == 'window'){
-      //console.log("init resize...");
-      this.setup_window_resize();
-    }else{
-      this.setup_window_resize();
-    }
+    // if(args?.resize == 'parent'){
+    // }else if(args?.resize == 'window'){
+    //   //console.log("init resize...");
+    //   this.setup_window_resize();
+    // }else{
+    //   this.setup_window_resize();
+    // }
     // Check for physics
     if(args?.isPhysics){
       console.log('init physics');
@@ -75,14 +75,19 @@ class TriEngine {
   }
 
   async init(){
-    this.setup_render();
+    await this.setup();
+  }
+
+  async setup(){
+    this.setupRenderer();
+    this.setupWindowResize();
   }
 
   init_editor(){
     van.add(document.body,editorAreaEL())
   }
 
-  setup_render(){
+  setupRenderer(){
     this.clock = new THREE.Clock();
     this.renderer.setSize( window.innerWidth, window.innerHeight );
 
@@ -93,7 +98,7 @@ class TriEngine {
     this.renderer.setAnimationLoop(this.update.bind(this));
   }
 
-  setup_window_resize(){
+  setupWindowResize(){
     window.addEventListener('resize',this.resize_window.bind(this));
   }
 
@@ -114,7 +119,8 @@ class TriEngine {
   }
 
   resize_window(event){
-    this.camera.aspect = window.innerWidth / window.innerHeight;
+    //this.camera.aspect = window.innerWidth / window.innerHeight;
+    this.camera.aspect = window.innerWidth / window.innerHeight
     this.camera.updateProjectionMatrix();
     this.renderer.setSize( window.innerWidth, window.innerHeight );
   }

@@ -6,7 +6,7 @@
   
 */
 
-import { THREE, ECS, van } from "./dps.js";
+import { THREE, ECS, van } from "/dps.js";
 //import App from "./components/app.js";
 //van.add(document.body, App())
 

@@ -7,7 +7,7 @@
 */
 
 //testing...
-import { ECS } from "./dps";
+import { ECS } from "/dps.js";
 
 //create input in the system
 //simple set up

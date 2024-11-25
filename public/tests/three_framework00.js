@@ -11,7 +11,7 @@
     vanjs main client entry point
 */
 
-import { THREE, OrbitControls, van  } from "../triengine/dps.js";
+import { THREE, OrbitControls, van  } from "/dps.js";
 import {TriEngine} from '../triengine/triengine.js';
 const {button, canvas, input, label, div} = van.tags;
 
@@ -19,10 +19,12 @@ class ThreeScene extends TriEngine{
   constructor(args){
     super(args);
   }
-  init(){
-    super.init();
+
+  async setup(){
+    super.setup();
     this.setup_BaseScene();
   }
+
   setup_lights(){
     //Add hemisphere light
     let hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 0.1 );
@@ -92,7 +94,7 @@ const ThreeEL = () => {
 
   function init(){
     //const renderer = new THREE.WebGLRenderer();
-    engine.val = new ThreeScene({canvas:renderEL,isPhysics:true});
+    engine.val = new ThreeScene({canvas:renderEL,isPhysics:false});
     console.log(engine.val);//
   }
 
