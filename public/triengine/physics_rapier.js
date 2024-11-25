@@ -16,11 +16,11 @@
 // import RAPIER from 'https://cdn.skypack.dev/@dimforge/rapier3d-compat';
 import { RAPIER } from '/dps.js';
 import Observable from './Observable.js';
+import FrameWork_Physics from './framework_physics.js';
 
-class PhysicsFrameWork{
+class Physics_Rapier extends FrameWork_Physics{
 
   isPhysics = false;
-
   world=null;
   rigidBodies = [];
   rigidBody=null
@@ -30,6 +30,8 @@ class PhysicsFrameWork{
   eventQueue=null;
 
   constructor(args){
+    super(args);
+
     this.event = new Observable();
     if(args){
       if(typeof args?.x == 'number'){
@@ -200,5 +202,5 @@ class PhysicsFrameWork{
 }
 
 export {
-  PhysicsFrameWork
+  Physics_Rapier
 }

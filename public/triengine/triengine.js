@@ -8,12 +8,8 @@
 
 // protoype test
 
-import { 
-  THREE, 
-  OrbitControls, 
-  van  
-} from "./_dps.js";
-import { PhysicsFrameWork } from './physicsframework.js';
+import { THREE, OrbitControls, van } from "/dps.js";
+//import { PhysicsFrameWork } from './physics_rapier.js';
 const {canvas} = van.tags;
 
 //console.log(OrbitControls);
@@ -38,8 +34,7 @@ class TriEngine {
   isPhysics=false;
 
   constructor(args){
-    //console.log("init...")
-    this.clock = new THREE.Clock();
+    console.log("init: ",args)
     
     // check for canvas element
     if (args?.canvas){
@@ -56,7 +51,6 @@ class TriEngine {
       //throw new Error('Parameter is need Canvas Element!');
     }
 
-    this.setup_render();
     if(args?.resize == 'parent'){
 
     }else if(args?.resize == 'window'){
@@ -68,12 +62,12 @@ class TriEngine {
     // Check for physics
     if(args?.isPhysics){
       console.log('init physics');
-      this.physics = new PhysicsFrameWork();
-      this.physics.event.listen("Ready",()=>{
+      //this.physics = new PhysicsFrameWork();
+      //this.physics.event.listen("Ready",()=>{
         //console.log('init physics event...')
-        this.init();
+        //this.init();
         //this.init_editor();
-      });
+      //});
     }else{
       this.init();
     }
@@ -81,7 +75,7 @@ class TriEngine {
   }
 
   async init(){
-    
+    this.setup_render();
   }
 
   init_editor(){
@@ -89,15 +83,11 @@ class TriEngine {
   }
 
   setup_render(){
+    this.clock = new THREE.Clock();
     this.renderer.setSize( window.innerWidth, window.innerHeight );
 
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-    //const geometry = new THREE.BoxGeometry( 1, 1, 1 );
-    //const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-    //const cube = new THREE.Mesh( geometry, material );
-    //this.scene.add( cube );
-
     this.camera.position.z = 5;
     this.controls = new OrbitControls(this.camera, this.renderer.domElement)
     this.renderer.setAnimationLoop(this.update.bind(this));
@@ -105,6 +95,13 @@ class TriEngine {
 
   setup_window_resize(){
     window.addEventListener('resize',this.resize_window.bind(this));
+  }
+
+  createMeshBox(){
+    //const geometry = new THREE.BoxGeometry( 1, 1, 1 );
+    //const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+    //const cube = new THREE.Mesh( geometry, material );
+    //this.scene.add( cube );
   }
 
   update(){
@@ -116,7 +113,7 @@ class TriEngine {
     }
   }
 
-  resize_window(){
+  resize_window(event){
     this.camera.aspect = window.innerWidth / window.innerHeight;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize( window.innerWidth, window.innerHeight );

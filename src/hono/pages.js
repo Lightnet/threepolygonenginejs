@@ -126,7 +126,7 @@ var urlandjs = [
   // {url:'/triecs_sample04',file:'/tests/three_ecs_sample04.js'},
   // {url:'/worker',file:'/tests/worker_main.js'},
   // {url:'/ecs_worker',file:'/tests/ecs_worker_main.js'},
-  // {url:'/threeammo',file:'/tests/three_ammo.js'},
+  {url:'/three_ammo',file:'/tests/three_ammo.js'},
   // {url:'/threerapier',file:'/tests/three_rapier.js'},
   // {url:'/threerapierjsm',file:'/tests/three_reapier_jsm.js'},
   // {url:'/threecss2d',file:'/tests/three_css2drenderer.js'},
@@ -144,9 +144,6 @@ var urlandjs = [
   {url:'/layercssrenderer01',         file:'/threejspolygon/layercssrenderer01.js'},
   {url:'/layercssrenderer02',         file:'/threejspolygon/layercssrenderer02.js'},
   {url:'/layercssrenderer03',         file:'/threejspolygon/layercssrenderer03.js'},
-
-  
-  
 ];
 
 var testFilesPath = __dirname + "../../../public/threejs_tests";
@@ -172,9 +169,6 @@ fs.readdir(testFilesPath, (err, files) => {
     })
   }
 })
-
-
-
 
 //console.log("URLS...");
 route.get("/:name", (c, next) => {

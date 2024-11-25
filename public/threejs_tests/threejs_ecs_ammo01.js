@@ -433,7 +433,7 @@ async function run_simulation() {
   //   console.log("init...")
   // });
   let AMMO = await Ammo();
-  console.log(AMMO);
+  //console.log(AMMO);
   _run_simulation(AMMO)
   
 }
@@ -511,8 +511,7 @@ function detectCollision(){
 }
 
 function _run_simulation(){
-  //console.log("RAPIER...");
-  // Use the RAPIER module here.
+  
   let gravity = { x: 0.0, y: -9.81, z: 0.0 };
   //physics = new AMMO.World(gravity);
   //console.log(Ammo);

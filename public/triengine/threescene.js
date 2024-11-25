@@ -89,7 +89,7 @@ const ThreeSceneEL = () => {
 
   function init(){
     //const renderer = new THREE.WebGLRenderer();
-    engine.val = new ThreeScene({canvas:renderEL,isPhysics:true});
+    engine.val = new ThreeScene({canvas:renderEL,isPhysics:false});
     console.log(engine.val);//
   }
 

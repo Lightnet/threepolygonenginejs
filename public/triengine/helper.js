@@ -10,7 +10,7 @@ import {
   THREE,
   //ECS,
   //van
-} from "./dps.js";
+} from "/dps.js";
 
 //https://discourse.threejs.org/t/convert-screen-2d-to-world-3d-coordiate-system-without-using-raycaster/13739/6
 function screenToWorld({ x, y, canvasWidth, canvasHeight, camera }) {

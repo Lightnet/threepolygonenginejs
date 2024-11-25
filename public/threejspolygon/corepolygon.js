@@ -283,6 +283,31 @@ class CorePolygon{
     //console.log(_ENTITY);
     return _ENTITY;
   }
+  
+  // https://github.com/mreinstein/ecs/issues/46
+  addEntity(_world){
+    let e;
+    if(_world){
+      e = ECS.addEntity(_world); // use params
+    }else{
+      e = ECS.addEntity(this.world); // use default
+    }
+    
+    const chain = {
+      addComponent: function (name, data={}) {
+        ECS.addComponent(world, e, name, data);
+        return chain;
+      }
+    };
+  
+    return chain;
+  }
+
+  // const w = ECS.createWorld()
+  // const monster = entity(w).addComponent('health', { hitpoints: 7 })
+  //                          .addComponent('pathFinding', { maxDistance: 128 })
+  //                          .addComponent('aabb', { width: 12, height: 14, position: [ 32,  106 ] })
+  //                          .addComponent('monster')
 
   //===============================================
   // RENDER SYSTEM ECS
