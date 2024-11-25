@@ -38,8 +38,6 @@ scene.add( cube );
 var clock = new THREE.Clock();
 var controls = new OrbitControls( camera, renderer.domElement );
 
-
-
 function setup_Helpers(){
   const size = 10;
   const divisions = 10;

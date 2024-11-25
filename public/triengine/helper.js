@@ -12,6 +12,8 @@ import {
   //van
 } from "/dps.js";
 
+//const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
+
 //https://discourse.threejs.org/t/convert-screen-2d-to-world-3d-coordiate-system-without-using-raycaster/13739/6
 function screenToWorld({ x, y, canvasWidth, canvasHeight, camera }) {
   const coords = new THREE.Vector3(

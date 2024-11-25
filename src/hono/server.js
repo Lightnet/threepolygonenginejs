@@ -6,7 +6,6 @@
   
 */
 
-// 
 // https://github.com/orgs/honojs/discussions/1355
 // 
 
@@ -92,10 +91,6 @@ app.route('/', forum);
 app.route('/', admin);
 
 //<script type="module" src="/client.js"></script>
-//<script type="module" src="/vanjs_client.js"></script>
-//<script type="module" src="/solid_client.js"></script>
-//<script type="module" src="/preact_client.js"></script>
-//<script type="module" src="/van_three.js"></script>
 app.get('/', (c) => {
   //const db = c.get('db');
   //console.log('db', db);

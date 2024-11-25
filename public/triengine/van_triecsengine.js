@@ -14,7 +14,7 @@
 // https://www.geeksforgeeks.org/enums-in-javascript/#:~:text=Enums%20in%20JavaScript%20are%20used,readability%2C%20maintainability%20and%20prevent%20errors.
 
 import { THREE, CSS3DRenderer, CSS3DObject, ECS, van } from "/dps.js";
-import { PhysicsFrameWork } from './physicsframework.js';
+//import { PhysicsFrameWork } from './physicsframework.js';
 
 const { canvas, div } = van.tags;
 
@@ -49,15 +49,16 @@ class TriECSEngine{
     this.van_threejs = div({style:"width:100%;height:100%;",id:'van_threejs'});
     let self = this;
     if(args?.isPhysics==true){
-      this.isPhysics=true
-      //console.log('init physics');
-      this.physics = new PhysicsFrameWork();
+      this.isPhysics=false;
+      // //console.log('init physics');
+      // this.physics = new PhysicsFrameWork();
       
-      this.physics.event.listen("Ready",()=>{
-        console.log('Physics ready!');
-        self.setup();
-        //this.init_editor();
-      });
+      // this.physics.event.listen("Ready",()=>{
+      //   console.log('Physics ready!');
+      //   self.setup();
+      //   //this.init_editor();
+      // });
+      self.setup();
     }else{
       self.setup();
     }
