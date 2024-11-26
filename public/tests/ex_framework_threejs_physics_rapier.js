@@ -24,11 +24,11 @@ import {
   RAPIER,
   GUI,
 } from '/dps.js';
-import {TriEngine} from '../triengine/triengine.js';
+import {TriFrameWork} from '../triengine/tri_framework.js';
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 const {canvas, div} = van.tags;
 
-class ThreeRapierTest extends TriEngine{
+class ThreeRapierTest extends TriFrameWork{
 
   clock=null;
   mesh = null;

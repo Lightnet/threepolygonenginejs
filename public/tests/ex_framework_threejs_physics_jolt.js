@@ -22,15 +22,15 @@ import {
   GUI,
   Stats,
 } from '/dps.js';
-import {TriEngine} from '../triengine/triengine.js';
+import {TriFrameWork} from '../triengine/tri_framework.js';
 
-import { LAYER_MOVING } from '../triengine/physics_jolt.js';
+import { LAYER_MOVING } from '../triengine/framework_physics_jolt.js';
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 const {canvas, div} = van.tags;
 
-class ThreejsJoltTest extends TriEngine{
+class ThreejsJoltTest extends TriFrameWork{
 
   clock=null;
   rigidBodies = [];

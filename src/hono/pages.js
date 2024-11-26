@@ -84,8 +84,8 @@ function scriptHtml03(_script){
       `),
       script({type:"importmap"},`{
   "imports": {
-    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
+    "three": "https://unpkg.com/three@0.170.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.170.0/examples/jsm/",
     "remove-array-items": "https://unpkg.com/remove-array-items@3.0.0/src/remove-array-items.js",
     "ecs":"https://unpkg.com/ecs@0.23.0/ecs.js"
   }
@@ -138,9 +138,9 @@ var urlandjs = [
   
   {url:'/three_framework00',                file:'/tests/three_framework00.js'},
   {url:'/three_rapier',                     file:'/tests/three_rapier.js'},
-  {url:'/three_physics_ammo',               file:'/tests/three_physics_ammo.js'},
-  {url:'/three_physics_jolt',               file:'/tests/three_physics_jolt.js'},
-  {url:'/three_physics_rapier',               file:'/tests/three_physics_rapier.js'},
+  {url:'/ex_framework_threejs_physics_ammo',               file:'/tests/ex_framework_threejs_physics_ammo.js'},
+  {url:'/ex_framework_threejs_physics_jolt',               file:'/tests/ex_framework_threejs_physics_jolt.js'},
+  {url:'/ex_framework_threejs_physics_rapier',               file:'/tests/ex_framework_threejs_physics_rapier.js'},
 
   {url:'/entitiesomponentssystems',         file:'/tests/entitiesomponentssystems.js'},
   {url:'/timer_test',                       file:'/tests/timer_test.js'},

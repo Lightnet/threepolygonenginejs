@@ -144,7 +144,16 @@ Note not easy to update script to match the layout for those three phyiscs. Ther
 
 ## Ammo.js:
  * rigidbody.hy = id
- * 
+ * stepSimulation function must not be null it need delta number. Result rigid body position will NaN. So it will disappear for mesh.
+```js
+//...
+const clock = new THREE.Clock();
+//...
+const deltaTime = clock.getDelta();
+//...
+this.world.stepSimulation(delta,10);
+```
+  
 
 ## Rapier:
   Note it required 3 objects for id, collision detect and update object

@@ -21,7 +21,7 @@
 //console.log(Ammo);//check if loaded...
 
 //import { AmmoPhysics } from 'https://unpkg.com/three@0.160.0/examples/jsm/physics/AmmoPhysics.js';
-import {TriEngine} from '../triengine/triengine.js';
+import {TriFrameWork} from '../triengine/tri_framework.js';
 import { 
   THREE,
   Stats,
@@ -33,7 +33,7 @@ const {button, canvas, input, label, div} = van.tags;
 
 let colGroupPlane = 1, colGroupRedBall = 2, colGroupGreenBall = 4;
 
-class ThreeAmmoTest extends TriEngine{
+class ThreeAmmoTest extends TriFrameWork{
 
   rigidBodies = [];
 
@@ -176,6 +176,11 @@ class ThreeAmmoTest extends TriEngine{
   }
 
   createPhysicsBox(args){
+
+    if(this.physicsWorld()==null){
+      console.log("not loaded?")
+      return;
+    }
     args = args || {};
     const width = args?.width || 2;
     const height = args?.height || 2;
@@ -217,7 +222,10 @@ class ThreeAmmoTest extends TriEngine{
     //info
     let rbInfo = new Ammo.btRigidBodyConstructionInfo( mass, motionState, blockColShape, localInertia );
     let body = new Ammo.btRigidBody( rbInfo );
-    this.physics.world.addRigidBody( body);
+
+
+    console.log(this.physics.world);
+    this.physicsWorld().addRigidBody( body);
 
     console.log(body);
 
@@ -260,10 +268,9 @@ class ThreeAmmoTest extends TriEngine{
         ms.getWorldTransform( tmpTrans );
         //console.log(p);
         if ( ms ) {
-          
           let p = tmpTrans.getOrigin();
           let q = tmpTrans.getRotation();
-          console.log("x: ",p.x()," y: ", p.y(), " z:", p.z());
+          //console.log("x: ",p.x()," y: ", p.y(), " z:", p.z());
           //console.log("x: ",q.x()," y: ", q.y(), " z:", q.z(), " w: ", q.w());
           _entity.mesh.position.set( p.x(), p.y(), p.z() );
           _entity.mesh.quaternion.set( q.x(), q.y(), q.z(),q.w() );
@@ -350,9 +357,14 @@ class ThreeAmmoTest extends TriEngine{
     }
   }
 
+  debugInfo(){
+
+  }
+
   setupGUI(){
     const gui = new GUI()
     this.gui = gui;
+    gui.add(this, 'debugInfo');
     const physicsFolder = gui.addFolder('Physics')
     const physicsBoxFolder = physicsFolder.addFolder('Box')
     physicsBoxFolder.add(this, 'createPhysicsBox').name('Created');
@@ -366,25 +378,6 @@ class ThreeAmmoTest extends TriEngine{
     physicsPlayerFolder.add(this, 'resetPlayer')
     physicsPlayerFolder.add(this, 'removePlayer').name('Remove')
 
-  }
-
-  async loadPhysicsWorld(){
-    //let AMMO = await Ammo();
-    await Ammo();
-    await this.setupPhysicsWorld();
-  }
-
-  async setupPhysicsWorld(){
-    let gravity = { x: 0.0, y: -9.81, z: 0.0 };
-    //physics = new AMMO.World(gravity);
-    console.log(Ammo);
-    var collisionConfiguration  = new Ammo.btDefaultCollisionConfiguration();
-    var dispatcher              = new Ammo.btCollisionDispatcher(collisionConfiguration);
-    var overlappingPairCache    = new Ammo.btDbvtBroadphase();
-    var solver                  = new Ammo.btSequentialImpulseConstraintSolver();
-    this.physicsWorld           = new Ammo.btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
-    this.physicsWorld.setGravity(new Ammo.btVector3(gravity.x, gravity.y, gravity.z));
-    this.tmpTrans = new Ammo.btTransform();
   }
   
 }

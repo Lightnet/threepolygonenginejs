@@ -5,8 +5,13 @@
   GitHub: https://github.com/Lightnet/threepolygonenginejs
   
 */
+/*
+  Need work. Loading variable is null for some reason.
+
+*/
 
 import FrameWork_Physics from "./framework_physics.js";
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 class Physics_Ammo extends FrameWork_Physics{
 
@@ -17,23 +22,28 @@ class Physics_Ammo extends FrameWork_Physics{
   }
 
   async init(){
-    await this.setup();
+    //await this.setup();
     //console.log("init ammo")
+    const AmmoLib = await Ammo();
+    console.log("AmmoLib: ", AmmoLib);
+    console.log("Ammo: ", Ammo);
+
+    console.log("Ammo.ready 1", Ammo.ready);
+    const test = await Ammo.ready;
+    console.log("Ammo.ready test", test);
+    this.Ammo = Ammo;
+    this.setup();
   }
 
   async setup(){
-    super.setup();
-    //console.log("setup ammo")
-    //const self = this;
-    Ammo().then((lib)=>{
-      //self.Ammo = lib;
-      //console.log("lib: ", lib);
-      this.build(lib);
-    });
+    this.build()
   }
 
-  build(Ammo){
-    let gravity = { x: 0.0, y: -9.81, z: 0.0 };
+  build(){
+    const Ammo = this.Ammo;
+    //let gravity = { x: 0.0, y: -9.81, z: 0.0 };
+    //let gravity = { x: 0.0, y: 0, z: 0.0 };
+    let gravity = { x: 0.0, y: -1, z: 0.0 };
     //physics = new AMMO.World(gravity);
     //console.log(Ammo);
     var collisionConfiguration  = new Ammo.btDefaultCollisionConfiguration();
@@ -42,7 +52,7 @@ class Physics_Ammo extends FrameWork_Physics{
     var solver                  = new Ammo.btSequentialImpulseConstraintSolver();
     this.world           = new Ammo.btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
     this.world.setGravity(new Ammo.btVector3(gravity.x, gravity.y, gravity.z));
-    this.tmpTrans = new Ammo.btTransform();
+    //this.tmpTrans = new Ammo.btTransform();
 
     this.Ammo = Ammo;
   }
@@ -53,9 +63,10 @@ class Physics_Ammo extends FrameWork_Physics{
 
   update(delta){
     super.update(delta);
-    //console.log('update...');
+    //console.log('delta: ', delta);
     if(this.world){
-      this.world.stepSimulation(delta,1);
+      //console.log(delta);
+      this.world.stepSimulation(delta,10);
       //this.updatePhysicsObjects()
     }
   }

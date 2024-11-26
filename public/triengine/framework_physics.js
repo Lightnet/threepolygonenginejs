@@ -7,7 +7,7 @@
 */
 
 
-import { RAPIER } from '/dps.js';
+//import { RAPIER } from '/dps.js';
 import Observable from './Observable.js';
 
 class FrameWork_Physics{

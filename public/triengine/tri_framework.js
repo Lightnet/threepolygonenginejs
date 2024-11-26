@@ -26,7 +26,7 @@ const editorAreaEL=()=>{
 }
 
 
-class TriEngine {
+class TriFrameWork {
 
   renderer = null;
   camera = null;
@@ -39,6 +39,7 @@ class TriEngine {
 
   constructor(args){
     console.log("init: ",args)
+    this.clock = new THREE.Clock();
     
     // check for canvas element
     if (args?.canvas){
@@ -70,6 +71,7 @@ class TriEngine {
         this.initPhysics(args.physicsType)
       }
     }else{
+      console.log("NO PHYSICS...");
       this.init();
     }
     //this.init_editor();
@@ -82,21 +84,21 @@ class TriEngine {
   async initPhysics(_type){
     console.log("Physics Type:", _type)
     if(_type == "ammo"){
-      const {default:_physics} = await import('./physics_ammo.js');
+      const {default:_physics} = await import('./framework_physics_ammo.js');
       this.physics = new _physics();
       //console.log(this.physics);
       await this.physics.init();
       await sleep(1000);
       await this.init();
     }else if (_type == "jolt"){
-      const {default:_physics} = await import('./physics_jolt.js');
+      const {default:_physics} = await import('./framework_physics_jolt.js');
       this.physics = new _physics();
       //console.log(this.physics);
       //await sleep(1000);
       await this.physics.init();
       await this.init();
     }else if (_type == "rapier"){
-      const {default:_physics} = await import('./physics_rapier.js');
+      const {default:_physics} = await import('./framework_physics_rapier.js');
       this.physics = new _physics();
       //console.log(this.physics);
       await this.physics.init();
@@ -118,14 +120,21 @@ class TriEngine {
   }
 
   setupRenderer(){
-    this.clock = new THREE.Clock();
+    
     this.renderer.setSize( window.innerWidth, window.innerHeight );
 
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
     this.camera.position.z = 5;
     this.controls = new OrbitControls(this.camera, this.renderer.domElement)
-    this.renderer.setAnimationLoop(this.update.bind(this));
+    //this.renderer.setAnimationLoop(this.update.bind(this));
+    //this.renderer.setAnimationLoop(this.update);//nope
+    const self = this;
+    this.renderer.setAnimationLoop(()=>{
+      //const deltaTime = self.clock.getDelta();
+      //console.log(deltaTime);
+      self.update();
+    });
   }
 
   setupWindowResize(){
@@ -139,7 +148,8 @@ class TriEngine {
     //this.scene.add( cube );
   }
 
-  update(delta){
+  update(){
+    
     if(this.renderer){
       this.renderer.render( this.scene, this.camera );
     }
@@ -147,7 +157,9 @@ class TriEngine {
     //console.log(this.isPhysics);
     if(this.physics !=null && this.isPhysics==true){
       //console.log("update physics")
-      this.physics.update(delta);
+      const deltaTime = this.clock.getDelta();
+      //console.log("deltaTime:",deltaTime);
+      this.physics.update(deltaTime);
     }
   }
 
@@ -210,7 +222,7 @@ class TriEngine {
     return this.physics.API();
   }
 
-  get physicsWorld(){
+  physicsWorld(){
     return this.physics.world;
   }
 };
@@ -229,8 +241,8 @@ const ThreeEL = () => {
   )
 };
 
-export default TriEngine;
+export default TriFrameWork;
 export {
-  TriEngine,
+  TriFrameWork,
   ThreeEL,
 }
