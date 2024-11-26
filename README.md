@@ -220,7 +220,7 @@ this.world.stepSimulation(delta,10);
 
 || ==================================== ||
 || 
-|| Class Engine Frame Work (triecsengine.js)
+|| Class Framework (triframeworkecs.js)
 || -Entities Components Systems
 || -html element UI
 || -Physics

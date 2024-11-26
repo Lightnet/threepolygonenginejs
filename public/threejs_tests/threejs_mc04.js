@@ -11,9 +11,6 @@
 
 //console.log("Test");
 
-//import { THREE, OrbitControls, ECS, van } from "/dps.js";
-//import { TriECSEngine } from "/components/triengine/triecsengine.js";
-
 import van from "https://cdn.jsdelivr.net/npm/vanjs-core@1.5.2/src/van.min.js";
 //import { FloatingWindow } from "https://cdn.jsdelivr.net/npm/vanjs-ui@0.10.1/dist/van-ui.min.js";
 import * as THREE from 'https://unpkg.com/three@0.170.0/build/three.module.js';

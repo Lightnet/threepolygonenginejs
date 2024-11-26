@@ -26,6 +26,7 @@ var physicsSystem;
 const LAYER_NON_MOVING = 0;
 const LAYER_MOVING = 1;
 const NUM_OBJECT_LAYERS = 2;
+//var gravity = {x:0,y:-9.8,z:0}
 
 var bodies = [];
 
@@ -76,36 +77,157 @@ function setup_Helpers(){
   scene.add( gridHelper );
 }
 
+function createCube(args){
+  args = args || {};
+  //console.log(args);
+  const width = args?.width || 1;
+  const height = args?.height || 1;
+  const depth = args?.depth || 1;
+  const color = args?.color || 0x00ff00;
+  const geometry = new THREE.BoxGeometry( width, height, depth );
+  const material = new THREE.MeshBasicMaterial( { color: color } );
+  const cube = new THREE.Mesh( geometry, material );
+  return cube;
+}
+
 const myObject ={
   isRotate:true,
+  gravity:{x:0,y:-9.81,z:0},
   test:()=>{
     console.log('test');
   },
   resetRotation(){
     cube.rotation.set(0,0,0)
   },
-  addPhysicsBox(){
+  addPhysicsBox(args={}){
+    console.log("Box: ", args)
+    let width = args?.width || 2;
+    let height = args?.height || 2;
+    let depth = args?.depth || 2;
 
+    let x = args?.x || 0;
+    let y = args?.y || 5;
+    let z = args?.z || 0;
+
+    //threejs mesh
+    const mesh = createCube({width:width,height:height,depth:height});
+    mesh.userData.objectType='box';
+    mesh.position.set(x,y,z);
+    scene.add(mesh);
+
+    // Create a box
+  	let material = new Jolt.PhysicsMaterial();
+  	let size = new Jolt.Vec3(width/2, height/2, depth/2);
+  	let box = new Jolt.BoxShapeSettings(size, 0.05, material); // 'material' is now owned by 'box'
+  	Jolt.destroy(size);
+
+    // Create a compound
+  	let compound = new Jolt.StaticCompoundShapeSettings();
+  	let boxPosition = new Jolt.Vec3(0, 0, 0);
+  	compound.AddShape(boxPosition, Jolt.Quat.prototype.sIdentity(), box); // 'box' is now owned by 'compound'
+  	Jolt.destroy(boxPosition);
+  	let shapeResult = compound.Create();
+  	let shape = shapeResult.Get();
+  	shapeResult.Clear(); // We no longer need the shape result, it keeps a reference to 'shape' (which it will also release the next time you create another shape)
+  	shape.AddRef(); // We want to own this shape so we can delete 'compound' which internally keeps a reference
+  	Jolt.destroy(compound);
+
+    // Create the body
+  	let bodyPosition = new Jolt.RVec3(x, y, z);
+  	let bodyRotation = new Jolt.Quat(0, 0, 0, 1);
+  	let creationSettings = new Jolt.BodyCreationSettings(shape, bodyPosition, bodyRotation, Jolt.EMotionType_Dynamic, LAYER_MOVING); // 'creationSettings' now holds a reference to 'shape'
+  	Jolt.destroy(bodyPosition);
+  	Jolt.destroy(bodyRotation);
+  	shape.Release(); // We no longer need our own reference to 'shape' because 'creationSettings' now has one
+  	let body = bodyInterface.CreateBody(creationSettings);
+  	Jolt.destroy(creationSettings); // 'creationSettings' no longer needed, all settings and the shape reference went to 'body'
+
+  	// Add the body
+  	bodyInterface.AddBody(body.GetID(), Jolt.EActivation_Activate);
+
+    bodies.push({
+      mesh:mesh,
+      rigid:body,
+    });
   },
-  addPhysicsGround(){
-    let mesh = createMeshCube();
-    scene.add(mesh)
+  removePhysicsBox(){
+    let removeBodies = [];
+    for (const entity of bodies){
+      console.log(entity);
 
-    var shape = new Jolt.BoxShape(new Jolt.Vec3(size, 0.5, size), 0.05, null);
-  	var creationSettings = new Jolt.BodyCreationSettings(shape, new Jolt.RVec3(0, -0.5, 0), new Jolt.Quat(0, 0, 0, 1), Jolt.EMotionType_Static, LAYER_NON_MOVING);
+      if(entity.mesh.userData?.objectType=='box'){
+        scene.remove(entity.mesh);
+        if(entity?.rigid){
+          //console.log("this.physics.bodyInterface: ", this.physics.bodyInterface)
+          bodyInterface.RemoveBody(entity.rigid.GetID());
+          bodyInterface.DestroyBody(entity.rigid.GetID());
+        }
+        
+        removeBodies.push(entity);
+        //break;
+      }
+    }
+
+    for(let i = 0; i < removeBodies.length;i++){
+      let index = bodies.indexOf(removeBodies[i]);
+      if(index > -1){
+        bodies.splice(index, 1);
+      }
+    }
+  },
+  addPhysicsGround(args={}){
+
+    let width = args?.width || 10;
+    let height = args?.height || 1;
+    let depth = args?.depth || 10;
+
+    let x = args?.x || 0;
+    let y = args?.y || -1;
+    let z = args?.z || 0;
+
+    const mesh = createCube({width:width,height:height,depth:depth,color:'gray'});
+    mesh.userData.objectType='ground';
+    mesh.position.set(x,y,z);
+    scene.add(mesh);
+    
+
+    var shape = new Jolt.BoxShape(new Jolt.Vec3(width*0.5, height*0.5, depth*0.5), 0.05, null);
+  	var creationSettings = new Jolt.BodyCreationSettings(shape, new Jolt.RVec3(x, y, z), new Jolt.Quat(0, 0, 0, 1), Jolt.EMotionType_Static, LAYER_NON_MOVING);
   	let body = bodyInterface.CreateBody(creationSettings);
   	Jolt.destroy(creationSettings);
 
     bodyInterface.AddBody(body.GetID(), Jolt.EActivation_Activate);
 
-    this.bodies.push({
+    bodies.push({
       mesh:mesh,
       rigid:body,
     })
 
   },
-  addPhysicsGround(){
+  removePhysicsGround(){
+    let removeBodies = [];
+    for (const entity of bodies){
+      console.log(entity);
 
+      if(entity.mesh.userData?.objectType=='ground'){
+        scene.remove(entity.mesh);
+        if(entity?.rigid){
+          //console.log("this.physics.bodyInterface: ", this.physics.bodyInterface)
+          bodyInterface.RemoveBody(entity.rigid.GetID());
+          bodyInterface.DestroyBody(entity.rigid.GetID());
+        }
+        
+        removeBodies.push(entity);
+        //break;
+      }
+    }
+
+    for(let i = 0; i < removeBodies.length;i++){
+      let index = bodies.indexOf(removeBodies[i]);
+      if(index > -1){
+        bodies.splice(index, 1);
+      }
+    }
   },
   addPhysicsPlayer(){
 
@@ -141,12 +263,37 @@ function createGUI(){
   cubeFolder.add(myObject,'resetRotation')
 
   const physicsFolder = gui.addFolder('Physics').show()
+  const physicsGravityFolder = physicsFolder.addFolder('Gravity');
+
+  physicsGravityFolder.add(myObject.gravity,'x').onChange(value=>{
+    console.log("test x: ",value)
+    myObject.gravity.x = value;
+    let gravity = myObject.gravity;
+    physicsSystem.SetGravity(unwrapVec3(gravity));
+  });
+  physicsGravityFolder.add(myObject.gravity,'y').onChange(value=>{
+    console.log("test x: ",value)
+    myObject.gravity.y = value;
+    let gravity = myObject.gravity;
+    physicsSystem.SetGravity(unwrapVec3(gravity));
+  });
+  physicsGravityFolder.add(myObject.gravity,'z').onChange(value=>{
+    console.log("test x: ",value)
+    myObject.gravity.z = value;
+    let gravity = myObject.gravity;
+    physicsSystem.SetGravity(unwrapVec3(gravity));
+  });
+  
+
   const physicsBoxFolder = physicsFolder.addFolder('Box')
   physicsBoxFolder.add(myObject,'addPhysicsBox')
+  physicsBoxFolder.add(myObject,'removePhysicsBox')
   const physicsGroundFolder = physicsFolder.addFolder('Ground')
   physicsGroundFolder.add(myObject,'addPhysicsGround')
+  physicsGroundFolder.add(myObject,'removePhysicsGround')
   const physicsPlayerFolder = physicsFolder.addFolder('Player')
   physicsPlayerFolder.add(myObject,'addPhysicsPlayer')
+  physicsPlayerFolder.add(myObject,'removePhysicsPlayer')
 
 }
 // SET UP SCENE
@@ -212,9 +359,11 @@ function setupPhysics(){
   const settings = new Jolt.JoltSettings();
   setupCollisionFiltering(settings);
   jolt = new Jolt.JoltInterface( settings );// world physics
+  console.log("jolt: ", jolt);
   
   Jolt.destroy( settings );
   physicsSystem = jolt.GetPhysicsSystem();
+  physicsSystem.SetGravity(unwrapVec3(myObject.gravity));
   bodyInterface = physicsSystem.GetBodyInterface();
 
   setupScene();
@@ -228,8 +377,9 @@ function updatePhysics(deltaTime){
 
   jolt.Step( deltaTime, numSteps );
   for(const _entity of bodies){
-    if((_entity?.mesh !=null)&&(entity?.rigid !=null)){
-
+    if((_entity?.mesh !=null)&&(_entity?.rigid !=null)){
+      _entity.mesh.position.copy(wrapVec3(_entity.rigid.GetPosition()));
+	    _entity.mesh.quaternion.copy(wrapQuat(_entity.rigid.GetRotation()));
     }
   }
 }

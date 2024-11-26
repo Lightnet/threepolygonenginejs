@@ -24,7 +24,7 @@ import {
   RAPIER,
   GUI,
 } from '/dps.js';
-import {TriFrameWork} from '../triengine/tri_framework.js';
+import {TriFrameWork} from './tri_framework.js';
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 const {canvas, div} = van.tags;
 
@@ -42,10 +42,10 @@ class ThreeRapierTest extends TriFrameWork{
 
   async setup(){
     super.setup()
-    console.log("setup three rapier...");
+    //console.log("setup three rapier...");
     //await sleep(1000);
     //await this.setup_physics();
-    console.log("this.physics: ",this.physics);
+    //console.log("this.physics: ",this.physics);
     this.setupScene();
     //this.createPhysicsGround();
     //this.createPhysicsObject();
@@ -56,6 +56,12 @@ class ThreeRapierTest extends TriFrameWork{
     const gui = new GUI()
     this.gui = gui;
     const physicsFolder = gui.addFolder('Physics')
+    const physicsGravityFolder = physicsFolder.addFolder('Gravity')
+    physicsGravityFolder.add(this.physics.world.gravity,'x')
+    physicsGravityFolder.add(this.physics.world.gravity,'y')
+    physicsGravityFolder.add(this.physics.world.gravity,'z')
+
+
     const physicsBoxFolder = physicsFolder.addFolder('Box')
     physicsBoxFolder.add(this, 'createPhysicsBox').name('Created');
     physicsBoxFolder.add(this, 'removePhysicsBox').name('Remove');
@@ -114,7 +120,7 @@ class ThreeRapierTest extends TriFrameWork{
       return;
     }
     // Step the simulation forward.  
-    this.physicsWorld.step();
+    this.physicsWorld().step();
     
     if(this.rigidBodies){
       for(const _entity of this.rigidBodies){
@@ -239,11 +245,11 @@ class ThreeRapierTest extends TriFrameWork{
     // Create a dynamic rigid-body.
     let rigidBodyDesc = RAPIER.RigidBodyDesc.dynamic()
      .setTranslation(pos.x, pos.y, pos.z);
-    let rigidBody = this.physicsWorld.createRigidBody(rigidBodyDesc);
+    let rigidBody = this.physicsWorld().createRigidBody(rigidBodyDesc);
 
     // Create a cuboid collider attached to the dynamic rigidBody.
     let colliderDesc = RAPIER.ColliderDesc.cuboid(width * 0.5,height * 0.5,depth * 0.5);
-    let collider = this.physicsWorld.createCollider(colliderDesc, rigidBody);
+    let collider = this.physicsWorld().createCollider(colliderDesc, rigidBody);
     //console.log(rigidBody);
     //ball.userData.physicsBody = rigidBody;
     //this.rigidBodies.push(ball);

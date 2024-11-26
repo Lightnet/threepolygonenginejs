@@ -1,4 +1,0 @@
-
-# Information:
- Testing area.
- 

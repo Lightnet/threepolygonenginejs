@@ -24,13 +24,14 @@ class Physics_Ammo extends FrameWork_Physics{
   async init(){
     //await this.setup();
     //console.log("init ammo")
-    const AmmoLib = await Ammo();
-    console.log("AmmoLib: ", AmmoLib);
-    console.log("Ammo: ", Ammo);
+    //const AmmoLib = await Ammo();
+    await Ammo();
+    //console.log("AmmoLib: ", AmmoLib);
+    //console.log("Ammo: ", Ammo);
 
-    console.log("Ammo.ready 1", Ammo.ready);
-    const test = await Ammo.ready;
-    console.log("Ammo.ready test", test);
+    //console.log("Ammo.ready 1", Ammo.ready);
+    //const test = await Ammo.ready;
+    //console.log("Ammo.ready test", test);
     this.Ammo = Ammo;
     this.setup();
   }
@@ -41,9 +42,9 @@ class Physics_Ammo extends FrameWork_Physics{
 
   build(){
     const Ammo = this.Ammo;
-    //let gravity = { x: 0.0, y: -9.81, z: 0.0 };
+    this.gravity = { x: 0.0, y: -9.81, z: 0.0 };
     //let gravity = { x: 0.0, y: 0, z: 0.0 };
-    let gravity = { x: 0.0, y: -1, z: 0.0 };
+    //let gravity = { x: 0.0, y: -1, z: 0.0 };
     //physics = new AMMO.World(gravity);
     //console.log(Ammo);
     var collisionConfiguration  = new Ammo.btDefaultCollisionConfiguration();
@@ -51,7 +52,7 @@ class Physics_Ammo extends FrameWork_Physics{
     var overlappingPairCache    = new Ammo.btDbvtBroadphase();
     var solver                  = new Ammo.btSequentialImpulseConstraintSolver();
     this.world           = new Ammo.btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
-    this.world.setGravity(new Ammo.btVector3(gravity.x, gravity.y, gravity.z));
+    this.world.setGravity(new Ammo.btVector3(this.gravity.x, this.gravity.y, this.gravity.z));
     //this.tmpTrans = new Ammo.btTransform();
 
     this.Ammo = Ammo;

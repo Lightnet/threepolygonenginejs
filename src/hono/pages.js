@@ -138,9 +138,12 @@ var urlandjs = [
   
   {url:'/three_framework00',                file:'/tests/three_framework00.js'},
   {url:'/three_rapier',                     file:'/tests/three_rapier.js'},
-  {url:'/ex_framework_threejs_physics_ammo',               file:'/tests/ex_framework_threejs_physics_ammo.js'},
-  {url:'/ex_framework_threejs_physics_jolt',               file:'/tests/ex_framework_threejs_physics_jolt.js'},
-  {url:'/ex_framework_threejs_physics_rapier',               file:'/tests/ex_framework_threejs_physics_rapier.js'},
+  {url:'/ex_framework_threejs_physics_ammo',        file:'/triframework/ex_framework_threejs_physics_ammo.js'},
+  {url:'/ex_framework_threejs_physics_jolt',        file:'/triframework/ex_framework_threejs_physics_jolt.js'},
+  {url:'/ex_framework_threejs_physics_rapier',      file:'/triframework/ex_framework_threejs_physics_rapier.js'},
+
+  {url:'/ex_threejs_scene01',                       file:'/triengine/ex_threejs_scene01.js'},
+
 
   {url:'/entitiesomponentssystems',         file:'/tests/entitiesomponentssystems.js'},
   {url:'/timer_test',                       file:'/tests/timer_test.js'},

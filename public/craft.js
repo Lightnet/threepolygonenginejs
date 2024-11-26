@@ -7,6 +7,6 @@
 */
 
 import { THREE, ECS, van } from "/dps.js";
-import { TriECSEngine } from "./triengine/triecsengine.js";
+//import { TriECSEngine } from "./triengine/triecsengine.js";
 
 console.log("craft test.");

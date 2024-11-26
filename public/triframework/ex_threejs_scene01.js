@@ -11,11 +11,15 @@
     vanjs main client entry point
 */
 
-import { THREE, OrbitControls, van  } from "/dps.js";
-import {TriEngine} from './triengine.js';
+import { 
+  THREE, 
+  OrbitControls, 
+  van  
+} from "/dps.js";
+import {TriFrameWork} from './tri_framework.js';
 const {button, canvas, input, label, div} = van.tags;
 
-class ThreeScene extends TriEngine{
+class ThreeScene extends TriFrameWork{
   constructor(args){
     super(args);
   }
@@ -48,15 +52,15 @@ class ThreeScene extends TriEngine{
     let mass = 0;
 
     //threeJS Section
-    let blockPlane = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshPhongMaterial({color: 0xa0afa4}));
+    let mesh = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshPhongMaterial({color: 0xa0afa4}));
 
-    blockPlane.position.set(pos.x, pos.y, pos.z);
-    blockPlane.scale.set(scale.x, scale.y, scale.z);
+    mesh.position.set(pos.x, pos.y, pos.z);
+    mesh.scale.set(scale.x, scale.y, scale.z);
 
-    blockPlane.castShadow = true;
-    blockPlane.receiveShadow = true;
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
 
-    this.scene.add(blockPlane);
+    this.scene.add(mesh);
   }
 
   setup_ball(){
@@ -66,16 +70,16 @@ class ThreeScene extends TriEngine{
     let mass = 1;
 
     //threeJS Section
-    let ball = new THREE.Mesh(new THREE.SphereGeometry(radius), new THREE.MeshPhongMaterial({color: 0xff0505}));
-    ball.position.set(pos.x, pos.y, pos.z);
+    let mesh = new THREE.Mesh(new THREE.SphereGeometry(radius), new THREE.MeshPhongMaterial({color: 0xff0505}));
+    mesh.position.set(pos.x, pos.y, pos.z);
     
-    ball.castShadow = true;
-    ball.receiveShadow = true;
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
     //console.log(this.scene);
 
-    this.scene.add(ball);
+    this.scene.add(mesh);
     //let rigidBody = this.physics.create_body_cube({pos:{y:20}});
-    //ball.userData.physicsBody = rigidBody;
+    //mesh.userData.physicsBody = rigidBody;
   }
 
   setup_BaseScene(){
@@ -105,8 +109,8 @@ const ThreeSceneEL = () => {
   )
 };
 
-//van.add(document.body,ThreeEL())
-export {
-  ThreeSceneEL,
-  ThreeScene
-}
+van.add(document.body,ThreeSceneEL())
+// export {
+//   ThreeSceneEL,
+//   ThreeScene
+// }

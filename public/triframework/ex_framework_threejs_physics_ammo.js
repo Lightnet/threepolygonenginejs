@@ -21,7 +21,7 @@
 //console.log(Ammo);//check if loaded...
 
 //import { AmmoPhysics } from 'https://unpkg.com/three@0.160.0/examples/jsm/physics/AmmoPhysics.js';
-import {TriFrameWork} from '../triengine/tri_framework.js';
+import {TriFrameWork} from './tri_framework.js';
 import { 
   THREE,
   Stats,
@@ -53,12 +53,12 @@ class ThreeAmmoTest extends TriFrameWork{
     //console.log(this.stats);
     van.add(document.body,this.stats.dom);
 
-    console.log("this.physicsAPI: ", this.physicsAPI());
+    //console.log("this.physicsAPI: ", this.physicsAPI());
     const Ammo = this.physicsAPI();
-    console.log("Ammo: ", Ammo);
+    //console.log("Ammo: ", Ammo);
     //this.tmpTrans = new this.physicsAPI().btTransform();
     this.tmpTrans = new Ammo.btTransform();
-    console.log("this.tmpTrans: ", this.tmpTrans);
+    //console.log("this.tmpTrans: ", this.tmpTrans);
     this.setupGUI();
   }
 
@@ -203,8 +203,8 @@ class ThreeAmmoTest extends TriFrameWork{
 
     //const Ammo = this.physics.API;
     const Ammo = this.physicsAPI();
-    console.log("Ammo", Ammo)
-    console.log("mass", mass)
+    //console.log("Ammo", Ammo)
+    //console.log("mass", mass)
 
     //Ammojs Section
     let transform = new Ammo.btTransform();
@@ -223,11 +223,10 @@ class ThreeAmmoTest extends TriFrameWork{
     let rbInfo = new Ammo.btRigidBodyConstructionInfo( mass, motionState, blockColShape, localInertia );
     let body = new Ammo.btRigidBody( rbInfo );
 
-
-    console.log(this.physics.world);
+    //console.log(this.physics.world);
     this.physicsWorld().addRigidBody( body);
 
-    console.log(body);
+    //console.log(body);
 
     this.rigidBodies.push({
       mesh:mesh,
@@ -358,14 +357,35 @@ class ThreeAmmoTest extends TriFrameWork{
   }
 
   debugInfo(){
-
+    console.log("Physics: ", this.physicsAPI())
   }
 
   setupGUI(){
     const gui = new GUI()
     this.gui = gui;
+    const self = this;
     gui.add(this, 'debugInfo');
     const physicsFolder = gui.addFolder('Physics')
+    const physicsGravityFolder = physicsFolder.addFolder('Gravity')
+    physicsGravityFolder.add(this.physics.gravity,'x').onChange( value => {
+      let gravity = self.physics.gravity;
+      gravity.x = value;
+      let bgravity = new self.physics.Ammo.btVector3(gravity.x, gravity.y, gravity.z);
+      self.physics.world.setGravity(bgravity)
+    })
+    physicsGravityFolder.add(this.physics.gravity,'y').onChange( value => {
+      let gravity = self.physics.gravity;
+      gravity.y = value;
+      let bgravity = new self.physics.Ammo.btVector3(gravity.x, gravity.y, gravity.z);
+      self.physics.world.setGravity(bgravity)
+    })
+    physicsGravityFolder.add(this.physics.gravity,'z').onChange( value => {
+      let gravity = self.physics.gravity;
+      gravity.z = value;
+      let bgravity = new self.physics.Ammo.btVector3(gravity.x, gravity.y, gravity.z);
+      self.physics.world.setGravity(bgravity)
+    })
+
     const physicsBoxFolder = physicsFolder.addFolder('Box')
     physicsBoxFolder.add(this, 'createPhysicsBox').name('Created');
     physicsBoxFolder.add(this, 'removePhysicsBox').name('Remove');

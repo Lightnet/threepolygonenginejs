@@ -61,6 +61,7 @@ function setup_Helpers(){
 
 const myObject ={
   isRotate:true,
+  gravity:{x:0,y:-9.81,z:0},
   test:()=>{
     console.log('test');
   },
@@ -178,7 +179,6 @@ const myObject ={
     mesh.userData.physics = { mass: 0 };
     mesh.userData.objectType = 'ground';
     scene.add( mesh );
-
 
     //Ammojs Section
     let transform = new Ammo.btTransform();
@@ -311,6 +311,24 @@ function createGUI(){
 
   const physicsFolder = gui.addFolder('Physics').show()
   physicsFolder.add(myObject,'lenPhysicsWorld')
+  const physicsGravityFolder = physicsFolder.addFolder('Gravity');
+  physicsGravityFolder.add(myObject.gravity,'x').onChange(value=>{
+    //console.log("x:", value);
+    let gravity = myObject.gravity;
+    physicsWorld.setGravity(new Ammo.btVector3(gravity.x, gravity.y, gravity.z));
+  });
+  physicsGravityFolder.add(myObject.gravity,'y').onChange(value=>{
+    console.log("y:", value);
+    let gravity = myObject.gravity;
+    physicsWorld.setGravity(new Ammo.btVector3(gravity.x, gravity.y, gravity.z));
+  });
+  physicsGravityFolder.add(myObject.gravity,'z').onChange(value=>{
+    console.log("z:", value);
+    let gravity = myObject.gravity;
+    physicsWorld.setGravity(new Ammo.btVector3(gravity.x, gravity.y, gravity.z));
+  });
+
+
   const physicsBoxFolder = physicsFolder.addFolder('Box')
   physicsBoxFolder.add(myObject,'addPhysicsBox')
   physicsBoxFolder.add(myObject,'removePhysicsBox')

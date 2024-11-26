@@ -22,9 +22,9 @@ import {
   GUI,
   Stats,
 } from '/dps.js';
-import {TriFrameWork} from '../triengine/tri_framework.js';
+import {TriFrameWork} from './tri_framework.js';
 
-import { LAYER_MOVING } from '../triengine/framework_physics_jolt.js';
+import { LAYER_MOVING, LAYER_NON_MOVING } from './framework_physics_jolt.js';
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 
@@ -74,6 +74,11 @@ class ThreejsJoltTest extends TriFrameWork{
     this.gui = gui;
     gui.add(this, 'checkPhysics');
     const physicsFolder = gui.addFolder('Physics')
+    const physicsGravityFolder = physicsFolder.addFolder('Gravity')
+    // physicsGravityFolder.add(this.physics.world.gravity,'x')
+    // physicsGravityFolder.add(this.physics.world.gravity,'y')
+    // physicsGravityFolder.add(this.physics.world.gravity,'z')
+
     const physicsBoxFolder = physicsFolder.addFolder('Box')
     physicsBoxFolder.add(this, 'createPhysicsBox').name('Created');
     physicsBoxFolder.add(this, 'removePhysicsBox').name('Remove');
@@ -102,19 +107,6 @@ class ThreejsJoltTest extends TriFrameWork{
     //this.camera.position.z
   }
 
-  //updatePhysics( deltaTime ){
-    // if (this.physics == null){
-    //   return;
-    // }
-    // Step the simulation forward.  
-    //this.physics.step();
-
-    // if(this.rigidBodies){
-    //   for ( let i = 0; i < this.rigidBodies.length; i++ ) {
-    //   }
-    // }
-  //}
-
   createLight(){
     //Add hemisphere light
     let hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 0.1 );
@@ -138,14 +130,16 @@ class ThreejsJoltTest extends TriFrameWork{
     let depth = args?.depth || 2;
 
     let x = args?.x || 0;
-    let y = args?.y || 0;
+    let y = args?.y || 5;
     let z = args?.z || 0;
 
     const mesh = this.createMeshCube({width:width,height:height,depth:height});//threejs mesh
+    mesh.position.set(x,y,z);
+    mesh.userData.objectType = 'box'
     this.scene.add(mesh);
 
     const Jolt = this.physicsAPI();
-    console.log("Jolt: ", Jolt);
+    //console.log("Jolt: ", Jolt);
 
     // Create a box
   	let material = new Jolt.PhysicsMaterial();
@@ -185,31 +179,94 @@ class ThreejsJoltTest extends TriFrameWork{
   }
 
   removePhysicsBox(){
+    let removeBodies = [];
+    for (const entity of this.rigidBodies){
+      console.log(entity);
 
+      if(entity.mesh.userData?.objectType=='box'){
+        this.scene.remove(entity.mesh);
+        if(entity?.rigid){
+          //console.log("this.physics.bodyInterface: ", this.physics.bodyInterface)
+          this.physics.bodyInterface.RemoveBody(entity.rigid.GetID());
+          this.physics.bodyInterface.DestroyBody(entity.rigid.GetID());
+        }
+        
+        removeBodies.push(entity);
+        //break;
+      }
+    }
+
+    for(let i = 0; i < removeBodies.length;i++){
+      let index = this.rigidBodies.indexOf(removeBodies[i]);
+      if(index > -1){
+        this.rigidBodies.splice(index, 1);
+      }
+    }
   }
 
-  createPhysicsGround(){
+  createPhysicsGround(args={}){
+
+    let width = args?.width || 10;
+    let height = args?.height || 2;
+    let depth = args?.depth || 10;
+
     let pos = {x: 0, y: -1, z: 0};
     let scale = {x: 10, y: 0.1, z: 10};
     let quat = {x: 0, y: 0, z: 0, w: 1};
     let mass = 0;
 
-    // Create the ground
-    let mesh = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshPhongMaterial({color: 0xa0afa4}));
-    mesh.position.set(pos.x, pos.y, pos.z);
-    mesh.scale.set(scale.x, scale.y, scale.z);
-
+    // Create the ground MESH
+    //let mesh = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshPhongMaterial({color: 0xa0afa4}));
+    //mesh.position.set(pos.x, pos.y, pos.z);
+    //mesh.scale.set(scale.x, scale.y, scale.z);
+    const mesh = this.createMeshCube({width:width,height:height,depth:depth,color:0xa0afa4});//threejs mesh
+    mesh.userData.objectType='ground';
+    mesh.position.set(pos.x,pos.y,pos.z);
     mesh.castShadow = true;
     mesh.receiveShadow = true;
-
     this.scene.add(mesh);
 
-    // Create the ground
+    const Jolt = this.physicsAPI();
+
+    // Create the ground Rigid
+    var shape = new Jolt.BoxShape(new Jolt.Vec3(width*0.5, height*0.5,depth* 0.5), 0.05, null);
+  	var creationSettings = new Jolt.BodyCreationSettings(shape, new Jolt.RVec3(0, -0.5, 0), new Jolt.Quat(0, 0, 0, 1), Jolt.EMotionType_Static, LAYER_NON_MOVING);
+  	let body = this.physics.bodyInterface.CreateBody(creationSettings);
+  	Jolt.destroy(creationSettings);
+    this.physics.bodyInterface.AddBody(body.GetID(), Jolt.EActivation_Activate);
+
+
+    this.rigidBodies.push({
+      mesh:mesh,
+      rigid:body
+    });
 
   }
 
   removePhysicsGround(){
+    let removeBodies = [];
+    for (const entity of this.rigidBodies){
+      console.log(entity);
 
+      if(entity.mesh.userData?.objectType=='ground'){
+        this.scene.remove(entity.mesh);
+        if(entity?.rigid){
+          //console.log("this.physics.bodyInterface: ", this.physics.bodyInterface)
+          this.physics.bodyInterface.RemoveBody(entity.rigid.GetID());
+          this.physics.bodyInterface.DestroyBody(entity.rigid.GetID());
+        }
+        
+        removeBodies.push(entity);
+        //break;
+      }
+    }
+
+    for(let i = 0; i < removeBodies.length;i++){
+      let index = this.rigidBodies.indexOf(removeBodies[i]);
+      if(index > -1){
+        this.rigidBodies.splice(index, 1);
+      }
+    }
   }
 
   // SPHERE

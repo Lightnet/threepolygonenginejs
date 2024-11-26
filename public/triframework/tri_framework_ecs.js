@@ -26,7 +26,7 @@ import {
 
 const { canvas, div, button, input } = van.tags;
 
-class TriECSEngine{
+class TriFrameworkECS{
   //three.js
   renderer=null;
   camera=null;
@@ -588,5 +588,5 @@ class TriECSEngine{
 }
 
 export{
-  TriECSEngine
+  TriFrameworkECS
 }

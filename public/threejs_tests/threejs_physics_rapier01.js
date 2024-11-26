@@ -5,13 +5,20 @@
   GitHub: https://github.com/Lightnet/threepolygonenginejs
   
 */
-
-import van from "https://cdn.jsdelivr.net/npm/vanjs-core@1.5.2/src/van.min.js";
-import * as THREE from 'https://unpkg.com/three@0.170.0/build/three.module.js';
-import { OrbitControls } from 'https://unpkg.com/three@0.170.0/examples/jsm/controls/OrbitControls.js';
-import Stats from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/stats.module.js';
-import { GUI } from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/lil-gui.module.min.js';
-import RAPIER from 'https://cdn.skypack.dev/@dimforge/rapier3d-compat';
+import {
+  van,
+  THREE,
+  OrbitControls,
+  Stats,
+  GUI,
+  RAPIER,
+} from "/dps.js"
+// import van from "https://cdn.jsdelivr.net/npm/vanjs-core@1.5.2/src/van.min.js";
+// import * as THREE from 'https://unpkg.com/three@0.170.0/build/three.module.js';
+// import { OrbitControls } from 'https://unpkg.com/three@0.170.0/examples/jsm/controls/OrbitControls.js';
+// import Stats from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/stats.module.js';
+// import { GUI } from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/lil-gui.module.min.js';
+// import RAPIER from 'https://cdn.skypack.dev/@dimforge/rapier3d-compat';
 
 //DRAW PHYSICS VERTICES
 class RapierDebugRenderer {
@@ -83,6 +90,7 @@ function setup_Helpers(){
 
 const myObject ={
   isRotate:true,
+  gravity:{x:0,y:-9.81,z:0},
   test:()=>{
     console.log('test');
   },
@@ -301,6 +309,18 @@ function createGUI(){
 
   const physicsFolder = gui.addFolder('Physics').show()
   physicsFolder.add(myObject,'lenPhysicsWorld')
+  const physicsGravityFolder = physicsFolder.addFolder('Gravity');
+  physicsGravityFolder.add(myObject.gravity,'x').onChange(value=>{
+    //console.log(physicsWorld);
+    physicsWorld.gravity.x = myObject.gravity.x;
+  });
+  physicsGravityFolder.add(myObject.gravity,'y').onChange(value=>{
+    physicsWorld.gravity.y = myObject.gravity.y;
+  });
+  physicsGravityFolder.add(myObject.gravity,'z').onChange(value=>{
+    physicsWorld.gravity.z = myObject.gravity.z;
+  });
+
   const physicsBoxFolder = physicsFolder.addFolder('Box')
   physicsBoxFolder.add(myObject,'addPhysicsBox')
   physicsBoxFolder.add(myObject,'removePhysicsBox')

@@ -14,9 +14,9 @@ import {
   CSS3DRenderer, 
   CSS3DObject,
   OrbitControls,
+  GUI,
 } from "/dps.js";
-//import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
-import { GUI } from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/lil-gui.module.min.js';
+
 const {div} = van.tags;
 
 var content = '<div>' +

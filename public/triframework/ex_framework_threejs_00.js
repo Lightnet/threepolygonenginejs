@@ -16,10 +16,10 @@ import {
   OrbitControls, 
   van,
 } from "/dps.js";
-import {TriEngine} from '../triengine/triengine.js';
+import {TriFrameWork} from './tri_framework.js';
 const {button, canvas, input, label, div} = van.tags;
 
-class ThreeScene extends TriEngine{
+class ThreeScene extends TriFrameWork{
   constructor(args){
     super(args);
   }

@@ -58,9 +58,8 @@ class Physics_Rapier extends FrameWork_Physics{
   }
 
   async setup(){
-    
-    console.log("this.RAPIER");
-    console.log(this.RAPIER);
+    //console.log("this.RAPIER");
+    //console.log(this.RAPIER);
     // set up world
     //this.world = new RAPIER.World(this.gravity);
     //this.eventQueue = new RAPIER.EventQueue(true);
@@ -74,11 +73,31 @@ class Physics_Rapier extends FrameWork_Physics{
 
   build(){
     this.world = new RAPIER.World(this.gravity);
+    console.log(this.world);
     this.RAPIER = RAPIER;
     //console.log(this.world);
   }
   
-  create_body_ground(){
+  create_body_ground(args={}){
+
+    const width = args?.width || 10;
+    const height = args?.height || 1;
+    const depth = args?.depth || 10;
+
+    let pos={
+      x:0,
+      y:0,
+      z:0,
+    }
+    let quat={
+      x:0,
+      y:0,
+      z:0,
+      w:1
+    }
+
+    let mass = args?.mass || 0;
+
     let rigidBodyDesc = RAPIER.RigidBodyDesc.fixed()
       .setTranslation(0.0,-2.0,0.0);
     let rigidBody = this.world.createRigidBody(rigidBodyDesc);
@@ -184,7 +203,7 @@ class Physics_Rapier extends FrameWork_Physics{
     super.update(delta)
     //console.log('physics update!');
     if (this.world == null){
-      console.log('physics update null');
+      console.log('physics world null');
       return;
     }
     
@@ -216,8 +235,11 @@ class Physics_Rapier extends FrameWork_Physics{
     });
   }
 
+  //=============================================
+  // PHYSICS API FOR RAPIER
+  //=============================================
   API(){
-    console.log("API", this.RAPIER);
+    //console.log("API", this.RAPIER);
     return this.RAPIER;
   }
 

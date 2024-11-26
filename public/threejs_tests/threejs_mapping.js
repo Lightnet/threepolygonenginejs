@@ -13,7 +13,6 @@ console.log("three js");
 
 import { THREE, OrbitControls, ECS, van } from "/dps.js";
 import { FloatingWindow } from "vanjs-ui";
-//import { TriECSEngine } from "/components/triengine/triecsengine.js";
 const {div, button, label, img} = van.tags;
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );

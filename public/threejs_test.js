@@ -9,10 +9,7 @@
 // https://discourse.threejs.org/t/how-can-i-rotate-a-sprite-to-face-particular-x-y-coordinates/44629
 // 
 
-console.log("Test");
-
 import { THREE, OrbitControls, ECS, van } from "/dps.js";
-//import { TriECSEngine } from "/components/triengine/triecsengine.js";
 
 class World extends THREE.Group{
   constructor(size = 32){

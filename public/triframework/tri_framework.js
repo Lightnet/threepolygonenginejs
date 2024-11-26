@@ -88,7 +88,7 @@ class TriFrameWork {
       this.physics = new _physics();
       //console.log(this.physics);
       await this.physics.init();
-      await sleep(1000);
+      //await sleep(1000);
       await this.init();
     }else if (_type == "jolt"){
       const {default:_physics} = await import('./framework_physics_jolt.js');
@@ -108,7 +108,6 @@ class TriFrameWork {
     }
     //await this.setup();
   }
-
 
   async setup(){
     this.setupRenderer();
