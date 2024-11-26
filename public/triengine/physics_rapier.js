@@ -18,6 +18,8 @@ import { RAPIER } from '/dps.js';
 import Observable from './Observable.js';
 import FrameWork_Physics from './framework_physics.js';
 
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
+
 class Physics_Rapier extends FrameWork_Physics{
 
   isPhysics = false;
@@ -44,22 +46,36 @@ class Physics_Rapier extends FrameWork_Physics{
         this.gravity.z = args.z;
       }
     }
+    //this.init();
+  }
 
-
-    this.setup();
-    return this;
+  async init(){
+    super.init();
+    await RAPIER.init();
+    //await sleep(1000);
+    this.RAPIER = RAPIER;
+    await this.setup();
   }
 
   async setup(){
-    await RAPIER.init();
+    
+    console.log("this.RAPIER");
+    console.log(this.RAPIER);
     // set up world
-    this.world = new RAPIER.World(this.gravity);
+    //this.world = new RAPIER.World(this.gravity);
     //this.eventQueue = new RAPIER.EventQueue(true);
     //this.setupEventQueue();
     //does not work need to be in loop update
     //this.eventQueue.drainCollisionEvents();
     // fire event when ready to init other
-    this.event.fireEvent("Ready");
+    //this.event.fireEvent("Ready");
+    this.build();
+  }
+
+  build(){
+    this.world = new RAPIER.World(this.gravity);
+    this.RAPIER = RAPIER;
+    //console.log(this.world);
   }
   
   create_body_ground(){
@@ -165,6 +181,7 @@ class Physics_Rapier extends FrameWork_Physics{
   //}
 
   update(delta){
+    super.update(delta)
     //console.log('physics update!');
     if (this.world == null){
       console.log('physics update null');
@@ -199,7 +216,14 @@ class Physics_Rapier extends FrameWork_Physics{
     });
   }
 
+  API(){
+    console.log("API", this.RAPIER);
+    return this.RAPIER;
+  }
+
 }
+
+export default Physics_Rapier;
 
 export {
   Physics_Rapier

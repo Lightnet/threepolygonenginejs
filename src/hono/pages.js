@@ -120,7 +120,7 @@ var urlandjs = [
   {url:'/threejs_test',                     file:'/threejs_test.js'},
   {url:'/flipclock',                        file:'/tests/flip_clock.js'},
   {url:'/texteditortest',                   file:'/texteditortest.js'},
-  {url:'/three_ammo',                       file:'/tests/three_ammo.js'},
+  
   {url:'/three_css2drenderer',              file:'/tests/three_css2drenderer.js'},
   {url:'/three_css3d_class',                file:'/tests/three_css3d_class.js'},
   {url:'/three_css3drenderer_resize',       file:'/tests/three_css3drenderer_resize.js'},
@@ -137,8 +137,12 @@ var urlandjs = [
   {url:'/threecss2d',                       file:'/tests/three_css2drenderer.js'},
   
   {url:'/three_framework00',                file:'/tests/three_framework00.js'},
-  {url:'/entitiesomponentssystems',         file:'/tests/entitiesomponentssystems.js'},
   {url:'/three_rapier',                     file:'/tests/three_rapier.js'},
+  {url:'/three_physics_ammo',               file:'/tests/three_physics_ammo.js'},
+  {url:'/three_physics_jolt',               file:'/tests/three_physics_jolt.js'},
+  {url:'/three_physics_rapier',               file:'/tests/three_physics_rapier.js'},
+
+  {url:'/entitiesomponentssystems',         file:'/tests/entitiesomponentssystems.js'},
   {url:'/timer_test',                       file:'/tests/timer_test.js'},
 
   {url:'/mobilespace',                file:'/mobilespace/main.js'},

@@ -11,7 +11,11 @@
     vanjs main client entry point
 */
 
-import { THREE, OrbitControls, van  } from "/dps.js";
+import { 
+  THREE, 
+  OrbitControls, 
+  van,
+} from "/dps.js";
 import {TriEngine} from '../triengine/triengine.js';
 const {button, canvas, input, label, div} = van.tags;
 
@@ -94,8 +98,11 @@ const ThreeEL = () => {
 
   function init(){
     //const renderer = new THREE.WebGLRenderer();
-    engine.val = new ThreeScene({canvas:renderEL,isPhysics:false});
-    console.log(engine.val);//
+    engine.val = new ThreeScene({
+      canvas:renderEL,
+      isPhysics:false
+    });
+    console.log(engine.val); //
   }
 
   init();

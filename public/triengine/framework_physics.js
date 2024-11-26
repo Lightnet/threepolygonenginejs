@@ -18,8 +18,11 @@ class FrameWork_Physics{
   gravity = { x: 0.0, y: -9.81, z: 0.0 };
 
   constructor(args){
-    
+    //this.init();
+  }
 
+  async init(){
+    //await this.setup();
   }
 
   async setup(){

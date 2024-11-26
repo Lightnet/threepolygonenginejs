@@ -8,6 +8,8 @@
 
 // protoype test
 
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
+
 import { THREE, OrbitControls, van } from "/dps.js";
 //import { PhysicsFrameWork } from './physics_rapier.js';
 const {canvas} = van.tags;
@@ -32,6 +34,7 @@ class TriEngine {
   clock=null;
   physics=null;
   isPhysics=false;
+  physicsType="none";
   isResize=true;
 
   constructor(args){
@@ -61,13 +64,11 @@ class TriEngine {
     // }
     // Check for physics
     if(args?.isPhysics){
+      this.isPhysics = args.isPhysics
       console.log('init physics');
-      //this.physics = new PhysicsFrameWork();
-      //this.physics.event.listen("Ready",()=>{
-        //console.log('init physics event...')
-        //this.init();
-        //this.init_editor();
-      //});
+      if(args?.physicsType){
+        this.initPhysics(args.physicsType)
+      }
     }else{
       this.init();
     }
@@ -77,6 +78,35 @@ class TriEngine {
   async init(){
     await this.setup();
   }
+
+  async initPhysics(_type){
+    console.log("Physics Type:", _type)
+    if(_type == "ammo"){
+      const {default:_physics} = await import('./physics_ammo.js');
+      this.physics = new _physics();
+      //console.log(this.physics);
+      await this.physics.init();
+      await sleep(1000);
+      await this.init();
+    }else if (_type == "jolt"){
+      const {default:_physics} = await import('./physics_jolt.js');
+      this.physics = new _physics();
+      //console.log(this.physics);
+      //await sleep(1000);
+      await this.physics.init();
+      await this.init();
+    }else if (_type == "rapier"){
+      const {default:_physics} = await import('./physics_rapier.js');
+      this.physics = new _physics();
+      //console.log(this.physics);
+      await this.physics.init();
+      await this.init();
+    }else{
+      console.log("PHYSICS NOT SUPPORT!");
+    }
+    //await this.setup();
+  }
+
 
   async setup(){
     this.setupRenderer();
@@ -109,12 +139,15 @@ class TriEngine {
     //this.scene.add( cube );
   }
 
-  update(){
+  update(delta){
     if(this.renderer){
       this.renderer.render( this.scene, this.camera );
     }
+    //console.log(this.physics);
+    //console.log(this.isPhysics);
     if(this.physics !=null && this.isPhysics==true){
-      this.physics.update();
+      //console.log("update physics")
+      this.physics.update(delta);
     }
   }
 
@@ -171,6 +204,14 @@ class TriEngine {
 
   domElement(){
     return this.renderer.domElement;
+  }
+
+  physicsAPI(){
+    return this.physics.API();
+  }
+
+  get physicsWorld(){
+    return this.physics.world;
   }
 };
 

@@ -23,7 +23,6 @@ import {
   ECS, 
   van,
 } from "/dps.js";
-//import { PhysicsFrameWork } from './physics_rapier.js';
 
 const { canvas, div, button, input } = van.tags;
 
