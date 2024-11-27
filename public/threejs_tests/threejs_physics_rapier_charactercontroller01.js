@@ -45,6 +45,13 @@ class RapierDebugRenderer {
   }
 }
 
+let kMoveDirection = { left: 0, right: 0, forward: 0, back: 0 };
+var characterController; // controller input
+var characterCollider;
+var characterRigidBody;
+
+let tmpPos = new THREE.Vector3(), tmpQuat = new THREE.Quaternion();
+
 var bodies = [];
 var physicsWorld;
 var gridHelper;
@@ -242,12 +249,13 @@ const myObject ={
   resetPhysicsGround(){
     
   },
-  addPhysicsPlayer(){
+  addPhysicsPlayer(args){
     args = args || {};
     const width = args?.width || 2;
     const height = args?.height || 2;
     const depth = args?.depth || 2;
-    const color = args?.color || 0x00ffff;
+    let color = args?.color || 0x00ffff;
+    color = 'blue'
 
     let pos={
       x:args?.x || 0,
@@ -262,15 +270,30 @@ const myObject ={
     }
     const mass = 1;
 
-    let mesh = this.createMeshCube({width:width,height:height,depth:depth,color:color});
+    let mesh = createMeshCube({width:width,height:height,depth:depth,color:color});
     mesh.position.set(pos.x, pos.y, pos.z);
     mesh.userData.physics = { mass: 1 };
-    mesh.userData.objectType = 'player';
-    this.scene.add( mesh );
+    mesh.userData.objectType = 'box';
+    scene.add( mesh );
 
-    this.rigidBodies.push({
+    //let rigidBodyDesc = RAPIER.RigidBodyDesc.dynamic()
+    //let rigidBodyDesc = RAPIER.RigidBodyDesc.kinematicPositionBased()
+      
+    let rigidBodyDesc = RAPIER.RigidBodyDesc
+      //.dynamic() // has gravity
+      .kinematicPositionBased()//no gravity
+      //.setGravityScale(1)
+      .setTranslation(pos.x, pos.y, pos.x);
+    let rigidBody = physicsWorld.createRigidBody(rigidBodyDesc);
+    let colliderDesc = RAPIER.ColliderDesc.cuboid(width * 0.5, height * 0.5, depth * 0.5);
+    let collider = physicsWorld.createCollider(colliderDesc, rigidBody);
+    characterCollider = collider;
+    characterRigidBody = rigidBody;
+    bodies.push({
       mesh:mesh,
-      rigid:body,
+      rigid:rigidBody,
+      colliderDesc:colliderDesc,
+      collider:collider,
     })
   },
   removePhysicsPlayer(){
@@ -279,6 +302,15 @@ const myObject ={
   resetPhysicsPlayer(){
 
   },
+}
+
+// https://rapier.rs/docs/user_guides/javascript/character_controller
+// vector3 position only and no rotation
+function setupCharacterController(){
+  // The gap the controller will leave between the character and its environment.
+  let offset = 0.01;
+  // Create the controller.
+  characterController = physicsWorld.createCharacterController(offset);
 }
 
 function createGUI(){
@@ -328,11 +360,46 @@ function createGUI(){
   physicsGroundFolder.add(myObject,'addPhysicsGround')
   physicsGroundFolder.add(myObject,'removePhysicsGround')
   physicsGroundFolder.add(myObject,'resetPhysicsGround')
-  //const physicsPlayerFolder = physicsFolder.addFolder('Player')
-  //physicsPlayerFolder.add(myObject,'addPhysicsPlayer')
-  //physicsPlayerFolder.add(myObject,'removePhysicsPlayer')
+  const physicsPlayerFolder = physicsFolder.addFolder('Player')
+  physicsPlayerFolder.add(myObject,'addPhysicsPlayer')
+  physicsPlayerFolder.add(myObject,'removePhysicsPlayer')
   //physicsPlayerFolder.add(myObject,'resetPhysicsPlayer')
 
+}
+// https://rapier.rs/docs/user_guides/javascript/character_controller
+function updatePlayerController(){
+  //console.log("characterController: ", characterController);
+  if(!characterController){return;}
+  if(!characterCollider){return;}
+  if(!characterRigidBody){return;}
+
+  let scalingFactor = 0.3;
+  //console.log(kMoveDirection);
+
+  let moveX =  kMoveDirection.right - kMoveDirection.left;
+  let moveZ =  kMoveDirection.back - kMoveDirection.forward;
+  //let moveY =  -1;
+  let moveY =  0; //set gravity as it can be customize for state machince.
+
+  let translateFactor = tmpPos.set(moveX, moveY, moveZ)
+  translateFactor.multiplyScalar(scalingFactor);
+
+  // kinematicPositionBased has no gravity
+  characterController.computeColliderMovement(
+    characterCollider,    // The collider we would like to move.
+    //this method 1
+    //{x:moveX,y:moveY,z:moveZ}, // The movement we would like to apply if there wasn’t any obstacle.
+    //this method 2
+    translateFactor, // 
+  );
+  
+  let movement = characterController.computedMovement();
+  let newPos = characterRigidBody.translation();
+  newPos.x += movement.x;
+  newPos.y += movement.y;
+  newPos.z += movement.z;
+
+  characterRigidBody.setTranslation({x:newPos.x,y:newPos.y,z:newPos.z}, true);
 }
 
 // SET UP SCENE
@@ -340,13 +407,68 @@ function setupScene(){
   cube = createMeshCube();
   scene.add(cube)
   setup_Helpers()
+  setupCharacterController();
 
   van.add(document.body, stats.dom);
   van.add(document.body, renderer.domElement);
+
+  myObject.addPhysicsGround();
+  setupEventHandlers();
   
   renderer.setAnimationLoop( animate );
   createGUI();
 }
+
+function setupEventHandlers(){
+  window.addEventListener( 'keydown', handleKeyDown, false);
+  window.addEventListener( 'keyup', handleKeyUp, false);
+}
+
+function handleKeyDown(event){
+  let keyCode = event.keyCode;
+  switch(keyCode){
+    case 87: //W: FORWARD
+      //moveDirection.forward = 1
+      kMoveDirection.forward = 1
+      break;
+    case 83: //S: BACK
+      //moveDirection.back = 1
+      kMoveDirection.back = 1
+      break;
+    case 65: //A: LEFT
+      //moveDirection.left = 1
+      kMoveDirection.left = 1
+      break;
+    case 68: //D: RIGHT
+      //moveDirection.right = 1
+      kMoveDirection.right = 1
+      break;
+  }
+}
+
+function handleKeyUp(event){
+
+  let keyCode = event.keyCode;
+  switch(keyCode){
+    case 87: //FORWARD
+      //moveDirection.forward = 0
+      kMoveDirection.forward = 0
+      break;
+    case 83: //BACK
+      //moveDirection.back = 0
+      kMoveDirection.back = 0
+      break;
+    case 65: //LEFT
+      //moveDirection.left = 0
+      kMoveDirection.left = 0
+      break;
+    case 68: //RIGHT
+      //moveDirection.right = 0
+      kMoveDirection.right = 0
+      break;
+  }
+}
+
 // LOOP RENDERER AND UPDATE
 function animate() {
   let deltaTime = clock.getDelta();
@@ -354,8 +476,9 @@ function animate() {
     cube.rotation.x += 0.01;
 	  cube.rotation.y += 0.01;
   }
-
+  updatePlayerController();
   updatePhysics(deltaTime);
+
 	if(rapierDebugRenderer){
     rapierDebugRenderer.update()
   }

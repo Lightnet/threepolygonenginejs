@@ -420,7 +420,7 @@ const myObject ={
     transform.setOrigin( new Ammo.btVector3( pos.x, pos.y, pos.z ) );
     transform.setRotation( new Ammo.btQuaternion( quat.x, quat.y, quat.z, quat.w ) );
 
-    const colShape = new Ammo.btCapsuleShape(radius*0.5, length*0.5)
+    const colShape = new Ammo.btCapsuleShape(radius, length*0.5)
 
     const ghostObject = new Ammo.btPairCachingGhostObject()
     ghostObject.setWorldTransform(transform)

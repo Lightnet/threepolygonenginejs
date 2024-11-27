@@ -142,7 +142,9 @@ Note not easy to update script to match the layout for those three phyiscs. Ther
 
  Note this is has more config and destroy to clean up.
 
-## Ammo.js:
+## Ammo.js (update Nov 20, 2023):
+ * docs a bit hard to find. for kcontroller and proper setup.
+ * base on bullet physics C++ update Apr 9, 2024
  * rigidbody.hy = id
  * stepSimulation function must not be null it need delta number. Result rigid body position will NaN. So it will disappear for mesh.
 ```js
@@ -155,6 +157,7 @@ this.world.stepSimulation(delta,10);
 ```
 
 ## Rapier:
+ * has debug collisions render
   Note it required 3 objects for id, collision detect and update object
  * rigidBody
  * colliderDesc

@@ -361,6 +361,27 @@ function getThreeObjectForBody(body, color) {
 
 	return threeObject;
 }
+// https://github.com/jrouwe/JoltPhysics.js/blob/main/Examples/js/example.js
+function createMeshForShape(shape) {
+	// Get triangle data
+	let scale = new Jolt.Vec3(1, 1, 1);
+	let triContext = new Jolt.ShapeGetTriangles(shape, Jolt.AABox.prototype.sBiggest(), shape.GetCenterOfMass(), Jolt.Quat.prototype.sIdentity(), scale);
+	Jolt.destroy(scale);
+
+	// Get a view on the triangle data (does not make a copy)
+	let vertices = new Float32Array(Jolt.HEAPF32.buffer, triContext.GetVerticesData(), triContext.GetVerticesSize() / Float32Array.BYTES_PER_ELEMENT);
+
+	// Now move the triangle data to a buffer and clone it so that we can free the memory from the C++ heap (which could be limited in size)
+	let buffer = new THREE.BufferAttribute(vertices, 3).clone();
+	Jolt.destroy(triContext);
+
+	// Create a three mesh
+	let geometry = new THREE.BufferGeometry();
+	geometry.setAttribute('position', buffer);
+	geometry.computeVertexNormals();
+
+	return geometry;
+}
 
 function addToThreeScene(body, color) {
 	let threeObject = getThreeObjectForBody(body, color);

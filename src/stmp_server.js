@@ -24,20 +24,6 @@ server.on("error", (err) => {
 server.listen(465);
 console.log("init mail server...");
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /*
 const transport = {
   //this is the authentication for sending email.
