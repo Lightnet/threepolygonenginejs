@@ -153,7 +153,6 @@ const deltaTime = clock.getDelta();
 //...
 this.world.stepSimulation(delta,10);
 ```
-  
 
 ## Rapier:
   Note it required 3 objects for id, collision detect and update object
@@ -162,6 +161,16 @@ this.world.stepSimulation(delta,10);
  * collider
 
  * collider.handle = id
+
+# Physics:
+ * threejs_tests/threejs_physics_ammo01.js
+ * threejs_tests/threejs_physics_cannon01.js
+ * threejs_tests/threejs_physics_jolt01.js
+ * threejs_tests/threejs_physics_oimophysics01.js
+ * threejs_tests/threejs_physics_rapier01.js
+
+  Those are almost the same for gui test for ground, box and gravity test. As well remove collisions.
+
 
 # Notes:
  Below this section are just notes. It still work in progress.
