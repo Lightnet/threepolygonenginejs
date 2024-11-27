@@ -5,6 +5,8 @@
   GitHub: https://github.com/Lightnet/threepolygonenginejs
   
 */
+// https://medium.com/@bluemagnificent/moving-objects-in-javascript-3d-physics-using-ammo-js-and-three-js-6e39eff6d9e5
+// simple setLinearVelocity test
 
 // https://stackoverflow.com/questions/5767325/how-can-i-remove-a-specific-item-from-an-array-in-javascript
 
@@ -13,6 +15,10 @@ import * as THREE from 'https://unpkg.com/three@0.170.0/build/three.module.js';
 import { OrbitControls } from 'https://unpkg.com/three@0.170.0/examples/jsm/controls/OrbitControls.js';
 import Stats from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/stats.module.js';
 import { GUI } from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/lil-gui.module.min.js';
+
+let moveDirection = { left: 0, right: 0, forward: 0, back: 0 };
+const STATE = { DISABLE_DEACTIVATION : 4 }
+let objectPlayer = null;
 
 let colGroupPlane = 1, colGroupRedBall = 2, colGroupGreenBall = 4;
 var bodies = [];
@@ -226,7 +232,7 @@ const myObject ={
   resetPhysicsGround(){
     
   },
-  addPhysicsPlayer(){
+  addPhysicsPlayer(args){
     args = args || {};
     const width = args?.width || 2;
     const height = args?.height || 2;
@@ -246,11 +252,12 @@ const myObject ={
     }
     const mass = 1;
 
-    let mesh = this.createMeshCube({width:width,height:height,depth:depth,color:color});
+    let mesh = createMeshCube({width:width,height:height,depth:depth,color:color});
     mesh.position.set(pos.x, pos.y, pos.z);
     mesh.userData.physics = { mass: 1 };
     mesh.userData.objectType = 'player';
-    this.scene.add( mesh );
+    objectPlayer = mesh;
+    scene.add( mesh );
 
     //Ammojs Section
     let transform = new Ammo.btTransform();
@@ -268,15 +275,34 @@ const myObject ={
     //info
     let rbInfo = new Ammo.btRigidBodyConstructionInfo( mass, motionState, blockColShape, localInertia );
     let body = new Ammo.btRigidBody( rbInfo );
-    this.physicsWorld.addRigidBody( body);
+    //disable sleep
+    body.setActivationState( STATE.DISABLE_DEACTIVATION );
+    physicsWorld.addRigidBody( body);
 
-    this.rigidBodies.push({
+    mesh.userData.physicsBody = body;
+
+    bodies.push({
       mesh:mesh,
       rigid:body,
     })
   },
   removePhysicsPlayer(){
+    let removeBodies = [];
+    for(const _entity of bodies) {
+      if(_entity.mesh.userData?.objectType=='player'){
+        scene.remove(_entity.mesh);
+        physicsWorld.removeRigidBody(_entity.rigid)
+        removeBodies.push(_entity);
+      }
+    }
 
+    for(let i=0; i< removeBodies.length;i++){
+      let index = bodies.indexOf(removeBodies[i]);
+      if(index > -1){
+        bodies.splice(index,1);
+      }
+    }
+    console.log(bodies);
   },
   resetPhysicsPlayer(){
 
@@ -334,11 +360,70 @@ function createGUI(){
   physicsGroundFolder.add(myObject,'addPhysicsGround')
   physicsGroundFolder.add(myObject,'removePhysicsGround')
   physicsGroundFolder.add(myObject,'resetPhysicsGround')
-  //const physicsPlayerFolder = physicsFolder.addFolder('Player')
-  //physicsPlayerFolder.add(myObject,'addPhysicsPlayer')
-  //physicsPlayerFolder.add(myObject,'removePhysicsPlayer')
-  //physicsPlayerFolder.add(myObject,'resetPhysicsPlayer')
+  const physicsPlayerFolder = physicsFolder.addFolder('Player')
+  physicsPlayerFolder.add(myObject,'addPhysicsPlayer')
+  physicsPlayerFolder.add(myObject,'removePhysicsPlayer')
+  physicsPlayerFolder.add(myObject,'resetPhysicsPlayer')
 
+}
+
+function setupEventHandlers(){
+  window.addEventListener( 'keydown', handleKeyDown, false);
+  window.addEventListener( 'keyup', handleKeyUp, false);
+}
+
+function handleKeyDown(event){
+  let keyCode = event.keyCode;
+  switch(keyCode){
+    case 87: //W: FORWARD
+      moveDirection.forward = 1
+      break;
+    case 83: //S: BACK
+      moveDirection.back = 1
+      break;
+    case 65: //A: LEFT
+      moveDirection.left = 1
+      break;
+    case 68: //D: RIGHT
+      moveDirection.right = 1
+      break;
+  }
+}
+
+function handleKeyUp(event){
+
+  let keyCode = event.keyCode;
+  switch(keyCode){
+    case 87: //FORWARD
+      moveDirection.forward = 0
+      break;
+    case 83: //BACK
+      moveDirection.back = 0
+      break;
+    case 65: //LEFT
+      moveDirection.left = 0
+      break;
+    case 68: //RIGHT
+      moveDirection.right = 0
+      break;
+  }
+}
+
+function movePlayer(){
+  if(!objectPlayer)return;
+  let scalingFactor = 20;
+  scalingFactor=1; 
+  let moveX =  moveDirection.right - moveDirection.left;
+  let moveZ =  moveDirection.back - moveDirection.forward;
+  let moveY =  0; 
+
+  if( moveX == 0 && moveY == 0 && moveZ == 0) return;
+
+  let resultantImpulse = new Ammo.btVector3( moveX, moveY, moveZ )
+  resultantImpulse.op_mul(scalingFactor);
+
+  let physicsBody = objectPlayer.userData.physicsBody;
+  physicsBody.setLinearVelocity( resultantImpulse );
 }
 
 // SET UP SCENE
@@ -346,6 +431,8 @@ function setupScene(){
   cube = createMeshCube();
   scene.add(cube)
   setup_Helpers()
+
+  setupEventHandlers();
 
   van.add(document.body, stats.dom);
   van.add(document.body, renderer.domElement);
@@ -361,6 +448,7 @@ function animate() {
 	  cube.rotation.y += 0.01;
   }
 
+  movePlayer();
   updatePhysics(deltaTime);
 	
   stats.update();

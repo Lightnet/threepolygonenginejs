@@ -6,6 +6,9 @@
   
 */
 
+// https://medium.com/@bluemagnificent/intro-to-javascript-3d-physics-using-ammo-js-and-three-js-dd48df81f591
+// https://medium.com/@bluemagnificent/moving-objects-in-javascript-3d-physics-using-ammo-js-and-three-js-6e39eff6d9e5
+// 
 // https://stackoverflow.com/questions/5767325/how-can-i-remove-a-specific-item-from-an-array-in-javascript
 
 import van from "https://cdn.jsdelivr.net/npm/vanjs-core@1.5.2/src/van.min.js";
@@ -13,6 +16,16 @@ import * as THREE from 'https://unpkg.com/three@0.170.0/build/three.module.js';
 import { OrbitControls } from 'https://unpkg.com/three@0.170.0/examples/jsm/controls/OrbitControls.js';
 import Stats from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/stats.module.js';
 import { GUI } from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/lil-gui.module.min.js';
+
+let moveDirection = { left: 0, right: 0, forward: 0, back: 0 };
+const STATE = { DISABLE_DEACTIVATION : 4 }
+const FLAGS = { CF_KINEMATIC_OBJECT: 2  }
+let kObject = null;
+let objectPlayer = null;
+let kMoveDirection = { left: 0, right: 0, forward: 0, back: 0 };
+let tmpPos = new THREE.Vector3(), tmpQuat = new THREE.Quaternion();
+let ammoTmpPos = null, ammoTmpQuat = null;
+
 
 let colGroupPlane = 1, colGroupRedBall = 2, colGroupGreenBall = 4;
 var bodies = [];
@@ -226,7 +239,7 @@ const myObject ={
   resetPhysicsGround(){
     
   },
-  addPhysicsPlayer(){
+  addPhysicsPlayer(args){
     args = args || {};
     const width = args?.width || 2;
     const height = args?.height || 2;
@@ -246,11 +259,12 @@ const myObject ={
     }
     const mass = 1;
 
-    let mesh = this.createMeshCube({width:width,height:height,depth:depth,color:color});
+    let mesh = createMeshCube({width:width,height:height,depth:depth,color:color});
     mesh.position.set(pos.x, pos.y, pos.z);
     mesh.userData.physics = { mass: 1 };
     mesh.userData.objectType = 'player';
-    this.scene.add( mesh );
+    objectPlayer = mesh;
+    scene.add( mesh );
 
     //Ammojs Section
     let transform = new Ammo.btTransform();
@@ -268,19 +282,96 @@ const myObject ={
     //info
     let rbInfo = new Ammo.btRigidBodyConstructionInfo( mass, motionState, blockColShape, localInertia );
     let body = new Ammo.btRigidBody( rbInfo );
-    this.physicsWorld.addRigidBody( body);
+    //disable sleep
+    body.setActivationState( STATE.DISABLE_DEACTIVATION );
+    physicsWorld.addRigidBody( body);
 
-    this.rigidBodies.push({
+    mesh.userData.physicsBody = body;
+
+    bodies.push({
       mesh:mesh,
       rigid:body,
     })
   },
   removePhysicsPlayer(){
+    let removeBodies = [];
+    for(const _entity of bodies) {
+      if(_entity.mesh.userData?.objectType=='player'){
+        scene.remove(_entity.mesh);
+        physicsWorld.removeRigidBody(_entity.rigid)
+        removeBodies.push(_entity);
+      }
+    }
 
+    for(let i=0; i< removeBodies.length;i++){
+      let index = bodies.indexOf(removeBodies[i]);
+      if(index > -1){
+        bodies.splice(index,1);
+      }
+    }
+    console.log(bodies);
   },
   resetPhysicsPlayer(){
 
   },
+  addPhysicsKPlayer(args){
+    args = args || {};
+    const width = args?.width || 2;
+    const height = args?.height || 2;
+    const depth = args?.depth || 2;
+    const color = args?.color || 0x30ab78;
+
+    let pos={
+      x:args?.x || -3,
+      y:args?.y || 1.5,
+      z:args?.z || 0,
+    }
+    let quat={
+      x:0,
+      y:0,
+      z:0,
+      w:1
+    }
+    const mass = 1;
+
+    let mesh = createMeshCube({width:width,height:height,depth:depth,color:color});
+    mesh.position.set(pos.x, pos.y, pos.z);
+    mesh.userData.physics = { mass: 1 };
+    mesh.userData.objectType = 'kPlayer';
+    kObject = mesh;
+    scene.add(mesh)
+
+    //Ammojs Section
+    let transform = new Ammo.btTransform();
+    transform.setIdentity();
+    transform.setOrigin( new Ammo.btVector3( pos.x, pos.y, pos.z ) );
+    transform.setRotation( new Ammo.btQuaternion( quat.x, quat.y, quat.z, quat.w ) );
+    let motionState = new Ammo.btDefaultMotionState( transform );
+
+    let colShape = new Ammo.btBoxShape( new Ammo.btVector3( width * 0.5, height * 0.5, depth * 0.5 ) );
+    colShape.setMargin( 0.05 );
+
+    let localInertia = new Ammo.btVector3( 0, 0, 0 );
+    colShape.calculateLocalInertia( mass, localInertia );
+
+    let rbInfo = new Ammo.btRigidBodyConstructionInfo( mass, motionState, colShape, localInertia );
+    let body = new Ammo.btRigidBody( rbInfo );
+
+    body.setFriction(4);
+    body.setRollingFriction(10);
+
+    body.setActivationState( STATE.DISABLE_DEACTIVATION );
+    body.setCollisionFlags( FLAGS.CF_KINEMATIC_OBJECT );
+
+    physicsWorld.addRigidBody( body );
+    kObject.userData.physicsBody = body;
+
+    bodies.push({
+      mesh:mesh,
+      rigid:body,
+    })
+
+  }
 }
 
 function createGUI(){
@@ -334,10 +425,113 @@ function createGUI(){
   physicsGroundFolder.add(myObject,'addPhysicsGround')
   physicsGroundFolder.add(myObject,'removePhysicsGround')
   physicsGroundFolder.add(myObject,'resetPhysicsGround')
-  //const physicsPlayerFolder = physicsFolder.addFolder('Player')
-  //physicsPlayerFolder.add(myObject,'addPhysicsPlayer')
-  //physicsPlayerFolder.add(myObject,'removePhysicsPlayer')
-  //physicsPlayerFolder.add(myObject,'resetPhysicsPlayer')
+  const physicsPlayerFolder = physicsFolder.addFolder('Player')
+  physicsPlayerFolder.add(myObject,'addPhysicsPlayer')
+  physicsPlayerFolder.add(myObject,'removePhysicsPlayer')
+  physicsPlayerFolder.add(myObject,'resetPhysicsPlayer')
+  physicsPlayerFolder.add(myObject,'addPhysicsKPlayer')
+
+}
+
+function setupEventHandlers(){
+  window.addEventListener( 'keydown', handleKeyDown, false);
+  window.addEventListener( 'keyup', handleKeyUp, false);
+}
+
+function handleKeyDown(event){
+  let keyCode = event.keyCode;
+  switch(keyCode){
+    case 87: //W: FORWARD
+      //moveDirection.forward = 1
+      kMoveDirection.forward = 1
+      break;
+    case 83: //S: BACK
+      //moveDirection.back = 1
+      kMoveDirection.back = 1
+      break;
+    case 65: //A: LEFT
+      //moveDirection.left = 1
+      kMoveDirection.left = 1
+      break;
+    case 68: //D: RIGHT
+      //moveDirection.right = 1
+      kMoveDirection.right = 1
+      break;
+  }
+}
+
+function handleKeyUp(event){
+
+  let keyCode = event.keyCode;
+  switch(keyCode){
+    case 87: //FORWARD
+      //moveDirection.forward = 0
+      kMoveDirection.forward = 0
+      break;
+    case 83: //BACK
+      //moveDirection.back = 0
+      kMoveDirection.back = 0
+      break;
+    case 65: //LEFT
+      //moveDirection.left = 0
+      kMoveDirection.left = 0
+      break;
+    case 68: //RIGHT
+      //moveDirection.right = 0
+      kMoveDirection.right = 0
+      break;
+  }
+}
+
+function movePlayer(){
+  if(!objectPlayer)return;
+  let scalingFactor = 20;
+  scalingFactor=1; 
+  let moveX =  moveDirection.right - moveDirection.left;
+  let moveZ =  moveDirection.back - moveDirection.forward;
+  let moveY =  0; 
+
+  if( moveX == 0 && moveY == 0 && moveZ == 0) return;
+
+  let resultantImpulse = new Ammo.btVector3( moveX, moveY, moveZ )
+  resultantImpulse.op_mul(scalingFactor);
+
+  let physicsBody = objectPlayer.userData.physicsBody;
+  physicsBody.setLinearVelocity( resultantImpulse );
+}
+
+function moveKinematic(){
+  if(!kObject)return;
+  let scalingFactor = 0.3;
+
+  let moveX =  kMoveDirection.right - kMoveDirection.left;
+  let moveZ =  kMoveDirection.back - kMoveDirection.forward;
+  let moveY =  0;
+
+  let translateFactor = tmpPos.set(moveX, moveY, moveZ);
+
+  translateFactor.multiplyScalar(scalingFactor);
+
+  kObject.translateX(translateFactor.x);
+  kObject.translateY(translateFactor.y);
+  kObject.translateZ(translateFactor.z);
+
+  kObject.getWorldPosition(tmpPos);
+  kObject.getWorldQuaternion(tmpQuat);
+
+  let physicsBody = kObject.userData.physicsBody;
+
+  let ms = physicsBody.getMotionState();
+  if ( ms ) {
+    ammoTmpPos.setValue(tmpPos.x, tmpPos.y, tmpPos.z);
+    ammoTmpQuat.setValue( tmpQuat.x, tmpQuat.y, tmpQuat.z, tmpQuat.w);
+
+    tmpTrans.setIdentity();
+    tmpTrans.setOrigin( ammoTmpPos ); 
+    tmpTrans.setRotation( ammoTmpQuat ); 
+
+    ms.setWorldTransform(tmpTrans);
+  }
 
 }
 
@@ -346,6 +540,8 @@ function setupScene(){
   cube = createMeshCube();
   scene.add(cube)
   setup_Helpers()
+
+  setupEventHandlers();
 
   van.add(document.body, stats.dom);
   van.add(document.body, renderer.domElement);
@@ -361,6 +557,8 @@ function animate() {
 	  cube.rotation.y += 0.01;
   }
 
+  //movePlayer();
+  moveKinematic();
   updatePhysics(deltaTime);
 	
   stats.update();
@@ -384,6 +582,8 @@ function setupPhysics(){
   physicsWorld                = new Ammo.btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
   physicsWorld.setGravity(new Ammo.btVector3(gravity.x, gravity.y, gravity.z));
   tmpTrans = new Ammo.btTransform();
+  ammoTmpPos = new Ammo.btVector3();
+  ammoTmpQuat = new Ammo.btQuaternion();
 
   setupScene()
 }
