@@ -93,7 +93,7 @@ function scriptHtml03(_script){
 `),
     ),
     body(
-      script({src:"https://unpkg.com/three@0.160.0/examples/jsm/libs/ammo.wasm.js"}),
+      script({src:"https://unpkg.com/three@0.170.0/examples/jsm/libs/ammo.wasm.js"}),
       script({type:"module",src:_script}),
     ),
   );
