@@ -268,8 +268,6 @@ function createGUI(){
   physicsGroundFolder.add(myObject,'addPhysicsGround')
   physicsGroundFolder.add(myObject,'removePhysicsGround')
 
-
-
 }
 
 function setup_scene(){
