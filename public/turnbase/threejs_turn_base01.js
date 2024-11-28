@@ -12,6 +12,8 @@ import { OrbitControls } from 'https://unpkg.com/three@0.170.0/examples/jsm/cont
 import Stats from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/stats.module.js';
 import { GUI } from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/lil-gui.module.min.js';
 
+import SpriteAnimation2DTileMap from './spriteanimation2dtilemap.js';
+
 const {div,style} = van.tags;
 
 var gridHelper;
@@ -23,17 +25,20 @@ const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.inner
 camera.position.set(0, 0, 5);
 
 const renderer = new THREE.WebGLRenderer();
+renderer.setPixelRatio( window.devicePixelRatio );
 renderer.setSize( window.innerWidth, window.innerHeight );
+renderer.setClearColor( 0x80a0e0);
+
 window.addEventListener('resize', function(event) {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize( window.innerWidth, window.innerHeight );
 });
 
-const geometry = new THREE.BoxGeometry( 1, 1, 1 );
-const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-const cube = new THREE.Mesh( geometry, material );
-scene.add( cube );
+// const geometry = new THREE.BoxGeometry( 1, 1, 1 );
+// const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+// const cube = new THREE.Mesh( geometry, material );
+// scene.add( cube );
 
 var clock = new THREE.Clock();
 var controls = new OrbitControls( camera, renderer.domElement );
@@ -53,6 +58,12 @@ const myObject ={
   },
   resetRotation(){
     cube.rotation.set(0,0,0)
+  },
+  playerAttack(){
+    console.log('attack 1');
+  },
+  enemyAttack(){
+    console.log('attack 2');
   }
 }
 
@@ -62,7 +73,7 @@ function createGUI(){
   const debugFolder = gui.addFolder('Debug')
   debugFolder.add(gridHelper,'visible').name('is Grid')
   //debugFolder.add(gridHelper,'visible').name('is Grid')
-  const orbitControlsFolder = gui.addFolder('Orbit Controls')
+  const orbitControlsFolder = gui.addFolder('Orbit Controls').show(false)
   orbitControlsFolder.add(controls, 'autoRotate')
   orbitControlsFolder.add(controls, 'autoRotateSpeed')
   orbitControlsFolder.add(controls, 'dampingFactor')
@@ -76,15 +87,28 @@ function createGUI(){
   orbitControlsFolder.add(controls, 'zoomToCursor')
   orbitControlsFolder.add(controls, 'enabled')
   
-  const cubeFolder = gui.addFolder('Cube')
-  cubeFolder.add(cube,'visible')
-  cubeFolder.add(myObject,'isRotate')
-  cubeFolder.add(myObject,'resetRotation')
+  //const cubeFolder = gui.addFolder('Cube').show(false);
+  // cubeFolder.add(cube,'visible')
+  // cubeFolder.add(myObject,'isRotate')
+  // cubeFolder.add(myObject,'resetRotation')
+
+  const battleFolder = gui.addFolder('Battle').show();
+  battleFolder.add(myObject,'playerAttack')
+  battleFolder.add(myObject,'enemyAttack')
+}
+
+function setupEntities(){
+
+  let playerSprite2D = new SpriteAnimation2DTileMap();
+  scene.add(playerSprite2D.mesh);
+
 }
 
 function setup_scene(){
 
-  setup_Helpers()
+  setup_Helpers();
+
+  setupEntities();
 
   van.add(document.body, stats.dom);
   van.add(document.body, renderer.domElement);
@@ -95,10 +119,10 @@ function setup_scene(){
 
 function animate() {
 
-  if(myObject.isRotate){
-    cube.rotation.x += 0.01;
-	  cube.rotation.y += 0.01;
-  }
+  // if(myObject.isRotate){
+  //   cube.rotation.x += 0.01;
+	//   cube.rotation.y += 0.01;
+  // }
 	
   stats.update();
   controls.update();

@@ -134,6 +134,8 @@ var urlandjs = [
   //{url:'/ecs_worker',                               file:'/tests/ecs_worker_main.js'},
   //{url:'/threerapierjsm',                           file:'/tests/three_reapier_jsm.js'},
   //{url:'/threecss2d',                               file:'/tests/three_css2drenderer.js'},
+
+  {url:'/threejs_turn_base01',                          file:'/turnbase/threejs_turn_base01.js'},
   
   {url:'/three_framework00',                          file:'/tests/three_framework00.js'},
   {url:'/three_rapier',                               file:'/tests/three_rapier.js'},
