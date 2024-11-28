@@ -6,9 +6,15 @@
   
 */
 
-// ray cast plane for 2d 
+// ray cast plane for 2d X,Y
 
-import { THREE, ECS, van } from "/dps.js";
+import { 
+  THREE, 
+  ECS, 
+  van,
+  GUI,
+  OrbitControls,
+} from "/dps.js";
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
@@ -17,7 +23,14 @@ camera.position.z = 5;
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
 renderer.setAnimationLoop( animate );
+window.addEventListener('resize', function(event) {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize( window.innerWidth, window.innerHeight );
+});
 document.body.appendChild( renderer.domElement );
+
+var controls = new OrbitControls( camera, renderer.domElement );
 
 const geometry = new THREE.BoxGeometry( 1, 1, 1 );
 const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
@@ -29,6 +42,12 @@ const point_material = new THREE.MeshBasicMaterial( { color: 0xff0000 } );
 const point_cube = new THREE.Mesh( point_geometry, point_material );
 scene.add( point_cube );
 point_cube.position.x = 1;
+
+const size = 10;
+const divisions = 10;
+
+const gridHelper = new THREE.GridHelper( size, divisions );
+scene.add( gridHelper );
 
 var raycaster = new THREE.Raycaster();
 var mouse = new THREE.Vector2();
@@ -60,9 +79,15 @@ function onPointerMove(event){
 	// }
 }
 
-
 function animate() {
 	cube.rotation.x += 0.01;
 	cube.rotation.y += 0.01;
 	renderer.render( scene, camera );
 }
+
+const myObject = {
+
+};
+
+const gui = new GUI();
+gui.add(gridHelper,'visible').name('gridHelper')

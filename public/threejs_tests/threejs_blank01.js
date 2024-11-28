@@ -13,23 +13,14 @@ import Stats from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/stats.modul
 import { GUI } from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/lil-gui.module.min.js';
 
 const {div,style} = van.tags;
+var gridHelper;
 
 const stats = new Stats();
-
-var raycaster = new THREE.Raycaster();
-var mouse = new THREE.Vector2();
-//                                             direction
-var plane = new THREE.Plane( new THREE.Vector3( 0, 0, 1 ), 0 );
-
+const clock = new THREE.Clock();
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 //camera.position.z = 5;
 camera.position.set(0, 0, 5);
-var gridHelper;
-var axesHelper;
-var cube;
-
-var meshes = [];
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
@@ -39,27 +30,15 @@ window.addEventListener('resize', function(event) {
   renderer.setSize( window.innerWidth, window.innerHeight );
 });
 
-function createMeshCube(color=0x00ff00){
-  const geometry = new THREE.BoxGeometry( 0.1, 0.1, 0.1 );
-  const material = new THREE.MeshBasicMaterial( { color: color} );
-  let mesh = new THREE.Mesh( geometry, material );
-  //scene.add( cube );
-  return mesh;
+function createMeshBox(){
+  const geometry = new THREE.BoxGeometry( 1, 1, 1 );
+  const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+  const box = new THREE.Mesh( geometry, material );
+  return box;
 }
-
-cube = createMeshCube();
+let cube = createMeshBox();
 scene.add( cube );
 
-let cube1 = createMeshCube();
-meshes.push(cube1);
-scene.add( cube1 );
-
-let cube2 = createMeshCube();
-cube2.position.set(0,1,0)
-meshes.push(cube2);
-scene.add( cube2 );
-
-//var clock = new THREE.Clock();
 var controls = new OrbitControls( camera, renderer.domElement );
 
 function setup_Helpers(){
@@ -67,17 +46,11 @@ function setup_Helpers(){
   const divisions = 10;
 
   gridHelper = new THREE.GridHelper( size, divisions );
-  gridHelper.rotation.x = Math.PI / 180 * 90
   scene.add( gridHelper );
-
-  axesHelper = new THREE.AxesHelper( 5 );
-
-  scene.add(axesHelper);
 }
 
 const myObject ={
   isRotate:true,
-  isHit:false,
   test:()=>{
     console.log('test');
   },
@@ -86,14 +59,11 @@ const myObject ={
   }
 }
 
-var pointer = new THREE.Vector3();
-
 function createGUI(){
   const gui = new GUI();
   gui.add(myObject,'test')
   const debugFolder = gui.addFolder('Debug')
   debugFolder.add(gridHelper,'visible').name('is Grid')
-  //debugFolder.add(gridHelper,'visible').name('is Grid')
   const orbitControlsFolder = gui.addFolder('Orbit Controls')
   orbitControlsFolder.add(controls, 'autoRotate')
   orbitControlsFolder.add(controls, 'autoRotateSpeed')
@@ -112,39 +82,6 @@ function createGUI(){
   cubeFolder.add(cube,'visible')
   cubeFolder.add(myObject,'isRotate')
   cubeFolder.add(myObject,'resetRotation')
-
-  const pointerFolder = gui.addFolder('Pointer')
-  pointerFolder.add(pointer, 'x').listen().disable();
-  pointerFolder.add(pointer, 'y').listen().disable();
-  pointerFolder.add(pointer, 'z').listen().disable();
-
-  pointerFolder.add(myObject,'isHit').listen().disable();
-}
-
-function onPointerMove(event){
-  //console.log("mouse move?");
-	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-  //console.log("mouse: ",mouse)
-	raycaster.setFromCamera( mouse, camera );
-  let intersects = new THREE.Vector3();
-  raycaster.ray.intersectPlane( plane, intersects );
-  //console.log( raycaster.ray ); 
-	//console.log("hit?", intersects );
-  if(intersects){
-    //console.log("intersects: ",intersects)
-    cube.position.copy(intersects);
-    pointer.copy(intersects);
-  }
-
-  // const objintersects = raycaster.intersectObjects( scene.children );
-  const objintersects = raycaster.intersectObjects( meshes );
-  myObject.isHit = false;
-  for ( let i = 0; i < objintersects.length; i ++ ) {
-    //console.log(objintersects[i]);
-    myObject.isHit = true;
-  }
-
 }
 
 function setup_scene(){
@@ -153,8 +90,6 @@ function setup_scene(){
 
   van.add(document.body, stats.dom);
   van.add(document.body, renderer.domElement);
-
-  window.addEventListener( 'pointermove', onPointerMove, { passive: false } );
   
   renderer.setAnimationLoop( animate );
   createGUI();
@@ -171,6 +106,5 @@ function animate() {
   controls.update();
 	renderer.render( scene, camera );
 }
-
 
 setup_scene()

@@ -177,13 +177,6 @@ class TriEditor extends TriECSEngine{
   }
 }
 
-
-
-
-
-
-
-
 function Page_Mapper_Editor(){
 
   const app = new TriEditor({isPhysics:true,isEditor:true});
