@@ -7,7 +7,9 @@
 */
 
 // https://sbcode.net/threejs/physics-rapier-impulsejoint-motors/
-
+// https://sbedit.net/d00b6d21064f1313f556563cd471ccdbf7d7578f#L265-L307
+// https://sbcode.net/threejs/physics-rapier-impulsejoint-motors/
+// 
 import {
   van,
   THREE,
@@ -52,7 +54,7 @@ class Box {
   dynamicBody=[]
 
   constructor(scene, world, position = [0,0,0]) {
-    const boxMesh = new Mesh(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial());
+    const boxMesh = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshStandardMaterial());
     boxMesh.castShadow = true
     scene.add(boxMesh);
 
@@ -91,6 +93,9 @@ class Car {
   keyMap={}; //: { [key: string]: boolean }
   pivot=null; // : Object3D
 
+  targetSteer=0;
+  targetVelocity=0;
+
   constructor(keyMap= {}, pivot) {
     this.followTarget.position.set(0, 1, 0)
     this.lightLeftTarget.position.set(-0.35, 1, -10)
@@ -102,28 +107,49 @@ class Car {
   //async init(scene, world, position= [0, 0, 0]) {
   async init(scene, world, position) {
 
-    const carMesh =  new THREE.Mesh(new THREE.BoxGeometry(1,0.5,1), new THREE.MeshBasicMaterial( {color: 0xffff00} ) );
+    const carMesh =  new THREE.Mesh(new THREE.BoxGeometry(0.8,0.5,1.5), new THREE.MeshBasicMaterial({
+      color: 0xffff00,
+      wireframe:true
+    }));
+    //carMesh.position.set(0,1,0)
     carMesh.add(this.followTarget)
 
-    const wheelBLMesh0 = new THREE.Mesh( new THREE.CylinderGeometry( 0.4, 0.4, 0.4, 16 ), new THREE.MeshBasicMaterial({ color: 0xffff00 })); 
-    const wheelBRMesh0 = new THREE.Mesh( new THREE.CylinderGeometry( 0.4, 0.4, 0.4, 16 ), new THREE.MeshBasicMaterial({color: 0xffff00 })); 
-    const wheelFLMesh0 = new THREE.Mesh( new THREE.CylinderGeometry( 0.4, 0.4, 0.4, 16 ), new THREE.MeshBasicMaterial({color: 0xffff00 })); 
-    const wheelFRMesh0 = new THREE.Mesh( new THREE.CylinderGeometry( 0.4, 0.4, 0.4, 16 ), new THREE.MeshBasicMaterial({color: 0xffff00 }));
+    const wheelBLMesh0 = new THREE.Mesh( new THREE.CylinderGeometry( 0.3, 0.3, 0.3, 6 ), new THREE.MeshBasicMaterial({ 
+      color: 0xffff00,
+      //color: 'red',
+      wireframe:true
+    })); 
+    const wheelBRMesh0 = new THREE.Mesh( new THREE.CylinderGeometry( 0.3, 0.3, 0.3, 6 ), new THREE.MeshBasicMaterial({
+      color: 0xffff00,
+      wireframe:true
+    })); 
+    const wheelFLMesh0 = new THREE.Mesh( new THREE.CylinderGeometry( 0.3, 0.3, 0.3, 6 ), new THREE.MeshBasicMaterial({
+      color: 0xffff00,
+      wireframe:true
+    })); 
+    const wheelFRMesh0 = new THREE.Mesh( new THREE.CylinderGeometry( 0.3, 0.3, 0.3, 6 ), new THREE.MeshBasicMaterial({
+      color: 0xffff00,
+      wireframe:true
+    }));
     //rotate mesh to match wheel rotate spin
     const wheelBLMesh = new THREE.Object3D();
     wheelBLMesh0.rotation.z = Math.PI / 180 * 90;
+    wheelBLMesh0.position.set(-0.2,0,0)
     wheelBLMesh.add(wheelBLMesh0);
     //rotate mesh to match wheel rotate spin
     const wheelBRMesh = new THREE.Object3D();
     wheelBRMesh0.rotation.z = Math.PI / 180 * 90;
+    wheelBRMesh0.position.set(0.2,0,0)
     wheelBRMesh.add(wheelBRMesh0);
     //rotate mesh to match wheel rotate spin
     const wheelFLMesh = new THREE.Object3D();
     wheelFLMesh0.rotation.z = Math.PI / 180 * 90;
+    wheelFLMesh0.position.set(-0.2,0,0)
     wheelFLMesh.add(wheelFLMesh0);
     //rotate mesh to match wheel rotate spin
     const wheelFRMesh = new THREE.Object3D();
     wheelFRMesh0.rotation.z = Math.PI / 180 * 90;
+    wheelFRMesh0.position.set(0.2,0,0)
     wheelFRMesh.add(wheelFRMesh0);
 
     scene.add(carMesh, wheelBLMesh, wheelBRMesh, wheelFLMesh, wheelFRMesh)
@@ -184,61 +210,91 @@ class Car {
     })
 
     // create shapes for carBody, wheelBodies and axelBodies
-    const carShape = (RAPIER.ColliderDesc.convexMesh(new Float32Array(positions)) ).setMass(1).setRestitution(0.5).setFriction(3)
-    //.setCollisionGroups(131073)
+    const carShape = (RAPIER.ColliderDesc.convexMesh(new Float32Array(positions)) )
+      .setMass(1)
+      .setRestitution(0.5)
+      .setFriction(3)
+      .setCollisionGroups(131073)
     const wheelBLShape = RAPIER.ColliderDesc.cylinder(0.1, 0.3)
       .setRotation(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), -Math.PI / 2))
       .setTranslation(-0.2, 0, 0)
       .setRestitution(0.5)
       .setFriction(2)
-    //.setCollisionGroups(262145)
+      .setCollisionGroups(262145)
     const wheelBRShape = RAPIER.ColliderDesc.cylinder(0.1, 0.3)
       .setRotation(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), Math.PI / 2))
       .setTranslation(0.2, 0, 0)
       .setRestitution(0.5)
       .setFriction(2)
-    //.setCollisionGroups(262145)
+      .setCollisionGroups(262145)
     const wheelFLShape = RAPIER.ColliderDesc.cylinder(0.1, 0.3)
       .setRotation(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), Math.PI / 2))
       .setTranslation(-0.2, 0, 0)
       .setRestitution(0.5)
       .setFriction(2.5)
-    //.setCollisionGroups(262145)
+      .setCollisionGroups(262145)
     const wheelFRShape = RAPIER.ColliderDesc.cylinder(0.1, 0.3)
       .setRotation(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), Math.PI / 2))
       .setTranslation(0.2, 0, 0)
       .setRestitution(0.5)
       .setFriction(2.5)
-    //.setCollisionGroups(262145)
+      .setCollisionGroups(262145)
+
+    // attach back wheel to cars. These will be configurable motors.
     const axelFLShape = RAPIER.ColliderDesc.cuboid(0.1, 0.1, 0.1)
       .setRotation(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), Math.PI / 2))
       .setMass(0.1)
-    //.setCollisionGroups(589823)
+      .setCollisionGroups(589823) //d
+    //.setCollisionGroups(524288)
     const axelFRShape = RAPIER.ColliderDesc.cuboid(0.1, 0.1, 0.1)
       .setRotation(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), Math.PI / 2))
       .setMass(0.1)
-    //.setCollisionGroups(589823)
-
-    //joins wheels to car body
-    world.createImpulseJoint(RAPIER.JointData.revolute(new THREE.Vector3(-0.55, 0, 0.63), new THREE.Vector3(0, 0, 0), new THREE.Vector3(-1, 0, 0)), this.carBody, wheelBLBody, true)
-    world.createImpulseJoint(RAPIER.JointData.revolute(new THREE.Vector3(0.55, 0, 0.63), new THREE.Vector3(0, 0, 0), new THREE.Vector3(-1, 0, 0)), this.carBody, wheelBRBody, true)
-    world.createImpulseJoint(RAPIER.JointData.revolute(new THREE.Vector3(-0.55, 0, -0.63), new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 0, 0)), this.carBody, wheelFLBody, true)
-    world.createImpulseJoint(RAPIER.JointData.revolute(new THREE.Vector3(0.55, 0, -0.63), new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 0, 0)), this.carBody, wheelFRBody, true)
+      .setCollisionGroups(589823)// d
+    //.setCollisionGroups(524288)//
 
     // attach back wheel to cars. These will be configurable motors.
-    this.wheelBLMotor = world.createImpulseJoint(RAPIER.JointData.revolute(new THREE.Vector3(-0.55, 0, 0.63), new THREE.Vector3(0, 0, 0), new THREE.Vector3(-1, 0, 0)), this.carBody, wheelBLBody, true)
-    this.wheelBRMotor = world.createImpulseJoint(RAPIER.JointData.revolute(new THREE.Vector3(0.55, 0, 0.63), new THREE.Vector3(0, 0, 0), new THREE.Vector3(-1, 0, 0)), this.carBody, wheelBRBody, true)
+    this.wheelBLMotor = world.createImpulseJoint(
+      RAPIER.JointData.revolute(new RAPIER.Vector3(-0.55, 0, 0.63), new RAPIER.Vector3(0, 0, 0), new RAPIER.Vector3(-1, 0, 0)),
+      this.carBody,
+      wheelBLBody,
+      true
+    )
+    this.wheelBRMotor = world.createImpulseJoint(
+        RAPIER.JointData.revolute(new RAPIER.Vector3(0.55, 0, 0.63), new RAPIER.Vector3(0, 0, 0), new RAPIER.Vector3(-1, 0, 0)),
+        this.carBody,
+        wheelBRBody,
+        true
+    )
 
     // attach steering axels to car. These will be configurable motors.
-    this.wheelFLAxel = world.createImpulseJoint(RAPIER.JointData.revolute(new THREE.Vector3(-0.55, 0, -0.63), new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 1, 0)), this.carBody, axelFLBody, true)
-    ;(this.wheelFLAxel).configureMotorModel(RAPIER.MotorModel.ForceBased)
-    this.wheelFRAxel = world.createImpulseJoint(RAPIER.JointData.revolute(new THREE.Vector3(0.55, 0, -0.63), new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 1, 0)), this.carBody, axelFRBody, true)
-    ;(this.wheelFRAxel).configureMotorModel(RAPIER.MotorModel.ForceBased)
+    this.wheelFLAxel = world.createImpulseJoint(
+        RAPIER.JointData.revolute(new RAPIER.Vector3(-0.55, 0, -0.63), new RAPIER.Vector3(0, 0, 0), new RAPIER.Vector3(0, 1, 0)),
+        this.carBody,
+        axelFLBody,
+        true
+    )
+    this.wheelFLAxel.configureMotorModel(RAPIER.MotorModel.ForceBased)
+    this.wheelFRAxel = world.createImpulseJoint(
+        RAPIER.JointData.revolute(new RAPIER.Vector3(0.55, 0, -0.63), new RAPIER.Vector3(0, 0, 0), new RAPIER.Vector3(0, 1, 0)),
+        this.carBody,
+        axelFRBody,
+        true
+    )
+    this.wheelFRAxel.configureMotorModel(RAPIER.MotorModel.ForceBased)
 
     // // attach front wheel to steering axels
-    world.createImpulseJoint(RAPIER.JointData.revolute(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 0, 0)), axelFLBody, wheelFLBody, true)
-    world.createImpulseJoint(RAPIER.JointData.revolute(new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, 0), new THREE.Vector3(1, 0, 0)), axelFRBody, wheelFRBody, true)
-
+    world.createImpulseJoint(
+        RAPIER.JointData.revolute(new RAPIER.Vector3(0, 0, 0), new RAPIER.Vector3(0, 0, 0), new RAPIER.Vector3(1, 0, 0)),
+        axelFLBody,
+        wheelFLBody,
+        true
+    )
+    world.createImpulseJoint(
+        RAPIER.JointData.revolute(new RAPIER.Vector3(0, 0, 0), new RAPIER.Vector3(0, 0, 0), new RAPIER.Vector3(1, 0, 0)),
+        axelFRBody,
+        wheelFRBody,
+        true
+    )
 
     // create world collider
     world.createCollider(carShape, this.carBody)
@@ -255,6 +311,8 @@ class Car {
     this.dynamicBodies.push([wheelBRMesh, wheelBRBody])
     this.dynamicBodies.push([wheelFLMesh, wheelFLBody])
     this.dynamicBodies.push([wheelFRMesh, wheelFRBody])
+    this.dynamicBodies.push([new THREE.Object3D(), axelFRBody])
+    this.dynamicBodies.push([new THREE.Object3D(), axelFLBody])
 
   }
 
@@ -270,13 +328,17 @@ class Car {
 
     let targetVelocity = 0
     if (this.keyMap['KeyW']) {
-      targetVelocity = 500
+      targetVelocity = 200
     }
     if (this.keyMap['KeyS']) {
       targetVelocity = -200
     }
-    //;(this.wheelBLMotor).configureMotorVelocity(targetVelocity, 2.0)
-    //;(this.wheelBRMotor).configureMotorVelocity(targetVelocity, 2.0)
+    // if (this.keyMap['Space']) {
+    //   targetVelocity = 0
+    // }
+    this.targetVelocity = targetVelocity;
+    ;(this.wheelBLMotor).configureMotorVelocity(targetVelocity, 2.0)
+    ;(this.wheelBRMotor).configureMotorVelocity(targetVelocity, 2.0)
 
     let targetSteer = 0
     if (this.keyMap['KeyA']) {
@@ -285,7 +347,8 @@ class Car {
     if (this.keyMap['KeyD']) {
       targetSteer -= 0.6
     }
-
+    this.targetSteer = targetSteer;
+    
     ;(this.wheelFLAxel).configureMotorPosition(targetSteer, 100, 10)
     ;(this.wheelFRAxel).configureMotorPosition(targetSteer, 100, 10)
   }
@@ -438,9 +501,9 @@ const myObject ={
       return;
     }
 
-    const width = args?.width || 10;
+    const width = args?.width || 50;
     const height = args?.height || 1;
-    const depth = args?.depth || 10;
+    const depth = args?.depth || 50;
 
     let pos={
       x:0,
@@ -591,6 +654,11 @@ function createGUI(){
   physicsGroundFolder.add(myObject,'addPhysicsGround')
   physicsGroundFolder.add(myObject,'removePhysicsGround')
   physicsGroundFolder.add(myObject,'resetPhysicsGround')
+
+  const physicsCarFolder = physicsFolder.addFolder('Car')
+  physicsCarFolder.add(car, 'targetSteer').listen().disable();
+  physicsCarFolder.add(car, 'targetVelocity').listen().disable();
+  //targetSteer
   //const physicsPlayerFolder = physicsFolder.addFolder('Player')
   //physicsPlayerFolder.add(myObject,'addPhysicsPlayer')
   //physicsPlayerFolder.add(myObject,'removePhysicsPlayer')
@@ -638,6 +706,7 @@ document.addEventListener('pointerlockchange', () => {
   }
 })
 var car;
+var boxes;
 // SET UP SCENE
 async function setupScene(){
   // cube = createMeshCube();
@@ -646,12 +715,15 @@ async function setupScene(){
 
   myObject.addPhysicsGround();
 
-  
-
   car = new Car(keyMap, pivot);
   await car.init(scene, physicsWorld, [0, 1, 0]);
 
-  
+  boxes = []
+  for (let x = 0; x < 8; x += 1) {
+    for (let y = 0; y < 8; y += 1) {
+      boxes.push(new Box(scene, physicsWorld, [(x - 4) * 1.2, y + 1, -20]))
+    }
+  }
 
   document.addEventListener('keydown', onDocumentKey);
   document.addEventListener('keyup', onDocumentKey);
@@ -703,6 +775,7 @@ function updatePhysics(deltaTime){
   if(physicsWorld){
     physicsWorld.step();
   }
+  boxes.forEach((b) => b.update())
   
   for(const _entity of bodies){
     if((_entity?.mesh !=null)&&(_entity?.rigid !=null)){
