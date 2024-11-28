@@ -45,7 +45,7 @@ class RNG {
 
 const params = {
   seed: 0,
-  terrain:{
+  texture:{
     scale: 30,
     magnitude: 0.5,
     offset: 0.2
@@ -109,11 +109,11 @@ function generateTexture(){
     for(let y = 0; y < ctx.canvas.height; y++) {
       for(let z = 0; z < ctx.canvas.width; z++) {
         let noise = simplex.noise3d(
-          x / params.terrain.scale, 
-          y / params.terrain.scale,
-          z / params.terrain.scale
+          x / params.texture.scale, 
+          y / params.texture.scale,
+          z / params.texture.scale
         );
-        noise = params.terrain.offset + params.terrain.magnitude * noise;
+        noise = params.texture.offset + params.texture.magnitude * noise;
         //console.log(noise);
         //noise = (noise + 1) / 2;
         let color = Math.abs(noise) * 255;
