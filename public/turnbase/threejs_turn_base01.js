@@ -13,8 +13,12 @@ import Stats from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/stats.modul
 import { GUI } from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/lil-gui.module.min.js';
 
 import SpriteAnimation2DTileMap from './spriteanimation2dtilemap.js';
+import ProgressBar2D from "./progressbar2d.js";
 
-const {div,style} = van.tags;
+//const {div,style} = van.tags;
+
+const players = [];
+const enemies = [];
 
 var gridHelper;
 const stats = new Stats();
@@ -61,6 +65,8 @@ const myObject ={
   },
   playerAttack(){
     console.log('attack 1');
+    players[0].isAttack=true;
+    players[0].animationPlayer.oncePlay([14,22,30], 1.5);
   },
   enemyAttack(){
     console.log('attack 2');
@@ -96,16 +102,80 @@ function createGUI(){
   battleFolder.add(myObject,'playerAttack')
   battleFolder.add(myObject,'enemyAttack')
 }
-
+var progressBar;
 function setupEntities(){
 
   let playerSprite2D = new SpriteAnimation2DTileMap();
+  playerSprite2D.mesh.position.set(-4,0,0);
   scene.add(playerSprite2D.mesh);
 
+  players.push({
+    health:10,
+    attack:1,
+    animationPlayer:playerSprite2D,
+    isAttack:false,
+    isFinish:false,
+    target:0,
+  })
+
+
+  let playerSprite2D02 = new SpriteAnimation2DTileMap();
+  playerSprite2D02.mesh.position.set(4,0,0);
+  scene.add(playerSprite2D02.mesh);
+
+  enemies.push({
+    health:10,
+    attack:1,
+    animationPlayer:playerSprite2D02,
+    isAttack:false,
+    isFinish:false,
+    target:0,
+  })
+
+  progressBar = new ProgressBar2D();
+  scene.add(progressBar.mesh);
+  console.log("progressBar.mesh: ", progressBar.mesh)
+
+}
+let pcount = 0;
+function updateProgressBar(){
+  pcount++;
+  if(pcount>100){
+    pcount = 0;
+  }
+  progressBar.update();
+  progressBar.setPercent(pcount)
 }
 
-function setup_scene(){
+function updateAnimationPlayer(dt){
+  for(const pa of  players){
+    pa.animationPlayer.update(dt)
+    if((pa.isAttack==true)&&
+      (pa.animationPlayer.isPlay == false)&&
+      (pa.animationPlayer.isLoop == false)
+    ){
+      pa.isAttack=false;
+      console.log("END...")
+    }
+  }
+}
 
+function setupLights(){
+  const light1 = new THREE.DirectionalLight();
+  light1.position.set(1, 1, 1);
+  scene.add( light1 );
+
+  const light2 = new THREE.DirectionalLight();
+  light2.position.set(-1, 1, -0.5);
+  scene.add( light2 );
+
+  const ambient = new THREE.AmbientLight();
+  ambient.intensity = 0.1;
+  scene.add( light1 );
+}
+
+function setupScene(){
+  setupLights()
   setup_Helpers();
 
   setupEntities();
@@ -118,15 +188,17 @@ function setup_scene(){
 }
 
 function animate() {
-
+  const delta = clock.getDelta()
   // if(myObject.isRotate){
   //   cube.rotation.x += 0.01;
 	//   cube.rotation.y += 0.01;
   // }
+  updateProgressBar();
+  updateAnimationPlayer(delta)
 	
   stats.update();
   controls.update();
 	renderer.render( scene, camera );
 }
 
-setup_scene()
+setupScene()

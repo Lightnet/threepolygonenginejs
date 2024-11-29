@@ -185,9 +185,9 @@ const myObject ={
       return;
     }
 
-    const width = args?.width || 10;
+    const width = args?.width || 50;
     const height = args?.height || 1;
-    const depth = args?.depth || 10;
+    const depth = args?.depth || 50;
 
     let pos={
       x:0,
@@ -334,10 +334,10 @@ function createGUI(){
   orbitControlsFolder.add(controls, 'zoomToCursor')
   orbitControlsFolder.add(controls, 'enabled')
   
-  const cubeFolder = gui.addFolder('Cube').show(false)
-  cubeFolder.add(cube,'visible')
-  cubeFolder.add(myObject,'isRotate')
-  cubeFolder.add(myObject,'resetRotation')
+  // const cubeFolder = gui.addFolder('Cube').show(false)
+  // cubeFolder.add(cube,'visible')
+  // cubeFolder.add(myObject,'isRotate')
+  // cubeFolder.add(myObject,'resetRotation')
 
   const physicsFolder = gui.addFolder('Physics').show()
   physicsFolder.add(myObject,'lenPhysicsWorld')
@@ -404,8 +404,8 @@ function updatePlayerController(){
 
 // SET UP SCENE
 function setupScene(){
-  cube = createMeshCube();
-  scene.add(cube)
+  // cube = createMeshCube();
+  // scene.add(cube)
   setup_Helpers()
   setupCharacterController();
 
@@ -472,10 +472,10 @@ function handleKeyUp(event){
 // LOOP RENDERER AND UPDATE
 function animate() {
   let deltaTime = clock.getDelta();
-  if(myObject.isRotate){
-    cube.rotation.x += 0.01;
-	  cube.rotation.y += 0.01;
-  }
+  // if(myObject.isRotate){
+  //   cube.rotation.x += 0.01;
+	//   cube.rotation.y += 0.01;
+  // }
   updatePlayerController();
   updatePhysics(deltaTime);
 

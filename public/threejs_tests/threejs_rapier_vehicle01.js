@@ -80,7 +80,7 @@ class Box {
 // axelShape = 3
 
 class Car {
-  dynamicBodies= [null,null][null] = [];
+  dynamicBodies = [];
   followTarget = new THREE.Object3D();
   lightLeftTarget = new THREE.Object3D();
   lightRightTarget = new THREE.Object3D();
@@ -131,6 +131,7 @@ class Car {
       color: 0xffff00,
       wireframe:true
     }));
+
     //rotate mesh to match wheel rotate spin
     const wheelBLMesh = new THREE.Object3D();
     wheelBLMesh0.rotation.z = Math.PI / 180 * 90;
@@ -194,7 +195,6 @@ class Car {
         .setCanSleep(false)
     )
 
-    
     const v = new THREE.Vector3()
     let positions = []
     carMesh.updateMatrixWorld(true) // ensure world matrix is up to date
@@ -363,7 +363,6 @@ var bodies = [];
 var physicsWorld;
 var gridHelper;
 var rapierDebugRenderer;
-var cube;
 
 var clock = new THREE.Clock();
 const stats = new Stats();
