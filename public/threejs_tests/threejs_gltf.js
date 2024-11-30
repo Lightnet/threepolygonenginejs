@@ -11,19 +11,13 @@ import * as THREE from 'https://unpkg.com/three@0.170.0/build/three.module.js';
 import { OrbitControls } from 'https://unpkg.com/three@0.170.0/examples/jsm/controls/OrbitControls.js';
 import Stats from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/stats.module.js';
 import { GUI } from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/lil-gui.module.min.js';
+import { GLTFLoader } from 'https://unpkg.com/three@0.170.0/examples/jsm/loaders/GLTFLoader.js';
 
-import SpriteAnimation2DTileMap from './spriteanimation2dtilemap.js';
-import ProgressBar2D from "./progressbar2d.js";
-import CanvasText2D from "./canvastext2d.js";
-
-//const {div,style} = van.tags;
-
-const players = [];
-const enemies = [];
-
+const {div,style} = van.tags;
 var gridHelper;
-const stats = new Stats();
 
+const stats = new Stats();
+const clock = new THREE.Clock();
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 //camera.position.z = 5;
@@ -33,19 +27,21 @@ const renderer = new THREE.WebGLRenderer();
 renderer.setPixelRatio( window.devicePixelRatio );
 renderer.setSize( window.innerWidth, window.innerHeight );
 renderer.setClearColor( 0x80a0e0);
-
 window.addEventListener('resize', function(event) {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize( window.innerWidth, window.innerHeight );
 });
 
-// const geometry = new THREE.BoxGeometry( 1, 1, 1 );
-// const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-// const cube = new THREE.Mesh( geometry, material );
+function createMeshBox(){
+  const geometry = new THREE.BoxGeometry( 1, 1, 1 );
+  const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+  const box = new THREE.Mesh( geometry, material );
+  return box;
+}
+// let cube = createMeshBox();
 // scene.add( cube );
 
-var clock = new THREE.Clock();
 var controls = new OrbitControls( camera, renderer.domElement );
 
 function setup_Helpers(){
@@ -63,14 +59,6 @@ const myObject ={
   },
   resetRotation(){
     cube.rotation.set(0,0,0)
-  },
-  playerAttack(){
-    console.log('attack 1');
-    players[0].isAttack=true;
-    players[0].animationPlayer.oncePlay([14,22,30], 1.5);
-  },
-  enemyAttack(){
-    console.log('attack 2');
   }
 }
 
@@ -79,8 +67,7 @@ function createGUI(){
   gui.add(myObject,'test')
   const debugFolder = gui.addFolder('Debug')
   debugFolder.add(gridHelper,'visible').name('is Grid')
-  //debugFolder.add(gridHelper,'visible').name('is Grid')
-  const orbitControlsFolder = gui.addFolder('Orbit Controls').show(false)
+  const orbitControlsFolder = gui.addFolder('Orbit Controls')
   orbitControlsFolder.add(controls, 'autoRotate')
   orbitControlsFolder.add(controls, 'autoRotateSpeed')
   orbitControlsFolder.add(controls, 'dampingFactor')
@@ -94,77 +81,12 @@ function createGUI(){
   orbitControlsFolder.add(controls, 'zoomToCursor')
   orbitControlsFolder.add(controls, 'enabled')
   
-  //const cubeFolder = gui.addFolder('Cube').show(false);
+  // const cubeFolder = gui.addFolder('Cube')
   // cubeFolder.add(cube,'visible')
   // cubeFolder.add(myObject,'isRotate')
   // cubeFolder.add(myObject,'resetRotation')
 
-  const battleFolder = gui.addFolder('Battle').show();
-  battleFolder.add(myObject,'playerAttack')
-  battleFolder.add(myObject,'enemyAttack')
-}
-var progressBar;
-var canvasText;
-function setupEntities(){
-
-  let playerSprite2D = new SpriteAnimation2DTileMap();
-  playerSprite2D.mesh.position.set(-4,0,0);
-  scene.add(playerSprite2D.mesh);
-
-  players.push({
-    health:10,
-    attack:1,
-    animationPlayer:playerSprite2D,
-    isAttack:false,
-    isFinish:false,
-    target:0,
-  })
-
-
-  let playerSprite2D02 = new SpriteAnimation2DTileMap();
-  playerSprite2D02.mesh.position.set(4,0,0);
-  scene.add(playerSprite2D02.mesh);
-
-  enemies.push({
-    health:10,
-    attack:1,
-    animationPlayer:playerSprite2D02,
-    isAttack:false,
-    isFinish:false,
-    target:0,
-  })
-
-  progressBar = new ProgressBar2D();
-  scene.add(progressBar.mesh);
-  console.log("progressBar.mesh: ", progressBar.mesh)
-
-  canvasText = new CanvasText2D();
-  canvasText.setText('Hello World');
-  canvasText.mesh.position.set(0,0,0.1)
-  scene.add(canvasText.mesh);
-
-}
-let pcount = 0;
-function updateProgressBar(){
-  pcount++;
-  if(pcount>100){
-    pcount = 0;
-  }
-  progressBar.update();
-  progressBar.setPercent(pcount)
-}
-
-function updateAnimationPlayer(dt){
-  for(const pa of  players){
-    pa.animationPlayer.update(dt)
-    if((pa.isAttack==true)&&
-      (pa.animationPlayer.isPlay == false)&&
-      (pa.animationPlayer.isLoop == false)
-    ){
-      pa.isAttack=false;
-      console.log("END...")
-    }
-  }
+  
 }
 
 function setupLights(){
@@ -180,12 +102,24 @@ function setupLights(){
   ambient.intensity = 0.1;
   scene.add( light1 );
 }
+const loader = new GLTFLoader();
 
-function setupScene(){
-  setupLights()
+function setup_scene(){
+  setupLights();
   setup_Helpers();
 
-  setupEntities();
+  loader.load(
+    'models/mc_1_2_base_model01.glb',
+    function ( gltf ) {
+      scene.add( gltf.scene );
+    },
+    function ( xhr ) {
+      console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+    },
+    function ( error ) {
+      console.log( 'An error happened' );
+    }
+  )
 
   van.add(document.body, stats.dom);
   van.add(document.body, renderer.domElement);
@@ -195,17 +129,15 @@ function setupScene(){
 }
 
 function animate() {
-  const delta = clock.getDelta()
+
   // if(myObject.isRotate){
   //   cube.rotation.x += 0.01;
 	//   cube.rotation.y += 0.01;
   // }
-  updateProgressBar();
-  updateAnimationPlayer(delta)
 	
   stats.update();
   controls.update();
 	renderer.render( scene, camera );
 }
 
-setupScene()
+setup_scene()

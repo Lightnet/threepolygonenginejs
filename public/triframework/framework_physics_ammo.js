@@ -6,7 +6,9 @@
   
 */
 /*
-  Need work. Loading variable is null for some reason.
+  Need work. 
+  -Loading variable is null for some reason.(fixed)
+  -need to load script here by inject load wait??
 
 */
 
