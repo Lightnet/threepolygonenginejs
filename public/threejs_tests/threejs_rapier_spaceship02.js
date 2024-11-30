@@ -15,7 +15,6 @@
 
 import RAPIER from 'https://cdn.skypack.dev/@dimforge/rapier3d-compat';
 import van from "https://cdn.jsdelivr.net/npm/vanjs-core@1.5.2/src/van.min.js";
-//import { FloatingWindow } from "https://cdn.jsdelivr.net/npm/vanjs-ui@0.10.1/dist/van-ui.min.js";
 import * as THREE from 'https://unpkg.com/three@0.170.0/build/three.module.js';
 import { GUI } from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/lil-gui.module.min.js';
 import { OrbitControls } from 'https://unpkg.com/three@0.170.0/examples/jsm/controls/OrbitControls.js'
@@ -51,10 +50,16 @@ class RapierDebugRenderer {
     }
   }
 }
+const _euler = new THREE.Euler( 0, 0, 0, 'YXZ' );
+const _PI_2 = Math.PI / 2;
 
 class Player {
-  radius = 0.5;
-  height = 1.75;
+  //radius = 0.5;
+  //height = 1.75;
+
+  width = 1;
+  height = 1;
+  depth = 1;
 
   maxSpeed = 10;
   input = new THREE.Vector3();
@@ -63,7 +68,17 @@ class Player {
   controls = new PointerLockControls( this.camera,document.body );
   cameraHelper = new THREE.CameraHelper(this.camera);
 
-  constructor(scene){
+  isLocked = false;
+  enabled = true;
+
+  mousePointer = new THREE.Vector3();
+  pointerSpeed = 1.0;
+  // Set to constrain the pitch of the camera
+	// Range is 0 to Math.PI radians
+	minPolarAngle = 0; // radians
+	maxPolarAngle = Math.PI; // radians
+
+  constructor(scene, world){
     //this.position.set(32,16,32);
     this.position.set(0,5,5);
     scene.add(this.camera);
@@ -71,12 +86,42 @@ class Player {
 
     document.addEventListener('keydown', this.onKeyDown.bind(this));
     document.addEventListener('keyup', this.onKeyUp.bind(this));
+    document.addEventListener("mousemove", this.onMouseMove.bind(this));
 
     this.boundsHelper = new THREE.Mesh(
-      new THREE.CylinderGeometry(this.radius, this.radius, this.height, 16),
+      //new THREE.CylinderGeometry(this.radius, this.radius, this.height, 16),
+      new THREE.BoxGeometry(this.width, this.height, this.depth),
       new THREE.MeshBasicMaterial({wireframe:true})
     );
     scene.add(this.boundsHelper);
+  }
+
+  onMouseMove(event){
+    //console.log(event.clientX)
+    //console.log(event);
+    if(this.isLocked == false){
+      return;
+    }
+    this.mousePointer.x = event.clientX / window.innerWidth - 0.5;
+    this.mousePointer.y = event.clientY / window.innerHeight - 0.5;
+    //console.log(this.mousePointer)
+    if(this.mousePointer.y > 0){
+      //console.log("up?")
+    }
+    if(this.mousePointer.y < 0){
+      //console.log("down?")
+    }
+    //console.log("x: ", event.movementX, " y: ", event.movementY)
+    //= this.mesh;
+     const camera = this.boundsHelper;
+  	_euler.setFromQuaternion( camera.quaternion );
+
+  	_euler.y -= event.movementX * 0.002 * this.pointerSpeed;
+  	_euler.x -= event.movementY * 0.002 * this.pointerSpeed;
+
+  	_euler.x = Math.max( _PI_2 - this.maxPolarAngle, Math.min( _PI_2 - this.minPolarAngle, _euler.x ) );
+
+  	camera.quaternion.setFromEuler( _euler );
   }
 
   update_camera(){
@@ -100,11 +145,13 @@ class Player {
 
   onKeyDown(event){
     //console.log('key down');
+    //this.isLocked = this.controls.isLocked;
     if(!this.controls.isLocked){
       this.controls.lock();
       console.log('locked');
+      this.isLocked = true
     }
-
+    console.log("event.code: ", event.code)
     switch(event.code){
       case 'KeyW':
         this.input.z = this.maxSpeed;
@@ -121,6 +168,10 @@ class Player {
       case 'KeyR':
         this.position.set(32,16,32);
         this.velocity.set(0, 0, 0);
+        break;
+      case 'Escape':
+        console.log("ESCAPE...");
+        this.isLocked = false;
         break;
     }
   }
@@ -139,6 +190,10 @@ class Player {
         break;
       case 'KeyD':
         this.input.x = 0;
+        break;
+      case 'Escape':
+        console.log("ESCAPE...");
+        this.isLocked = false;
         break;
     }
 
@@ -173,7 +228,7 @@ var world;
 var rapierDebugRenderer
 var rigidBodies = [];
 
-var cube;
+//var cube;
 // CHARACTER
 var character;
 var characterController;
@@ -211,10 +266,10 @@ function create_cube(args){
   const geometry = new THREE.BoxGeometry( width, height, depth );
   //const material0 = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
   const material0 = new THREE.MeshLambertMaterial( { color: color } );
-  const cube = new THREE.Mesh( geometry, material0 );
-  cube.position.set(x,y,z);
-  scene.add( cube );
-  return cube;
+  const mesh = new THREE.Mesh( geometry, material0 );
+  mesh.position.set(x,y,z);
+  scene.add( mesh );
+  return mesh;
 }
 
 function setup_lights(){
@@ -278,7 +333,6 @@ function create_Rigid_Body_Cube(){
   // Create a cuboid collider attached to the dynamic rigidBody.
   let colliderDesc = RAPIER.ColliderDesc.cuboid(0.5, 0.5, 0.5);
   let collider = world.createCollider(colliderDesc, rigidBody);
-  cube = rigidBody;
   const meshCube = create_cube({color:0x00ff00});
   rigidBodies.push({rigid:rigidBody,mesh:meshCube});
 }
@@ -433,27 +487,29 @@ const myWorld ={
 // load error not sync...
 function createUI(){
 
-  gui.add(rapierDebugRenderer, 'enabled').name('Physics Debug Render');
-  gui.add(gridHelper, 'visible').name('Debug Grid Helper');
-  gui.add(axesHelper, 'visible').name('Debug Axes Helper');
-
-  const characterFolder = gui.addFolder('Character')
-  characterFolder.add(myWorld, 'reset').name('Reset');
-  characterFolder.add(myWorld.pos, 'x', -10, 10).name('X: ');
-  characterFolder.add(myWorld.pos, 'y', -10, 10).name('Y: ');
-  characterFolder.add(myWorld.pos, 'z', -10, 10).name('Z: ');
-
-  const cubeFolder = gui.addFolder('Cube');
-  cubeFolder.add(myWorld, 'resetCube').name('Reset');;
-  cubeFolder.add(myWorld.pos_cube, 'x', -10, 10).name('X: ');
-  cubeFolder.add(myWorld.pos_cube, 'y', -10, 10).name('Y: ');
-  cubeFolder.add(myWorld.pos_cube, 'z', -10, 10).name('Z: ');
-
+  
   const debugFolder = gui.addFolder('Debug');
-  //debugFolder.add(myWorld,'test').name("TEST");
-  debugFolder.add(gridHelper, 'visible').name('Grid Helper');
-  debugFolder.add(axesHelper, 'visible').name('Axes Helper');
+  debugFolder.add(rapierDebugRenderer, 'enabled').name('Physics Debug Render');
+  debugFolder.add(gridHelper, 'visible').name('Debug Grid Helper');
+  debugFolder.add(axesHelper, 'visible').name('Debug Axes Helper');
   debugFolder.add(controls,'enabled').name("Orbit Control");
+
+  // const characterFolder = gui.addFolder('Character')
+  // characterFolder.add(myWorld, 'reset').name('Reset');
+  // characterFolder.add(myWorld.pos, 'x', -10, 10).name('X: ');
+  // characterFolder.add(myWorld.pos, 'y', -10, 10).name('Y: ');
+  // characterFolder.add(myWorld.pos, 'z', -10, 10).name('Z: ');
+
+  // const cubeFolder = gui.addFolder('Cube');
+  // cubeFolder.add(myWorld, 'resetCube').name('Reset');;
+  // cubeFolder.add(myWorld.pos_cube, 'x', -10, 10).name('X: ');
+  // cubeFolder.add(myWorld.pos_cube, 'y', -10, 10).name('Y: ');
+  // cubeFolder.add(myWorld.pos_cube, 'z', -10, 10).name('Z: ');
+
+  //debugFolder.add(myWorld,'test').name("TEST");
+
+  const physicsFolder = gui.addFolder('Physics')
+  
 }
 function setup_world(){
   run_simulation();
@@ -466,7 +522,7 @@ function setup_world(){
   //document.addEventListener("keydown", onDocumentKeyDown, false);
   //document.addEventListener("keyup", onKeyUp, false);
 
-  player = new Player(scene);
+  player = new Player(scene, world);
 }
 
 function currentCamera(){

@@ -12,7 +12,7 @@ import { OrbitControls } from 'https://unpkg.com/three@0.170.0/examples/jsm/cont
 import Stats from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/stats.module.js';
 import { GUI } from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/lil-gui.module.min.js';
 
-const {div,style} = van.tags;
+//const {div,style} = van.tags;
 
 const stats = new Stats();
 

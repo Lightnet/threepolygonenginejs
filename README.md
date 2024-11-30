@@ -12,15 +12,32 @@
 
 # Information:
 
-  This is protoype to build the minecraft style. There will be example stand alone script for testing the builds.
-  
-  As to keep the model simple as possible to reduce lag in render for stable smooth application.
+  This is protoype to build the minecraft style. There will be example stand alone script for testing the builds. As to keep the model simple as possible to reduce lag in render for stable smooth application.
 
   There will be some different type of games for testing.
   
   Using the hono server framework, socket.io and sqlite.
 
   For local play with friend to play.
+
+# Framework and Engine Design Idea:
+ Note that render and physics are independent as it will not have global file store variable. Thinking of Entity Component System. As example of Bevy Engine as everything is component to window frames.
+
+ The reason for thinking is to have two renderer and physics in case of moving to another scene. Another is portal but required some code to transfar control and camera.
+
+```
+ - Framework:
+   - global players for data
+   - scenes?
+   - game logics
+   - Renderer
+     - physics
+   - Renderer
+     - physics
+
+
+```
+
 
 # Server:
   * hono js server 

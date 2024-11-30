@@ -88,8 +88,6 @@ class Spaceship {
   	_euler.x = Math.max( _PI_2 - this.maxPolarAngle, Math.min( _PI_2 - this.minPolarAngle, _euler.x ) );
 
   	camera.quaternion.setFromEuler( _euler );
-
-
   }
 
   get position(){
