@@ -117,6 +117,7 @@ app.use('/*',  (c) => {
   return c.html(pageHtml);
 });
 
+
 //https://stackoverflow.com/questions/4224606/how-to-check-whether-a-script-is-running-under-node-js
 let typeServer = 'none';
 if((typeof process !== 'undefined') && (process.release.name === 'node')){

@@ -115,7 +115,9 @@ function setupEntities(){
     health:10,
     attack:1,
     animationPlayer:playerSprite2D,
+    animationState:"idle",
     isAttack:false,
+    isHurt:false,
     isFinish:false,
     target:0,
   })

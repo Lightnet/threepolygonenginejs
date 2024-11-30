@@ -14,6 +14,9 @@ import Stats from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/stats.modul
 import { GUI } from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/lil-gui.module.min.js';
 //import { PointerLockControls  } from 'https://unpkg.com/three@0.170.0/examples/jsm/controls/PointerLockControls.js';
 
+const _euler = new THREE.Euler( 0, 0, 0, 'YXZ' );
+const _PI_2 = Math.PI / 2;
+
 class Spaceship {
   radius = 0.5;
   height = 1.75;
@@ -25,6 +28,13 @@ class Spaceship {
   #worldVelocity = new THREE.Vector3();//private var
   mesh = null;
   camera = new THREE.PerspectiveCamera( 70, window.innerWidth/window.innerHeight, 0.1, 200 );
+  mousePointer = new THREE.Vector3();
+
+  pointerSpeed = 1.0;
+  // Set to constrain the pitch of the camera
+	// Range is 0 to Math.PI radians
+	minPolarAngle = 0; // radians
+	maxPolarAngle = Math.PI; // radians
 
   constructor(scene){
     const geometry = new THREE.BoxGeometry( 1, 1, 1 );
@@ -38,6 +48,8 @@ class Spaceship {
 
     document.addEventListener('keydown', this.onKeyDown.bind(this));
     document.addEventListener('keyup', this.onKeyUp.bind(this));
+  
+    document.addEventListener("mousemove", this.onMouseMove.bind(this));
   }
 
   update(dt){
@@ -52,6 +64,32 @@ class Spaceship {
     this.mesh.translateX((this.velocity.x * dt));
     this.mesh.translateZ((this.velocity.z * dt)*-1);
     //console.log("this.mesh z:", this.mesh.position.z)
+  }
+
+  onMouseMove(event){
+    //console.log(event.clientX)
+    this.mousePointer.x = event.clientX / window.innerWidth - 0.5;
+    this.mousePointer.y = event.clientY / window.innerHeight - 0.5;
+    //console.log(this.mousePointer)
+    if(this.mousePointer.y > 0){
+      //console.log("up?")
+    }
+    if(this.mousePointer.y < 0){
+      //console.log("down?")
+    }
+    console.log("x: ", event.movementX, " y: ", event.movementY)
+    //= this.mesh;
+     const camera = this.mesh;
+  	_euler.setFromQuaternion( camera.quaternion );
+
+  	_euler.y -= event.movementX * 0.002 * this.pointerSpeed;
+  	_euler.x -= event.movementY * 0.002 * this.pointerSpeed;
+
+  	_euler.x = Math.max( _PI_2 - this.maxPolarAngle, Math.min( _PI_2 - this.minPolarAngle, _euler.x ) );
+
+  	camera.quaternion.setFromEuler( _euler );
+
+
   }
 
   get position(){
@@ -168,6 +206,7 @@ function setup_Scene(){
   van.add(document.body, renderer.domElement );
   document.addEventListener('keydown', onKeyDown);
   document.addEventListener('keyup', onKeyUp);
+  
 }
 
 function onKeyDown(event){
