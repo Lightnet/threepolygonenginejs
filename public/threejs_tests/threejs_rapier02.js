@@ -14,13 +14,13 @@
 // https://sbcode.net/threejs/physics-rapier/
 
 import RAPIER from 'https://cdn.skypack.dev/@dimforge/rapier3d-compat';
-import van from "https://cdn.jsdelivr.net/npm/vanjs-core@1.5.2/src/van.min.js";
+//import van from "https://cdn.jsdelivr.net/npm/vanjs-core@1.5.2/src/van.min.js";
 //import { FloatingWindow } from "https://cdn.jsdelivr.net/npm/vanjs-ui@0.10.1/dist/van-ui.min.js";
 import * as THREE from 'https://unpkg.com/three@0.170.0/build/three.module.js';
 import { OrbitControls } from 'https://unpkg.com/three@0.170.0/examples/jsm/controls/OrbitControls.js';
 import { GUI } from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/lil-gui.module.min.js';
 
-const {div, button} = van.tags;
+//const {div, button} = van.tags;
 
 //DRAW PHYSICS VERTICES
 class RapierDebugRenderer {

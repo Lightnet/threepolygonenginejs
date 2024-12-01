@@ -46,6 +46,7 @@ class RapierDebugRenderer {
     }
   }
 }
+const keyMap = {};
 const stats = new Stats();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 //camera.position.set( -5, 10, -5 );
@@ -101,6 +102,7 @@ function animate() {
   // Step the simulation forward.  
   if(physicsWorld){
     updateObjectPhysics()
+    updateKey();
     physicsWorld.step();
     //update_rigid_body();
   }
@@ -217,7 +219,6 @@ const myObject={
   angularVelocity:{x:0,y:0,z:0},//radian
   gravityScale:1,
   colliderId:0,
-  colliderType:"None",
   collider:null,
   test(){
     console.log('test');
@@ -518,7 +519,7 @@ function createGUI(){
   const gui = new GUI();
   gui.add(myObject,'test')
   const physicsFolder = gui.addFolder('Physics');
-  const physicsGravityFolder = physicsFolder.addFolder('Gravity').show();
+  const physicsGravityFolder = physicsFolder.addFolder('Gravity').show(false);
   physicsGravityFolder.add(myObject.gravity,'x').onChange(value=>{
     //console.log(physicsWorld);
     physicsWorld.gravity.x = myObject.gravity.x;
@@ -536,10 +537,9 @@ function createGUI(){
   colliderFolder = physicsFolder.addFolder('Collider')
   colliderFolders = colliderFolder.addFolder('Colliders')
   colliderFolders.add(myObject,'resetRigid');
-  colliderFolders.add(myObject,'colliderType').listen().disable();
   controllerColliderid = colliderFolders.add(myObject,'colliderIds',[])
 
-  const colliderGravityScaleFolder = colliderFolder.addFolder('Gravity Scale').show()
+  const colliderGravityScaleFolder = colliderFolder.addFolder('Gravity Scale').show(false)
   colliderGravityScaleFolder.add(myObject,'gravityScale').onChange((value)=>{
     let opCollider = null;
     let opRigid = null;
@@ -555,24 +555,26 @@ function createGUI(){
       opRigid.setGravityScale(value, true); 
     }
   })
-  const colliderPositionFolder = colliderFolder.addFolder('Position').show()
+  const colliderPositionFolder = colliderFolder.addFolder('Position').show(false)
   colliderPositionFolder.add(myObject.pos,'x')
   colliderPositionFolder.add(myObject.pos,'y')
   colliderPositionFolder.add(myObject.pos,'z')
 
-  const colliderRotationFolder = colliderFolder.addFolder('Rotation').show()
+  const colliderRotationFolder = colliderFolder.addFolder('Rotation').show(false)
   colliderRotationFolder.add(myObject.quat,'x')
   colliderRotationFolder.add(myObject.quat,'y')
   colliderRotationFolder.add(myObject.quat,'z')
   colliderRotationFolder.add(myObject.quat,'w')
 
-  const colliderLinearVelocityFolder = colliderFolder.addFolder('Linear Velocity').show()
+  
+
+  const colliderLinearVelocityFolder = colliderFolder.addFolder('Linear Velocity').show(false)
   colliderLinearVelocityFolder.add(myObject.linearVelocity,'x')
   colliderLinearVelocityFolder.add(myObject.linearVelocity,'y')
   colliderLinearVelocityFolder.add(myObject.linearVelocity,'z')
   colliderLinearVelocityFolder.add(myObject,'setVeolcity')
 
-  const colliderAngularVelocityFolder = colliderFolder.addFolder('Angular Velocity').show()
+  const colliderAngularVelocityFolder = colliderFolder.addFolder('Angular Velocity').show(false)
   colliderAngularVelocityFolder.add(myObject.angularVelocity,'x')
   colliderAngularVelocityFolder.add(myObject.angularVelocity,'y')
   colliderAngularVelocityFolder.add(myObject.angularVelocity,'z')
@@ -609,18 +611,84 @@ function createGUI(){
 
   //colliderFolder.add(myObject,'getColliderId')
   //colliderFolder.add(myObject,'getColliderIds')
-  gui.onChange( event=>{
-    console.log("event.property: ",event.property);
-    console.log("event.value: ",event.value);
-    if(event.property == 'colliderId'){
-      for(const op of bodies){
-        if(op?.collider.handle == event.value){
-          console.log(op)
-          myObject.colliderType = op.mesh.userData.objectType;
-        }
-      }
+  
+}
+var wheelFLAxel;
+
+function setupJointTest(){
+
+  let position = [0, 1, 0];
+
+  // create bodies for car, wheels and axels
+  const carBody = physicsWorld.createRigidBody(
+    RAPIER.RigidBodyDesc.dynamic()
+      .setTranslation(...position)
+      .setCanSleep(false)
+  )
+
+  const axelFLBody = physicsWorld.createRigidBody(
+    RAPIER.RigidBodyDesc.dynamic()
+      .setTranslation(position[0] - 0.55, position[1], position[2] - 0.63)
+      .setCanSleep(false)
+  )
+
+  const wheelFLBody = physicsWorld.createRigidBody(
+    RAPIER.RigidBodyDesc.dynamic()
+      .setTranslation(position[0] - 0.55, position[1], position[2] - 0.63)
+      .setCanSleep(false)
+  )
+
+  const wheelFLShape = RAPIER.ColliderDesc.cylinder(0.1, 0.3)
+      .setRotation(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), Math.PI / 2))
+      .setTranslation(-0.2, 0, 0)
+      .setRestitution(0.5)
+      .setFriction(2.5)
+      .setCollisionGroups(262145)
+
+  // attach steering axels to car. These will be configurable motors.
+  wheelFLAxel = physicsWorld.createImpulseJoint(
+    RAPIER.JointData.revolute(new RAPIER.Vector3(-0.55, 0, -0.63), new RAPIER.Vector3(0, 0, 0), new RAPIER.Vector3(0, 1, 0)),
+    carBody,
+    axelFLBody,
+    true
+  )
+  wheelFLAxel.configureMotorModel(RAPIER.MotorModel.ForceBased)
+
+  // // attach front wheel to steering axels
+  physicsWorld.createImpulseJoint(
+    RAPIER.JointData.revolute(new RAPIER.Vector3(0, 0, 0), new RAPIER.Vector3(0, 0, 0), new RAPIER.Vector3(1, 0, 0)),
+    axelFLBody,
+    wheelFLBody,
+    true
+  )
+
+  // attach back wheel to cars. These will be configurable motors.
+  const axelFLShape = RAPIER.ColliderDesc.cuboid(0.1, 0.1, 0.1)
+  .setRotation(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), Math.PI / 2))
+  .setMass(0.1)
+  .setCollisionGroups(589823) //d
+
+  physicsWorld.createCollider(axelFLShape, axelFLBody)
+  physicsWorld.createCollider(wheelFLShape, wheelFLBody)
+}
+
+function updateKey(){
+  let targetSteer = 0
+    if (keyMap['KeyA']) {
+      targetSteer += 0.6
     }
-  });
+    if (keyMap['KeyD']) {
+      targetSteer -= 0.6
+    }
+    //targetSteer = targetSteer;
+  //console.log(targetSteer);
+  
+  ;(wheelFLAxel).configureMotorPosition(targetSteer, 100, 10)
+}
+
+
+const onDocumentKey = (e) => {
+  keyMap[e.code] = e.type === 'keydown'
 }
 
 function setupScene(){
@@ -628,8 +696,15 @@ function setupScene(){
   setupLights();
 
   myObject.addPhysicsGround()
+
+  setupJointTest();
   
   createGUI();
+
+  document.addEventListener('keydown', onDocumentKey)
+  document.addEventListener('keyup', onDocumentKey)
+
+
   document.body.appendChild( stats.dom );
   document.body.appendChild( renderer.domElement );
   renderer.setAnimationLoop( animate );
