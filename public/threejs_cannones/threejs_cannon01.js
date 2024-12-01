@@ -14,7 +14,7 @@ import * as THREE from 'https://unpkg.com/three@0.170.0/build/three.module.js';
 import { OrbitControls } from 'https://unpkg.com/three@0.170.0/examples/jsm/controls/OrbitControls.js';
 import Stats from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/stats.module.js';
 //import { GUI } from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/lil-gui.module.min.js';
-import {Pane} from 'https://cdn.jsdelivr.net/npm/tweakpane@4.0.5/dist/tweakpane.min.js';
+import { Pane } from 'https://cdn.jsdelivr.net/npm/tweakpane@4.0.5/dist/tweakpane.min.js';
 import * as CANNON from 'https://cdn.jsdelivr.net/npm/cannon-es@0.20.0/+esm';
 import CannonDebugRenderer from './cannondebugrenderer.js';
 const {div,style} = van.tags;
@@ -292,10 +292,7 @@ const divPane = div({style:`position:fixed;top:0px;right:0px;`,class:'yourCustom
     myObject.removePhysicsBox();
   });
 
-
-
 }
-
 
 function createGUI(){
   // const gui = new GUI();

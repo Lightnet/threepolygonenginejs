@@ -1,26 +1,26 @@
-/*
-  Project Name: threepolygonenginejs
-  License: MIT
-  Created By: Lightnet
-  GitHub: https://github.com/Lightnet/threepolygonenginejs
-  
-*/
-
-// work in progress just test shape checks
+// https://github.com/jrouwe/JoltPhysics.js/issues/152
+// 
+// 
+// 
 
 import van from "https://cdn.jsdelivr.net/npm/vanjs-core@1.5.2/src/van.min.js";
 import * as THREE from 'https://unpkg.com/three@0.170.0/build/three.module.js';
 import { OrbitControls } from 'https://unpkg.com/three@0.170.0/examples/jsm/controls/OrbitControls.js';
 import Stats from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/stats.module.js';
-import { GUI } from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/lil-gui.module.min.js';
-//import { RenderWidget } from "./jolt_debug_renderer.js";
-
+import { Pane } from 'https://cdn.jsdelivr.net/npm/tweakpane@4.0.5/dist/tweakpane.min.js';
 const JOLT_PATH = 'https://cdn.jsdelivr.net/npm/jolt-physics@0.29.0/dist/jolt-physics.wasm-compat.js';
 
 const {div,style} = van.tags;
 
+let aabb;
+let quat;
+let scale;
+
+var bodies = [];
+
 var gridHelper;
-var cube;
+//var cube;
+
 let Jolt; // upper case API
 var jolt; // lower case world and objects
 var bodyInterface;
@@ -29,13 +29,6 @@ var physicsSystem;
 const LAYER_NON_MOVING = 0;
 const LAYER_MOVING = 1;
 const NUM_OBJECT_LAYERS = 2;
-//var gravity = {x:0,y:-9.8,z:0}
-
-let aabb;
-let quat;
-let scale;
-
-var bodies = [];
 
 // https://github.com/jrouwe/JoltPhysics.js/blob/main/Examples/js/example.js
 const DegreesToRadians = (deg) => deg * (Math.PI / 180.0);
@@ -64,7 +57,7 @@ window.addEventListener('resize', function(event) {
   renderer.setSize( window.innerWidth, window.innerHeight );
 });
 
-function createMeshCube(args){
+function createMeshBox(args){
   args = args || {};
   const width = args?.width || 1;
   const height = args?.height || 1;
@@ -82,19 +75,6 @@ function setup_Helpers(){
 
   gridHelper = new THREE.GridHelper( size, divisions );
   scene.add( gridHelper );
-}
-
-function createCube(args){
-  args = args || {};
-  //console.log(args);
-  const width = args?.width || 1;
-  const height = args?.height || 1;
-  const depth = args?.depth || 1;
-  const color = args?.color || 0x00ff00;
-  const geometry = new THREE.BoxGeometry( width, height, depth );
-  const material = new THREE.MeshBasicMaterial( { color: color } );
-  const cube = new THREE.Mesh( geometry, material );
-  return cube;
 }
 
 const myObject ={
@@ -117,7 +97,7 @@ const myObject ={
     let z = args?.z || 0;
 
     //threejs mesh
-    const mesh = createCube({width:width,height:height,depth:height});
+    const mesh = createMeshBox({width:width,height:height,depth:height});
     mesh.userData.objectType='box';
     mesh.position.set(x,y,z);
     scene.add(mesh);
@@ -192,10 +172,10 @@ const myObject ={
     let y = args?.y || -1;
     let z = args?.z || 0;
 
-    const mesh = createCube({width:width,height:height,depth:depth,color:'gray'});
+    const mesh = createMeshBox({width:width,height:height,depth:depth,color:'gray'});
     mesh.userData.objectType='ground';
     mesh.position.set(x,y,z);
-    //scene.add(mesh);
+    scene.add(mesh);
     
     var shape = new Jolt.BoxShape(new Jolt.Vec3(width*0.5, height*0.5, depth*0.5), 0.05, null);
   	var creationSettings = new Jolt.BodyCreationSettings(shape, new Jolt.RVec3(x, y, z), new Jolt.Quat(0, 0, 0, 1), Jolt.EMotionType_Static, LAYER_NON_MOVING);
@@ -207,9 +187,9 @@ const myObject ={
     //let data = getByteOffset(body);
     //console.log(data);
     //let threeObject = getThreeObjectForBody(body, 'blue');
-    let threeObject = getThreeObjectForBody(body, 'gray');
-    console.log(threeObject);
-    scene.add(threeObject);
+    //let threeObject = getThreeObjectForBody(body, 'gray');
+    //console.log(threeObject);
+    //scene.add(threeObject);
     
 
     bodies.push({
@@ -251,94 +231,111 @@ const myObject ={
   }
 }
 
-function createGUI(){
-  const gui = new GUI();
-  //gui.add(myObject,'test')
-  const debugFolder = gui.addFolder('Debug')
-  debugFolder.add(gridHelper,'visible').name('is Grid')
-  //debugFolder.add(gridHelper,'visible').name('is Grid')
-  const orbitControlsFolder = gui.addFolder('Orbit Controls').show(false)
-  orbitControlsFolder.add(controls, 'autoRotate')
-  orbitControlsFolder.add(controls, 'autoRotateSpeed')
-  orbitControlsFolder.add(controls, 'dampingFactor')
-  orbitControlsFolder.add(controls, 'enableDamping')
-  orbitControlsFolder.add(controls, 'enablePan')
-  orbitControlsFolder.add(controls, 'enableRotate')
-  orbitControlsFolder.add(controls, 'enableZoom')
-  orbitControlsFolder.add(controls, 'panSpeed')
-  orbitControlsFolder.add(controls, 'rotateSpeed')
-  orbitControlsFolder.add(controls, 'screenSpacePanning')
-  orbitControlsFolder.add(controls, 'zoomToCursor')
-  orbitControlsFolder.add(controls, 'enabled')
-  
-  const cubeFolder = gui.addFolder('Cube').show(false)
-  cubeFolder.add(cube,'visible')
-  cubeFolder.add(myObject,'isRotate')
-  cubeFolder.add(myObject,'resetRotation')
+function createPane(){
+  const myStyle = style(`
+/* Default wrapper view */
+.yourCustomContainer .tp-dfwv {
+  min-width: 360px;
+}   
+`);
+  van.add(document.body,myStyle)
+  const divPane = div({style:`position:fixed;top:0px;right:0px;`,class:'yourCustomContainer'})
+  van.add(document.body,divPane)
+  const pane = new Pane({
+    title: 'Parameters',
+    container:divPane,
+    expanded: true,
+  });
+  //console.log("pane: ", pane);
+  const debugFolder = pane.addFolder({title: 'Debug',expanded: true,});
+  debugFolder.addBinding(gridHelper, 'visible',{
+    label:'Grid Helper'
+    // options:{//list
+    //   label:'test'
+    // }
+  })
 
-  const physicsFolder = gui.addFolder('Physics').show()
-  const physicsGravityFolder = physicsFolder.addFolder('Gravity');
+  const orbitControlsFolder = pane.addFolder({title: 'Orbit Controls',expanded: false,});
+  orbitControlsFolder.addBinding(controls, 'autoRotate');
+  orbitControlsFolder.addBinding(controls, 'autoRotateSpeed');
+  orbitControlsFolder.addBinding(controls, 'dampingFactor');
+  orbitControlsFolder.addBinding(controls, 'enableDamping');
+  orbitControlsFolder.addBinding(controls, 'enablePan');
+  orbitControlsFolder.addBinding(controls, 'enableRotate');
+  orbitControlsFolder.addBinding(controls, 'enableZoom');
+  orbitControlsFolder.addBinding(controls, 'panSpeed');
+  orbitControlsFolder.addBinding(controls, 'rotateSpeed');
+  orbitControlsFolder.addBinding(controls, 'screenSpacePanning');
+  orbitControlsFolder.addBinding(controls, 'zoomToCursor');
+  orbitControlsFolder.addBinding(controls, 'enabled');
 
-  physicsGravityFolder.add(myObject.gravity,'x').onChange(value=>{
-    console.log("test x: ",value)
-    myObject.gravity.x = value;
+  const physicsFolder = pane.addFolder({title: 'physics',expanded: true,});
+  const physicsGravityFolder = physicsFolder.addFolder({title: 'Gravity',expanded: true,});
+  physicsGravityFolder.addBinding(myObject.gravity,'x').on('change',ev=>{
+    //console.log(ev.value);
     let gravity = myObject.gravity;
     physicsSystem.SetGravity(unwrapVec3(gravity));
   });
-  physicsGravityFolder.add(myObject.gravity,'y').onChange(value=>{
-    console.log("test x: ",value)
-    myObject.gravity.y = value;
+
+  physicsGravityFolder.addBinding(myObject.gravity,'y').on('change',ev=>{
+    //console.log(ev.value);
     let gravity = myObject.gravity;
     physicsSystem.SetGravity(unwrapVec3(gravity));
   });
-  physicsGravityFolder.add(myObject.gravity,'z').onChange(value=>{
-    console.log("test x: ",value)
-    myObject.gravity.z = value;
+
+  physicsGravityFolder.addBinding(myObject.gravity,'z').on('change',ev=>{
+    //console.log(ev.value);
     let gravity = myObject.gravity;
     physicsSystem.SetGravity(unwrapVec3(gravity));
   });
-  
 
-  const physicsBoxFolder = physicsFolder.addFolder('Box')
-  physicsBoxFolder.add(myObject,'addPhysicsBox')
-  physicsBoxFolder.add(myObject,'removePhysicsBox')
-  const physicsGroundFolder = physicsFolder.addFolder('Ground')
-  physicsGroundFolder.add(myObject,'addPhysicsGround')
-  physicsGroundFolder.add(myObject,'removePhysicsGround')
-  const physicsPlayerFolder = physicsFolder.addFolder('Player')
-  physicsPlayerFolder.add(myObject,'addPhysicsPlayer')
-  physicsPlayerFolder.add(myObject,'removePhysicsPlayer')
 
+  const physicsBoxFolder = physicsFolder.addFolder({title: 'Box',expanded: true,});
+  physicsBoxFolder.addButton({
+    title: 'Add',
+    //label: 'counter',   // optional
+  }).on('click', () => {
+    myObject.addPhysicsBox();
+  });
+
+  physicsBoxFolder.addButton({
+    title: 'Remove',
+    //label: 'counter',   // optional
+  }).on('click', () => {
+    myObject.removePhysicsBox();
+  });
 }
 
 // SET UP SCENE
 function setupScene(){
-  cube = createMeshCube();
-  scene.add(cube)
+  // cube = createMeshBox();
+  // scene.add(cube)
   setup_Helpers()
   var dirLight = new THREE.DirectionalLight(0xffffff, 1);
 	dirLight.position.set(10, 10, 5);
 	scene.add(dirLight);
 
+  myObject.addPhysicsGround();
+
   van.add(document.body, stats.dom);
   van.add(document.body, renderer.domElement);
   
   renderer.setAnimationLoop( animate );
-  createGUI();
+  createPane();
 }
 
 // LOOP RENDERER AND UPDATE
 function animate() {
   let deltaTime = clock.getDelta();
-  if(myObject.isRotate){
-    cube.rotation.x += 0.01;
-	  cube.rotation.y += 0.01;
-  }
+  // if(myObject.isRotate){
+  //   cube.rotation.x += 0.01;
+	//   cube.rotation.y += 0.01;
+  // }
 
   updatePhysics(deltaTime);
 	
   stats.update();
-  controls.update();
+  //controls.update();
 	renderer.render( scene, camera );
 }
 
@@ -378,89 +375,15 @@ async function initPhysics(){
   //Jolt.DebugRendererJS=true;
   console.log(Jolt.DebugRendererJS)
   if(Jolt.DebugRendererJS){//does not exist
-    const debugRendererWidget = new RenderWidget(Jolt);
-    debugRendererWidget.render();
-    debugRendererWidget.init();
-    document.body.appendChild(debugRendererWidget.domElement);
+    // const debugRendererWidget = new RenderWidget(Jolt);
+    // debugRendererWidget.render();
+    // debugRendererWidget.init();
+    // document.body.appendChild(debugRendererWidget.domElement);
 
     setupPhysics();
   }else{
     setupPhysics();
   }
-}
-
-function getThreeObjectForBody(body, color) {
-	let material = new THREE.MeshPhongMaterial({ color: color });
-
-	let threeObject;
-
-	let shape = body.GetShape();
-	switch (shape.GetSubType()) {
-		case Jolt.EShapeSubType_Box:
-      console.log("EShapeSubType_Box");
-			let boxShape = Jolt.castObject(shape, Jolt.BoxShape);
-			let extent = wrapVec3(boxShape.GetHalfExtent()).multiplyScalar(2);
-			threeObject = new THREE.Mesh(new THREE.BoxGeometry(extent.x, extent.y, extent.z, 1, 1, 1), material);
-			break;
-		case Jolt.EShapeSubType_Sphere:
-      console.log("EShapeSubType_Sphere");
-			let sphereShape = Jolt.castObject(shape, Jolt.SphereShape);
-			threeObject = new THREE.Mesh(new THREE.SphereGeometry(sphereShape.GetRadius(), 32, 32), material);
-			break;
-		case Jolt.EShapeSubType_Capsule:
-      console.log("EShapeSubType_Capsule");
-			let capsuleShape = Jolt.castObject(shape, Jolt.CapsuleShape);
-			threeObject = new THREE.Mesh(new THREE.CapsuleGeometry(capsuleShape.GetRadius(), 2 * capsuleShape.GetHalfHeightOfCylinder(), 20, 10), material);
-			break;
-		case Jolt.EShapeSubType_Cylinder:
-      console.log("EShapeSubType_Cylinder");
-			let cylinderShape = Jolt.castObject(shape, Jolt.CylinderShape);
-			threeObject = new THREE.Mesh(new THREE.CylinderGeometry(cylinderShape.GetRadius(), cylinderShape.GetRadius(), 2 * cylinderShape.GetHalfHeight(), 20, 1), material);
-			break;
-		default:
-			if (body.GetBodyType() == Jolt.EBodyType_SoftBody)
-				threeObject = getSoftBodyMesh(body, material);
-			else
-				threeObject = new THREE.Mesh(createMeshForShape(shape), material);
-			break;
-	}
-
-	//threeObject.position.copy(wrapVec3(body.GetPosition()));
-	//threeObject.quaternion.copy(wrapQuat(body.GetRotation()));
-
-	return threeObject;
-}
-// https://github.com/jrouwe/JoltPhysics.js/blob/main/Examples/js/example.js
-function createMeshForShape(shape) {
-	// Get triangle data
-	let scale = new Jolt.Vec3(1, 1, 1);
-	let triContext = new Jolt.ShapeGetTriangles(shape, Jolt.AABox.prototype.sBiggest(), shape.GetCenterOfMass(), Jolt.Quat.prototype.sIdentity(), scale);
-	Jolt.destroy(scale);
-
-	// Get a view on the triangle data (does not make a copy)
-	let vertices = new Float32Array(Jolt.HEAPF32.buffer, triContext.GetVerticesData(), triContext.GetVerticesSize() / Float32Array.BYTES_PER_ELEMENT);
-
-	// Now move the triangle data to a buffer and clone it so that we can free the memory from the C++ heap (which could be limited in size)
-	let buffer = new THREE.BufferAttribute(vertices, 3).clone();
-	Jolt.destroy(triContext);
-
-	// Create a three mesh
-	let geometry = new THREE.BufferGeometry();
-	geometry.setAttribute('position', buffer);
-	geometry.computeVertexNormals();
-
-	return geometry;
-}
-
-// https://jsfiddle.net/LeXXik/sar36vqf/17/
-
-function getByteOffset(body) {
-  const shape = body.GetShape();
-  console.log(shape);
-  const triContext = new Jolt.ShapeGetTriangles(shape, aabb, shape.GetCenterOfMass(), quat, scale);
-  const offset = triContext.GetVerticesData();
-  Jolt.destroy(triContext);
-  return offset;
 }
 
 function updatePhysics(deltaTime){
