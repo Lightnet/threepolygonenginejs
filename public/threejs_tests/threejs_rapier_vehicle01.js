@@ -167,11 +167,13 @@ class Car {
         .setTranslation(position[0] - 0.55, position[1], position[2] + 0.63)
         .setCanSleep(false)
     )
+    this.wheelBLBody = wheelBLBody;
     const wheelBRBody = world.createRigidBody(
       RAPIER.RigidBodyDesc.dynamic()
         .setTranslation(position[0] + 0.55, position[1], position[2] + 0.63)
         .setCanSleep(false)
     )
+    this.wheelBRBody = wheelBRBody;
 
     const wheelFLBody = world.createRigidBody(
       RAPIER.RigidBodyDesc.dynamic()
@@ -333,9 +335,12 @@ class Car {
     if (this.keyMap['KeyS']) {
       targetVelocity = -200
     }
-    // if (this.keyMap['Space']) {
-    //   targetVelocity = 0
-    // }
+
+    if (this.keyMap['Space']) {
+      this.wheelBLBody.setAngvel({ x: 0.0, y: 0.0, z: 0.0 }, true);//stop wheel spin
+      this.wheelBRBody.setAngvel({ x: 0.0, y: 0.0, z: 0.0 }, true);//stop wheel spin
+
+    }
     this.targetVelocity = targetVelocity;
     ;(this.wheelBLMotor).configureMotorVelocity(targetVelocity, 2.0)
     ;(this.wheelBRMotor).configureMotorVelocity(targetVelocity, 2.0)
