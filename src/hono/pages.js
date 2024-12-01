@@ -136,6 +136,7 @@ var urlandjs = [
   //{url:'/threecss2d',                               file:'/tests/three_css2drenderer.js'},
 
   {url:'/threejs_turn_base01',                          file:'/turnbase/threejs_turn_base01.js'},
+  {url:'/threejs_cannon01',                          file:'/threejs_cannones/threejs_cannon01.js'},
   
   {url:'/three_framework00',                          file:'/tests/three_framework00.js'},
   {url:'/three_rapier',                               file:'/tests/three_rapier.js'},
@@ -145,8 +146,6 @@ var urlandjs = [
   {url:'/ex_framework_threejs_physics_jolt',          file:'/triframework/ex_framework_threejs_physics_jolt.js'},
   {url:'/ex_framework_threejs_physics_rapier',        file:'/triframework/ex_framework_threejs_physics_rapier.js'},
   {url:'/ex_threejs_scene01',                         file:'/triframework/ex_threejs_scene01.js'},
-
-
 
   {url:'/mobilespace',                                file:'/mobilespace/main.js'},
   {url:'/threejspolygon',                             file:'/threejspolygon/main.js'},
