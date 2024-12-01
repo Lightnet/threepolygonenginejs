@@ -71,6 +71,8 @@ const myObject ={
   },
   enemyAttack(){
     console.log('attack 2');
+    enemies[0].isAttack=true;
+    enemies[0].animationPlayer.oncePlay([14,22,30], 1.5);
   }
 }
 
@@ -111,10 +113,16 @@ function setupEntities(){
   playerSprite2D.mesh.position.set(-4,0,0);
   scene.add(playerSprite2D.mesh);
 
+  let cText2d = new CanvasText2D();
+  cText2d.setText('10/10');
+  cText2d.mesh.position.set(-4,1,0.1)
+  scene.add(cText2d.mesh);
+
   players.push({
     health:10,
     attack:1,
     animationPlayer:playerSprite2D,
+    text2d:cText2d,
     animationState:"idle",
     isAttack:false,
     isHurt:false,
@@ -123,14 +131,21 @@ function setupEntities(){
   })
 
 
+  
   let playerSprite2D02 = new SpriteAnimation2DTileMap();
   playerSprite2D02.mesh.position.set(4,0,0);
   scene.add(playerSprite2D02.mesh);
+
+  let cText2d02 = new CanvasText2D();
+  cText2d02.setText('10/10');
+  cText2d02.mesh.position.set(4,1,0.1)
+  scene.add(cText2d02.mesh);
 
   enemies.push({
     health:10,
     attack:1,
     animationPlayer:playerSprite2D02,
+    text2d:cText2d02,
     isAttack:false,
     isFinish:false,
     target:0,
@@ -165,6 +180,22 @@ function updateAnimationPlayer(dt){
     ){
       pa.isAttack=false;
       console.log("END...")
+      enemies[0].health -= pa.attack;
+      enemies[0].text2d.setText(`${enemies[0].health}/10`);
+    }
+  }
+
+  for(const pa of enemies){
+    pa.animationPlayer.update(dt)
+    if((pa.isAttack==true)&&
+      (pa.animationPlayer.isPlay == false)&&
+      (pa.animationPlayer.isLoop == false)
+    ){
+      pa.isAttack=false;
+      console.log("END...")
+      console.log("END...")
+      players[0].health -= pa.attack;
+      players[0].text2d.setText(`${players[0].health}/10`);
     }
   }
 }
