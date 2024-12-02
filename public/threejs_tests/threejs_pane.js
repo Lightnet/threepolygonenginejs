@@ -20,6 +20,7 @@ const PARAMS = {
   theme: 'dark',
   size:8,
   text:'text',
+  count:0,
 };
 
 const pane = new Pane({
@@ -27,8 +28,8 @@ const pane = new Pane({
   expanded: true,
 });
 
-pane.addBinding(PARAMS, 'factor');
-pane.addBinding(PARAMS, 'title');
+// pane.addBinding(PARAMS, 'factor');
+// pane.addBinding(PARAMS, 'title');
 pane.addBinding(PARAMS, 'color');
 
 // `min` and `max`: slider
@@ -36,7 +37,6 @@ pane.addBinding(
   PARAMS, 'percentage',
   {min: 0, max: 100, step: 10}
 );
-
 
 const divPane = div({style:`position:fixed;top:0px;left:0px;`,class:'yourCustomContainer'})
 van.add(document.body,divPane)
@@ -46,36 +46,45 @@ const pane0 = new Pane({
   expanded: true,
 });
 
-
 pane0.addButton({
   title: 'test',
   //label: 'counter',   // optional
 }).on('click', () => {
   console.log('test')
 });
+// https://tweakpane.github.io/docs/monitor-bindings/
+pane.addBinding(PARAMS, 'count',{
+  interval: 100,
+  view: 'graph',
+  readonly: true,
+});
+pane.addBinding(PARAMS, 'count',{
+  interval: 100,
+  readonly: true,
+});
 
 // `options`: list
-pane.addBinding(
-  PARAMS, 'theme',
-  {options: {Dark: 'dark', Light: 'light'}}
-);
+// pane.addBinding(
+//   PARAMS, 'theme',
+//   {options: {Dark: 'dark', Light: 'light'}}
+// );
 
-const f = pane.addFolder({
-  title: 'Title',
-  expanded: true,
-});
+// const f = pane.addFolder({
+//   title: 'Title',
+//   expanded: true,
+// });
 
 // f.addBinding(PARAMS, 'text');
-f.addBinding(PARAMS, 'size');
+//f.addBinding(PARAMS, 'size');
 
-const b = pane.addBinding(
-  PARAMS, 'size',
-  {min: 8, max: 100, step: 1}
-);
+// const b = pane.addBinding(
+//   PARAMS, 'size',
+//   {min: 8, max: 100, step: 1}
+// );
 
-b.on('change', function(ev) {
-  console.log(`change: ${ev.value}`);
-});
+// b.on('change', function(ev) {
+//   console.log(`change: ${ev.value}`);
+// });
 
 
 // const pane2 = new Pane({
@@ -83,3 +92,13 @@ b.on('change', function(ev) {
 //   expanded: true,
   
 // });
+
+function update(){
+  PARAMS.count++;
+  //console.log(PARAMS.count);
+  if(PARAMS.count>30){
+    PARAMS.count=0
+  }
+  requestAnimationFrame(update)
+}
+update();

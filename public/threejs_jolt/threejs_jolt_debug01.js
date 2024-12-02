@@ -1,7 +1,8 @@
 // https://github.com/jrouwe/JoltPhysics.js/issues/152
 // 
 // 
-// 
+// Note not easy to find physicsSystem draw
+// not possible? it not expose.
 
 import van from "https://cdn.jsdelivr.net/npm/vanjs-core@1.5.2/src/van.min.js";
 import * as THREE from 'https://unpkg.com/three@0.170.0/build/three.module.js';
@@ -11,6 +12,38 @@ import { Pane } from 'https://cdn.jsdelivr.net/npm/tweakpane@4.0.5/dist/tweakpan
 const JOLT_PATH = 'https://cdn.jsdelivr.net/npm/jolt-physics@0.29.0/dist/jolt-physics.wasm-compat.js';
 
 const {div,style} = van.tags;
+
+
+export default class JoltDebugRenderer {
+  scene=null;
+  world=null;
+  _meshes=null;
+
+  
+  constructor(scene, world, options={}) {
+
+  }
+
+  update() {
+
+  }
+
+  _updateMesh(index, body, shape) {
+
+  }
+
+  _typeMatch(mesh, shape){
+
+  }
+
+  _createMesh(shape) {
+
+  }
+
+  _scaleMesh(mesh, shape) {
+
+  }
+}
 
 let aabb;
 let quat;
@@ -228,6 +261,25 @@ const myObject ={
   },
   removePhysicsPlayer(){
 
+  },
+  getPhysicsData(){
+    console.log("jolt: ", jolt)
+    console.log("physicsSystem: ", physicsSystem)
+    console.log("bodyInterface: ", bodyInterface)
+
+    //console.log("GetNumBodies: ", physicsSystem.GetNumBodies())
+    //console.log("GetBodyInterface: ", physicsSystem.GetBodyInterface())
+    //console.log("GetActiveBodies: ", physicsSystem.GetActiveBodies())//nope
+    //console.log("GetBodies: ", physicsSystem.GetBodies())//nope
+    //console.log("GetBounds: ", physicsSystem.GetBounds())
+    //console.log("GetBroadPhaseQuery: ", physicsSystem.GetBroadPhaseQuery())
+    //console.log("GetContactListener: ", physicsSystem.GetContactListener())
+    //console.log("GetNarrowPhaseQuery: ", physicsSystem.GetNarrowPhaseQuery())
+    console.log("GetPhysicsSettings: ", physicsSystem.GetPhysicsSettings())
+
+    // physicsSystem
+
+
   }
 }
 
@@ -289,7 +341,6 @@ function createPane(){
     physicsSystem.SetGravity(unwrapVec3(gravity));
   });
 
-
   const physicsBoxFolder = physicsFolder.addFolder({title: 'Box',expanded: true,});
   physicsBoxFolder.addButton({
     title: 'Add',
@@ -303,6 +354,13 @@ function createPane(){
     //label: 'counter',   // optional
   }).on('click', () => {
     myObject.removePhysicsBox();
+  });
+
+  debugFolder.addButton({
+    title: 'getPhysicsData',
+    //label: 'counter',   // optional
+  }).on('click', () => {
+    myObject.getPhysicsData();
   });
 }
 

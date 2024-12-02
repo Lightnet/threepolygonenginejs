@@ -27,10 +27,10 @@ export default class CannonDebugRenderer {
   _planeGeometry=null;
   _particleGeometry=null;
 
-   tmpVec0 = new CANNON.Vec3()
-   tmpVec1 = new CANNON.Vec3()
-   tmpVec2 = new CANNON.Vec3()
-   tmpQuat0 = new CANNON.Quaternion()
+  tmpVec0 = new CANNON.Vec3()
+  tmpVec1 = new CANNON.Vec3()
+  tmpVec2 = new CANNON.Vec3()
+  tmpQuat0 = new CANNON.Quaternion()
 
   constructor(scene, world, options={}) {
     options = options || {}
