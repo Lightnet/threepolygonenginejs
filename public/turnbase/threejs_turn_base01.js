@@ -10,13 +10,13 @@ import van from "https://cdn.jsdelivr.net/npm/vanjs-core@1.5.2/src/van.min.js";
 import * as THREE from 'https://unpkg.com/three@0.170.0/build/three.module.js';
 import { OrbitControls } from 'https://unpkg.com/three@0.170.0/examples/jsm/controls/OrbitControls.js';
 import Stats from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/stats.module.js';
-import { GUI } from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/lil-gui.module.min.js';
-
+//import { GUI } from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/lil-gui.module.min.js';
+import { Pane } from 'https://cdn.jsdelivr.net/npm/tweakpane@4.0.5/dist/tweakpane.min.js';
 import SpriteAnimation2DTileMap from './spriteanimation2dtilemap.js';
 import ProgressBar2D from "./progressbar2d.js";
 import CanvasText2D from "./canvastext2d.js";
 
-//const {div,style} = van.tags;
+const {div,style} = van.tags;
 
 const players = [];
 const enemies = [];
@@ -76,49 +76,105 @@ const myObject ={
   }
 }
 
-function createGUI(){
-  const gui = new GUI();
-  gui.add(myObject,'test')
-  const debugFolder = gui.addFolder('Debug')
-  debugFolder.add(gridHelper,'visible').name('is Grid')
-  //debugFolder.add(gridHelper,'visible').name('is Grid')
-  const orbitControlsFolder = gui.addFolder('Orbit Controls').show(false)
-  orbitControlsFolder.add(controls, 'autoRotate')
-  orbitControlsFolder.add(controls, 'autoRotateSpeed')
-  orbitControlsFolder.add(controls, 'dampingFactor')
-  orbitControlsFolder.add(controls, 'enableDamping')
-  orbitControlsFolder.add(controls, 'enablePan')
-  orbitControlsFolder.add(controls, 'enableRotate')
-  orbitControlsFolder.add(controls, 'enableZoom')
-  orbitControlsFolder.add(controls, 'panSpeed')
-  orbitControlsFolder.add(controls, 'rotateSpeed')
-  orbitControlsFolder.add(controls, 'screenSpacePanning')
-  orbitControlsFolder.add(controls, 'zoomToCursor')
-  orbitControlsFolder.add(controls, 'enabled')
-  
-  //const cubeFolder = gui.addFolder('Cube').show(false);
-  // cubeFolder.add(cube,'visible')
-  // cubeFolder.add(myObject,'isRotate')
-  // cubeFolder.add(myObject,'resetRotation')
+function createTweakPane(){
+  const myStyle = style(`
+    /* Default wrapper view */
+    .yourCustomContainer .tp-dfwv {
+      min-width: 360px;
+    }   
+    `);
+  van.add(document.body,myStyle)
 
-  const battleFolder = gui.addFolder('Battle').show();
-  battleFolder.add(myObject,'playerAttack')
-  battleFolder.add(myObject,'enemyAttack')
+  const pane = new Pane({
+    title: 'Parameters',
+    expanded: true,
+  });
+
+  const debugFolder = pane.addFolder({title: 'Debug',expanded: true,});
+  debugFolder.addBinding(gridHelper, 'visible',{
+    label:'Grid Helper'
+    // options:{//list
+    //   label:'test'
+    // }
+  })
+
+  const orbitControlsFolder = pane.addFolder({title: 'Orbit Controls',expanded: false});
+  orbitControlsFolder.addBinding(controls, 'autoRotate');
+  orbitControlsFolder.addBinding(controls, 'autoRotateSpeed');
+  orbitControlsFolder.addBinding(controls, 'dampingFactor');
+  orbitControlsFolder.addBinding(controls, 'enableDamping');
+  orbitControlsFolder.addBinding(controls, 'enablePan');
+  orbitControlsFolder.addBinding(controls, 'enableRotate');
+  orbitControlsFolder.addBinding(controls, 'enableZoom');
+  orbitControlsFolder.addBinding(controls, 'panSpeed');
+  orbitControlsFolder.addBinding(controls, 'rotateSpeed');
+  orbitControlsFolder.addBinding(controls, 'screenSpacePanning');
+  orbitControlsFolder.addBinding(controls, 'zoomToCursor');
+  orbitControlsFolder.addBinding(controls, 'enabled');
+
+  const playerFolder = pane.addFolder({title: 'Player',expanded: true});
+  const playerAttack = playerFolder.addButton({title:'Attack'})
+  playerAttack.on('click', () => {
+    console.log('test')
+    myObject.playerAttack();
+  });
+
+  const enemyFolder = pane.addFolder({title: 'Enemy',expanded: true});
+  const enemyAttack = enemyFolder.addButton({title:'Attack'})
+  enemyAttack.on('click', () => {
+    console.log('test')
+    myObject.enemyAttack();
+  });
 }
+
+// function createGUI(){
+//   const gui = new GUI();
+//   gui.add(myObject,'test')
+//   const debugFolder = gui.addFolder('Debug')
+//   debugFolder.add(gridHelper,'visible').name('is Grid')
+//   //debugFolder.add(gridHelper,'visible').name('is Grid')
+//   const orbitControlsFolder = gui.addFolder('Orbit Controls').show(false)
+//   orbitControlsFolder.add(controls, 'autoRotate')
+//   orbitControlsFolder.add(controls, 'autoRotateSpeed')
+//   orbitControlsFolder.add(controls, 'dampingFactor')
+//   orbitControlsFolder.add(controls, 'enableDamping')
+//   orbitControlsFolder.add(controls, 'enablePan')
+//   orbitControlsFolder.add(controls, 'enableRotate')
+//   orbitControlsFolder.add(controls, 'enableZoom')
+//   orbitControlsFolder.add(controls, 'panSpeed')
+//   orbitControlsFolder.add(controls, 'rotateSpeed')
+//   orbitControlsFolder.add(controls, 'screenSpacePanning')
+//   orbitControlsFolder.add(controls, 'zoomToCursor')
+//   orbitControlsFolder.add(controls, 'enabled')
+  
+//   //const cubeFolder = gui.addFolder('Cube').show(false);
+//   // cubeFolder.add(cube,'visible')
+//   // cubeFolder.add(myObject,'isRotate')
+//   // cubeFolder.add(myObject,'resetRotation')
+
+//   const battleFolder = gui.addFolder('Battle').show();
+//   battleFolder.add(myObject,'playerAttack')
+//   battleFolder.add(myObject,'enemyAttack')
+// }
 var progressBar;
 var canvasText;
-function setupEntities(){
+
+function createCharacter(args={}){
+  let x = args.x || 0;
+  let y = args.y || 0;
+  let z = args.z || 0;
 
   let playerSprite2D = new SpriteAnimation2DTileMap();
-  playerSprite2D.mesh.position.set(-4,0,0);
+  playerSprite2D.mesh.position.set(x,y,z);
   scene.add(playerSprite2D.mesh);
 
   let cText2d = new CanvasText2D();
   cText2d.setText('10/10');
-  cText2d.mesh.position.set(-4,1,0.1)
+  cText2d.mesh.position.set(x,y+1,z+0.1)
   scene.add(cText2d.mesh);
 
-  players.push({
+  return {
+    id:"",
     health:10,
     attack:1,
     animationPlayer:playerSprite2D,
@@ -128,37 +184,36 @@ function setupEntities(){
     isHurt:false,
     isFinish:false,
     target:0,
-  })
+  }
+}
 
 
-  
-  let playerSprite2D02 = new SpriteAnimation2DTileMap();
-  playerSprite2D02.mesh.position.set(4,0,0);
-  scene.add(playerSprite2D02.mesh);
+function setupEntities(){
 
-  let cText2d02 = new CanvasText2D();
-  cText2d02.setText('10/10');
-  cText2d02.mesh.position.set(4,1,0.1)
-  scene.add(cText2d02.mesh);
+  let tmpPlayer = createCharacter({
+    x:-2,
+    y:0,
+    z:0,
+  });
 
-  enemies.push({
-    health:10,
-    attack:1,
-    animationPlayer:playerSprite2D02,
-    text2d:cText2d02,
-    isAttack:false,
-    isFinish:false,
-    target:0,
-  })
+  players.push(tmpPlayer)
 
-  progressBar = new ProgressBar2D();
-  scene.add(progressBar.mesh);
-  console.log("progressBar.mesh: ", progressBar.mesh)
+  let tmpEnemy =createCharacter({
+    x:2,
+    y:0,
+    z:0,
+  });
 
-  canvasText = new CanvasText2D();
-  canvasText.setText('Hello World');
-  canvasText.mesh.position.set(0,0,0.1)
-  scene.add(canvasText.mesh);
+  enemies.push(tmpEnemy)
+
+  // progressBar = new ProgressBar2D();
+  // scene.add(progressBar.mesh);
+  // console.log("progressBar.mesh: ", progressBar.mesh)
+
+  // canvasText = new CanvasText2D();
+  // canvasText.setText('Hello World');
+  // canvasText.mesh.position.set(0,0,0.1)
+  // scene.add(canvasText.mesh);
 
 }
 let pcount = 0;
@@ -224,7 +279,8 @@ function setupScene(){
   van.add(document.body, renderer.domElement);
   
   renderer.setAnimationLoop( animate );
-  createGUI();
+  //createGUI();
+  createTweakPane();
 }
 
 function animate() {
@@ -233,7 +289,7 @@ function animate() {
   //   cube.rotation.x += 0.01;
 	//   cube.rotation.y += 0.01;
   // }
-  updateProgressBar();
+  //updateProgressBar();
   updateAnimationPlayer(delta)
 	
   stats.update();
