@@ -1,16 +1,25 @@
 
 // https://github.com/pmndrs/cannon-es/blob/master/src/objects/RigidVehicle.ts
+// https://github.com/pmndrs/cannon-es/blob/master/examples/raycast_vehicle.html
 
-import { Vec3 } from '../math/Vec3'
-import { Body } from '../objects/Body'
-import { Sphere } from '../shapes/Sphere'
-import { Box } from '../shapes/Box'
-import { HingeConstraint } from '../constraints/HingeConstraint'
+// import { Vec3 } from '../math/Vec3'
+// import { Body } from '../objects/Body'
+// import { Sphere } from '../shapes/Sphere'
+// import { Box } from '../shapes/Box'
+// import { HingeConstraint } from '../constraints/HingeConstraint'
+
+import { 
+  Vec3,
+  Body,
+  Sphere,
+  Box,
+  HingeConstraint,
+} from 'https://cdn.jsdelivr.net/npm/cannon-es@0.20.0/+esm';
 
 /**
  * Simple vehicle helper class with spherical rigid body wheels.
  */
-export class RigidVehicle {
+export default class RigidVehicle {
   /**
    * The bodies of the wheels.
    */
@@ -81,7 +90,11 @@ export class RigidVehicle {
     // Constrain wheel
     const axis = typeof options.axis !== 'undefined' ? options.axis.clone() : new Vec3(0, 0, 1)
     this.wheelAxes.push(axis)
-
+    console.log("pivotA: ", position);
+    console.log("axisA: ", axis);
+    console.log("pivotB: ", Vec3.ZERO);
+    console.log("axisB: ", axis);
+    console.log("collideConnected: ", false);
     const hingeConstraint = new HingeConstraint(this.chassisBody, wheelBody, {
       pivotA: position,
       axisA: axis,

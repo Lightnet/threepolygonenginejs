@@ -139,6 +139,7 @@ var urlandjs = [
   {url:'/threejs_cannon01',                           file:'/threejs_cannones/threejs_cannon01.js'},
   {url:'/threejs_jolt_debug01',                       file:'/threejs_jolt/threejs_jolt_debug01.js'},
   {url:'/threejs_cannon_vehicle01',                       file:'/threejs_cannones/threejs_cannon_vehicle01.js'},
+  {url:'/threejs_cannon_vehicle02',                       file:'/threejs_cannones/threejs_cannon_vehicle02.js'},
   
   {url:'/three_framework00',                          file:'/tests/three_framework00.js'},
   {url:'/three_rapier',                               file:'/tests/three_rapier.js'},
