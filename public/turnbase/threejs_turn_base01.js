@@ -12,9 +12,17 @@ import { OrbitControls } from 'https://unpkg.com/three@0.170.0/examples/jsm/cont
 import Stats from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/stats.module.js';
 //import { GUI } from 'https://unpkg.com/three@0.170.0/examples/jsm/libs/lil-gui.module.min.js';
 import { Pane } from 'https://cdn.jsdelivr.net/npm/tweakpane@4.0.5/dist/tweakpane.min.js';
+//import { customAlphabet } from 'https://cdn.jsdelivr.net/npm/nanoid/nanoid.js'
+//import nanoid from 'https://cdn.jsdelivr.net/npm/nanoid@5.0.9/+esm'
+import { customAlphabet } from 'https://cdn.jsdelivr.net/npm/nanoid@5.0.9/+esm'
+
 import SpriteAnimation2DTileMap from './spriteanimation2dtilemap.js';
 import ProgressBar2D from "./progressbar2d.js";
 import CanvasText2D from "./canvastext2d.js";
+
+const nanoid = customAlphabet('1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', 10);
+//abcdefghijklmnopqrstuvwxyz
+//ABCDEFGHIJKLMNOPQRSTUVWXYZ
 
 const {div,style} = van.tags;
 
@@ -27,28 +35,54 @@ const stats = new Stats();
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 //camera.position.z = 5;
-camera.position.set(0, 0, 5);
+camera.position.set(0, 2, 5);
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setPixelRatio( window.devicePixelRatio );
 renderer.setSize( window.innerWidth, window.innerHeight );
 renderer.setClearColor( 0x80a0e0);
 
+var clock = new THREE.Clock();
+var controls = new OrbitControls( camera, renderer.domElement );
+
 window.addEventListener('resize', function(event) {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize( window.innerWidth, window.innerHeight );
 });
+//===============================================
 
-// const geometry = new THREE.BoxGeometry( 1, 1, 1 );
-// const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-// const cube = new THREE.Mesh( geometry, material );
-// scene.add( cube );
+//===============================================
 
-var clock = new THREE.Clock();
-var controls = new OrbitControls( camera, renderer.domElement );
+function createMeshBox(args={}){
+  //args = args || {};
+  const width = args?.width || 1;
+  const height = args?.height || 1;
+  const depth = args?.depth || 1;
+  //const color = args?.color || 0x00ff00;
 
-function setup_Helpers(){
+  const x = args?.x || 0;
+  const y = args?.y || 0;
+  const z = args?.z || 0;
+
+  const texture = new THREE.TextureLoader().load('/textures/prototypes/dark/texture_01.png' ); 
+  const material = new THREE.MeshBasicMaterial({
+    //color: 0x00ff00,
+    map:texture,
+  });
+  //const geometry = new THREE.BoxGeometry( 1, 1, 1 );
+  const geometry = new THREE.BoxGeometry( width, height, depth );
+  
+  const mesh = new THREE.Mesh( geometry, material );
+  mesh.position.set(x,y,z);
+
+  return mesh;
+}
+
+//===============================================
+// HELPER
+//===============================================
+function setupHelpers(){
   const size = 10;
   const divisions = 10;
 
@@ -58,6 +92,14 @@ function setup_Helpers(){
 
 const myObject ={
   isRotate:true,
+  memberid:"",
+  health:0,
+  attack:0,
+  animationState:"idle",
+  isAttack:false,
+  isHurt:false,
+  isFinish:false,
+  target:0,
   test:()=>{
     console.log('test');
   },
@@ -75,7 +117,7 @@ const myObject ={
     enemies[0].animationPlayer.oncePlay([14,22,30], 1.5);
   }
 }
-
+var gamemenu;
 function createTweakPane(){
   const myStyle = style(`
     /* Default wrapper view */
@@ -85,11 +127,118 @@ function createTweakPane(){
     `);
   van.add(document.body,myStyle)
 
+  const divGame = div({
+    class:`yourCustomContainer`,
+    style:`
+position:fixed;
+top:64px;
+left:20px;    
+    `
+  })
+  van.add(document.body,divGame);
+//===============================================
+// GAME
+//===============================================
+
+  gamemenu = new Pane({
+    title: 'Menu',
+    expanded: true,
+    container:divGame
+  });
+
+  const cheatsFolder = gamemenu.addFolder({title: 'Cheats',expanded: false,});
+  cheatsFolder.addButton({title:'Full Heal'})
+  //cheatsFolder.addButton({title:'Full Heal'})
+  //cheatsFolder.addButton({title:'Add Potions'})
+  cheatsFolder.addButton({title:'Add Item'})
+  const mapFolder = gamemenu.addFolder({title: 'Map',expanded: false,});
+  mapFolder.addButton({title:'World'});
+  mapFolder.addButton({title:'Scenes'});
+
+  const inventoryFolder = gamemenu.addFolder({title: 'Inventory',expanded: false,});
+  inventoryFolder.addButton({title:'Refresh'});
+
+  const partyFolder = gamemenu.addFolder({title: 'Party',expanded: false,});
+  partyFolder.addButton({title:'Add'});
+  partyFolder.addButton({title:'Remove'});
+  partyFolder.addButton({title:'Refresh'});
+
+  const partiesFolder = gamemenu.addFolder({title: 'Parties',expanded: true,});
+  let mylist;
+  partiesFolder.addButton({title:'Update'}).on('click', () => {
+    let members = [];
+    let count = 0;
+    for(const player of players){
+      count++;
+      members.push({
+        text:"Member "+ count,
+        value:player.id,
+      })
+    }
+
+    mylist.options= members;
+  });
+  // partiesFolder.addButton({title:'Clear'}).on('click', () => {
+  //   mylist.dispose();
+  // });
+  mylist = partiesFolder.addBlade({
+    view: 'list',
+    label: 'Members',
+    options: [],
+    value: 'memberid',
+  });
+  console.log(partiesFolder)
+  mylist.on('change', (ev) => {
+    myObject.memberid = ev.value;
+    for(const player of players){
+      if(player.id == ev.value){
+        myObject.health = player.health;
+        myObject.isAttack = player.isAttack;
+        myObject.isHurt = player.isHurt;
+        myObject.isFinish = player.isFinish;
+        break;
+      }
+    }
+  });
+
+  const statusFolder = gamemenu.addFolder({title: 'Status',expanded: true,});
+  statusFolder.addBinding(myObject,'health',{readonly:true});
+  statusFolder.addBinding(myObject,'animationState',{readonly:true});
+  statusFolder.addBinding(myObject,'attack',{readonly:true});
+  statusFolder.addBinding(myObject,'isAttack',{readonly:true});
+  statusFolder.addBinding(myObject,'isHurt',{readonly:true});
+  statusFolder.addBinding(myObject,'isFinish',{readonly:true});
+  statusFolder.addBinding(myObject,'target',{readonly:true});
+
+  statusFolder.addButton({title:'Update'}).on('click', () => {
+    console.log(myObject.memberid);
+    for(const player of players){
+      if(player.id == myObject.memberid){
+        myObject.health = player.health;
+        myObject.isAttack = player.isAttack;
+        myObject.isHurt = player.isHurt;
+        myObject.isFinish = player.isFinish;
+        break;
+      }
+    }
+  });
+
+  const equipmentFolder = gamemenu.addFolder({title: 'Equipment ',expanded: false,});
+
+  const actionsFolder = gamemenu.addFolder({title: 'Actions',expanded: true,});
+  actionsFolder.addButton({title:'Attack'});
+  actionsFolder.addButton({title:'Defend'});
+  actionsFolder.addButton({title:'Skills'});
+  actionsFolder.addButton({title:'Items'});
+  actionsFolder.addButton({title:'Escape'});
+
+//===============================================
+// DEBUG
+//===============================================
   const pane = new Pane({
     title: 'Parameters',
     expanded: true,
   });
-
   const debugFolder = pane.addFolder({title: 'Debug',expanded: true,});
   debugFolder.addBinding(gridHelper, 'visible',{
     label:'Grid Helper'
@@ -97,7 +246,6 @@ function createTweakPane(){
     //   label:'test'
     // }
   })
-
   const orbitControlsFolder = pane.addFolder({title: 'Orbit Controls',expanded: false});
   orbitControlsFolder.addBinding(controls, 'autoRotate');
   orbitControlsFolder.addBinding(controls, 'autoRotateSpeed');
@@ -156,9 +304,10 @@ function createTweakPane(){
 //   battleFolder.add(myObject,'playerAttack')
 //   battleFolder.add(myObject,'enemyAttack')
 // }
-var progressBar;
-var canvasText;
 
+//===============================================
+// CREATE TMP CHARACTERS
+//===============================================
 function createCharacter(args={}){
   let x = args.x || 0;
   let y = args.y || 0;
@@ -174,7 +323,7 @@ function createCharacter(args={}){
   scene.add(cText2d.mesh);
 
   return {
-    id:"",
+    id:nanoid(),
     health:10,
     attack:1,
     animationPlayer:playerSprite2D,
@@ -186,13 +335,14 @@ function createCharacter(args={}){
     target:0,
   }
 }
-
-
+//===============================================
+// SET UP CHARACTERS
+//===============================================
 function setupEntities(){
 
   let tmpPlayer = createCharacter({
     x:-2,
-    y:0,
+    y:1.5,
     z:0,
   });
 
@@ -200,32 +350,15 @@ function setupEntities(){
 
   let tmpEnemy =createCharacter({
     x:2,
-    y:0,
+    y:1.5,
     z:0,
   });
 
   enemies.push(tmpEnemy)
-
-  // progressBar = new ProgressBar2D();
-  // scene.add(progressBar.mesh);
-  // console.log("progressBar.mesh: ", progressBar.mesh)
-
-  // canvasText = new CanvasText2D();
-  // canvasText.setText('Hello World');
-  // canvasText.mesh.position.set(0,0,0.1)
-  // scene.add(canvasText.mesh);
-
 }
-let pcount = 0;
-function updateProgressBar(){
-  pcount++;
-  if(pcount>100){
-    pcount = 0;
-  }
-  progressBar.update();
-  progressBar.setPercent(pcount)
-}
-
+//===============================================
+// UPDATE ANIMATION CHARACTERS
+//===============================================
 function updateAnimationPlayer(dt){
   for(const pa of  players){
     pa.animationPlayer.update(dt)
@@ -269,9 +402,30 @@ function setupLights(){
   scene.add( light1 );
 }
 
+function setupGround(){
+
+  var pos = {x:-5,y:0,z:-5};
+  var size = 11;
+
+  for(let x = 0; x < size; x++){
+    for(let z = 0; z < size; z++){
+      console.log("x:", (pos.x + x)+ " z:", (pos.z + z));
+      let mesh = createMeshBox({
+        x: pos.x + x,
+        z: pos.z + z,
+      });
+      scene.add(mesh);
+    }
+  }
+
+  //createMeshBox()
+}
+
 function setupScene(){
   setupLights()
-  setup_Helpers();
+  setupHelpers();
+
+  setupGround()
 
   setupEntities();
 

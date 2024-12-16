@@ -1,4 +1,13 @@
 
+| Physics |  2D ? 3D  | Debug Render | Access Objects |
+| --------| ----------| ------------ | -------------- |
+| Rapier  | 2D,3D     | Yes          |
+| Jolt    | 3D        | No           | No
+| Cannon-es| 3D        | Yes          |
+| Ammo    | 3D         
+
+
+
 # update Physics:
  * Matter.js        2024 june 23
  * OimoPhysics      2024 june 07

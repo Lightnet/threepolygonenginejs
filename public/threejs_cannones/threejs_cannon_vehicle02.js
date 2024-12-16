@@ -13,6 +13,8 @@
 // https://github.com/pmndrs/cannon-es/blob/master/examples/fixed_rotation.html
 // https://github.com/pmndrs/cannon-es/blob/master/examples/hinge.html
 
+// https://stackoverflow.com/questions/42598275/cannonjs-lock-rotation-on-specific-axes
+
 // https://github.com/pmndrs/cannon-es/blob/master/getting-started.md
 // https://pmndrs.github.io/cannon-es/examples/rigid_vehicle
 // https://github.com/pmndrs/cannon-es/blob/master/examples/rigid_vehicle.html
@@ -57,9 +59,12 @@ window.addEventListener('resize', function(event) {
   renderer.setSize( window.innerWidth, window.innerHeight );
 });
 
-document.addEventListener('click', () => {
-  renderer.domElement.requestPointerLock()
-})
+// document.addEventListener('click', () => {
+//   renderer.domElement.requestPointerLock()
+// })
+
+document.addEventListener('keydown', onDocumentKey)
+document.addEventListener('keyup', onDocumentKey)
 
 document.addEventListener('pointerlockchange', () => {
   if (document.pointerLockElement === renderer.domElement) {
@@ -369,44 +374,67 @@ function createGUI(){
 
   // const physicsFolder = gui.addFolder('Physics')
   // physicsFolder.add(myObject,'addPhysicsGround');
-
-
-
   
   // const cubeFolder = gui.addFolder('Cube')
   // cubeFolder.add(cube,'visible')
   // cubeFolder.add(myObject,'isRotate')
   // cubeFolder.add(myObject,'resetRotation')
 }
+
+function setSteeringValue(value, wheel) {
+  const axis = wheel
+}
+
+// setSteeringValue(value, wheelIndex) {
+//   // Set angle of the hinge axis
+//   const axis = this.wheelAxes[wheelIndex]
+
+//   const c = Math.cos(value)
+//   const s = Math.sin(value)
+//   const x = axis.x
+//   const z = axis.z
+//   this.constraints[wheelIndex].axisA.set(-c * x + s * z, 0, s * x + c * z)
+// }
 var vehicle;
 function UpdateVehicle(){
   const maxSteerVal = Math.PI / 8
   const maxSpeed = 10
   const maxForce = 100
   if (keyMap['KeyW']) {
-    vehicle.setWheelForce(maxForce, 2)
-    vehicle.setWheelForce(-maxForce, 3)
+    RearLeftHC.setMotorSpeed(-maxSpeed)
+    RearRightHC.setMotorSpeed(-maxSpeed)
+    //vehicle.setWheelForce(maxForce, 2)
+    //vehicle.setWheelForce(-maxForce, 3)
   }else if (keyMap['KeyS']) {
-    vehicle.setWheelForce(-maxForce / 2, 2)
-    vehicle.setWheelForce(maxForce / 2, 3)
+    RearLeftHC.setMotorSpeed(maxSpeed)
+    RearRightHC.setMotorSpeed(maxSpeed)
+    //vehicle.setWheelForce(-maxForce / 2, 2)
+    //vehicle.setWheelForce(maxForce / 2, 3)
   }else{
-    vehicle.setWheelForce(0, 2)
-    vehicle.setWheelForce(0, 3)
+    RearLeftHC.setMotorSpeed(0)
+    RearRightHC.setMotorSpeed(0)
+    //vehicle.setWheelForce(0, 2)
+    //vehicle.setWheelForce(0, 3)
     // vehicle.setSteeringValue(0, 2)
     // vehicle.setSteeringValue(0, 3)
   }
 
   if (keyMap['KeyA']) {
-    vehicle.setSteeringValue(maxSteerVal, 0)
-    vehicle.setSteeringValue(maxSteerVal, 1)
+    // vehicle.setSteeringValue(maxSteerVal, 0)
+    // vehicle.setSteeringValue(maxSteerVal, 1)
   }else if (keyMap['KeyD']) {
-    vehicle.setSteeringValue(-maxSteerVal, 0)
-    vehicle.setSteeringValue(-maxSteerVal, 1)
+    // vehicle.setSteeringValue(-maxSteerVal, 0)
+    // vehicle.setSteeringValue(-maxSteerVal, 1)
   }else{
-    vehicle.setSteeringValue(0, 0)
-    vehicle.setSteeringValue(0, 1)
+    // vehicle.setSteeringValue(0, 0)
+    // vehicle.setSteeringValue(0, 1)
   }
 }
+
+let FrontLeftHC;
+let FrontRightHC;
+let RearLeftHC;
+let RearRightHC;
 
 function setupVehicle(){
   const zero = new CANNON.Vec3()
@@ -418,30 +446,31 @@ function setupVehicle(){
   const centerOfMassAdjust = new CANNON.Vec3(0, -1, 0)
   chassisBody.addShape(chassisShape, centerOfMassAdjust)
 
-
   const wheelBody1 = new CANNON.Body({ mass, material: wheelMaterial })
   const wheelShape = new CANNON.Cylinder(1.5, 1.5, 1, 10)
   wheelBody1.addShape(wheelShape)
   wheelBody1.quaternion.setFromEuler(Math.PI / 2, 0, 0)
   console.log(wheelShape);
   wheelBody1.position.set(-5, 0, 3)
+  wheelBody1.angularFactor = new CANNON.Vec3(0, 0, 1);
 
-  const leftfrontc = new CANNON.HingeConstraint(chassisBody, wheelBody1, {
+  const leftFrontHC = new CANNON.HingeConstraint(chassisBody, wheelBody1, {
     pivotA: new CANNON.Vec3(-5, -1, 3),
     axisA: new CANNON.Vec3(0, 0, 0),
     pivotB: new CANNON.Vec3(0, 0, 0),
     axisB: new CANNON.Vec3(0, 1, 0),
     collideConnected: false,
   })
-  console.log("leftfrontc: ",leftfrontc)
+  console.log("leftFrontHC: ",leftFrontHC)
 
   const wheelBody2 = new CANNON.Body({ mass, material: wheelMaterial })
   const wheelShape2 = new CANNON.Cylinder(1.5, 1.5, 1, 10)
   wheelBody2.addShape(wheelShape2)
   wheelBody2.quaternion.setFromEuler(Math.PI / 2, 0, 0)
   wheelBody2.position.set(-5, 0, -3)
+  wheelBody2.angularFactor = new CANNON.Vec3(0, 0, 1);
 
-  const rightfrontc = new CANNON.HingeConstraint(chassisBody, wheelBody2, {
+  const rightFrontHC = new CANNON.HingeConstraint(chassisBody, wheelBody2, {
     pivotA: new CANNON.Vec3(-5, -1, -3),
     axisA: new CANNON.Vec3(0, 0, 0),
     pivotB: new CANNON.Vec3(0, 0, 0),
@@ -454,8 +483,9 @@ function setupVehicle(){
   wheelBody3.addShape(wheelShape3)
   wheelBody3.quaternion.setFromEuler(Math.PI / 2, 0, 0)
   wheelBody3.position.set(5, 0, 3)
+  wheelBody3.angularFactor = new CANNON.Vec3(0, 0, 1);
 
-  const leftrearc = new CANNON.HingeConstraint(chassisBody, wheelBody3, {
+  const leftRearHC = new CANNON.HingeConstraint(chassisBody, wheelBody3, {
     pivotA: new CANNON.Vec3(5, -1, 3),
     axisA: new CANNON.Vec3(0, 0, 0),
     pivotB: new CANNON.Vec3(0, 0, 0),
@@ -468,8 +498,9 @@ function setupVehicle(){
   wheelBody4.addShape(wheelShape4)
   wheelBody4.quaternion.setFromEuler(Math.PI / 2, 0, 0)
   wheelBody4.position.set(5, 0, -3)
+  wheelBody4.angularFactor = new CANNON.Vec3(0, 0, 1);
 
-  const rightrearc = new CANNON.HingeConstraint(chassisBody, wheelBody4, {
+  const rightRearHC = new CANNON.HingeConstraint(chassisBody, wheelBody4, {
     pivotA: new CANNON.Vec3(5, -1, -3),
     axisA: new CANNON.Vec3(0, 0, 0),
     pivotB: new CANNON.Vec3(0, 0, 0),
@@ -484,10 +515,24 @@ function setupVehicle(){
   physicsWorld.addBody(wheelBody3)
   physicsWorld.addBody(wheelBody4)
   //Constraint to world
-  physicsWorld.addConstraint(leftfrontc)
-  physicsWorld.addConstraint(rightfrontc)
-  physicsWorld.addConstraint(leftrearc)
-  physicsWorld.addConstraint(rightrearc)
+  physicsWorld.addConstraint(leftFrontHC)
+  physicsWorld.addConstraint(rightFrontHC)
+  physicsWorld.addConstraint(leftRearHC)
+  physicsWorld.addConstraint(rightRearHC)
+
+  FrontLeftHC=leftFrontHC;
+  FrontRightHC=rightFrontHC;
+  RearLeftHC=leftRearHC;
+  RearRightHC=rightRearHC;
+
+  RearLeftHC.enableMotor();
+  RearRightHC.enableMotor();
+
+  addAxeHelper(chassisBody)
+  addAxeHelper(wheelBody1)
+  addAxeHelper(wheelBody2)
+  addAxeHelper(wheelBody3)
+  addAxeHelper(wheelBody4)
 
   const velocity = -1
   // leftfrontc.enableMotor()
@@ -495,11 +540,17 @@ function setupVehicle(){
   // leftfrontc.setMotorSpeed(velocity)
   // rightfrontc.setMotorSpeed(velocity)
 
-  leftrearc.enableMotor()
-  rightrearc.enableMotor()
-  leftrearc.setMotorSpeed(velocity)
-  rightrearc.setMotorSpeed(velocity)
+  // leftrearc.enableMotor()
+  // rightrearc.enableMotor()
+  // leftrearc.setMotorSpeed(velocity)
+  // rightrearc.setMotorSpeed(velocity)
 
+}
+
+function addAxeHelper(_Body){
+  const axesHelper1 = new THREE.AxesHelper( 3 );
+  scene.add(axesHelper1)
+  bodies.push({mesh:axesHelper1,rigid:_Body})
 }
 
 function setupScene(){
@@ -527,7 +578,7 @@ function animate() {
   // }
 
   updatePhysics();
-  //UpdateVehicle();
+  UpdateVehicle();
   cannonDebugRenderer.update();
 	
   stats.update();
